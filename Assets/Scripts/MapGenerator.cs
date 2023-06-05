@@ -76,5 +76,14 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
+        Invoke("DrawGrid", Time.deltaTime);
+    }
+
+    void DrawGrid()
+    {
+        GetComponent<PathGrid>().width = (int)mapSize.x;
+        GetComponent<PathGrid>().height = (int)mapSize.y;
+
+        GetComponent<PathGrid>().DrawGrid();
     }
 }
