@@ -3,24 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-public class TileType : MonoBehaviour
+public class TileProps : MonoBehaviour
 {
     public Sprite[] sprites;
+    public GameObject nation = null;
 
     public int type;
 
     public int grow = 1;
     public int freq = 1;
 
-    public int mapWidth = 40;
+    public int mapWidth = 80; //this is fro wrapping in future
+
+    //MIGHT PUT THIS STUFF IN ANOTHER SCRIPT ##############################################################################
+    public int population;
+    public int recruitPop;
+    public int tax; //might change
+    public SpriteRenderer resourceSprite;
+    public string resource;
+    public string oldResource;
+    public string agriResource;
+    //#####################################################################################################################
 
     public void SwitchType(int i)
     {
         type = i;
+    }
+
+    public void SwitchSprite(int i)
+    {
         GetComponent<SpriteRenderer>().sprite = sprites[i];
     }
 
-    public void Grow()
+    //MIGHT PUT THIS STUFF IN ANOTHER SCRIPT ##############################################################################
+
+
+    //#####################################################################################################################
+
+    public void Grow() //for generating land masses on map
     {
         List<Vector2> neighbors = new List<Vector2>();
         neighbors.Add(new Vector2(transform.position.x + 1, transform.position.y));
@@ -49,7 +69,7 @@ public class TileType : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(neighbors[n], neighbors[n], 0, LayerMask.GetMask("Default"));
             if (hit)
             {
-                TileType newTile = hit.collider.gameObject.GetComponent<TileType>();
+                TileProps newTile = hit.collider.gameObject.GetComponent<TileProps>();
 
                 if (newTile.type == 1)
                 {

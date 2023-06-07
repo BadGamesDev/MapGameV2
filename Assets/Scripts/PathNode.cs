@@ -6,9 +6,9 @@ public class PathNode
 {
     public Vector2 pos;
 
-    public float gCost;
-    public float hCost;
-    public float fCost;
+    public float gCost; //terrain etc. cost
+    public float hCost; //distance cost
+    public float fCost; //total cost
 
     public PathNode cameFromNode;
 

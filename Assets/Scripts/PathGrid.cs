@@ -41,11 +41,11 @@ public class PathGrid : MonoBehaviour
                 RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, defaultMask);
                 if (hit)
                 {
-                    if (hit.collider.gameObject.GetComponent<TileType>().type == 1)
+                    if (hit.collider.gameObject.GetComponent<TileProps>().type == 1)
                     {
                         open = 10;
                     }
-                    if (hit.collider.gameObject.GetComponent<TileType>().type == 2)
+                    if (hit.collider.gameObject.GetComponent<TileProps>().type == 2)
                     {
                         open = 5;
                     }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CamControls : MonoBehaviour
+public class CamControl : MonoBehaviour
 {
     Camera cam;
 
@@ -15,6 +15,7 @@ public class CamControls : MonoBehaviour
 
     private void Update()
     {
+        speed = 10 + (cam.orthographicSize);
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -31,7 +32,6 @@ public class CamControls : MonoBehaviour
         if (scroll < 0 && cam.orthographicSize < 30)
         {
             cam.orthographicSize -= scroll * 10;
-            speed -= scroll * 10;
         }
 
         else if (scroll > 0 && cam.orthographicSize > 2)

@@ -5,11 +5,6 @@ using UnityEngine;
 public class Controls : MonoBehaviour
 {
     GameObject unit;
-
-    private void Start()
-    {
-        
-    }
     
     private void Update()
     {

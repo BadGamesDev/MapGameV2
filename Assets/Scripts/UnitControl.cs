@@ -8,11 +8,6 @@ public class UnitControl : MonoBehaviour
     public int currNode = 0;
     public float delay = 0.5f;
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         if (path.Count > 0)
