@@ -6,8 +6,11 @@ using static UnityEditor.PlayerSettings;
 public class TileProps : MonoBehaviour
 {
     public Sprite[] sprites;
+    public SpriteRenderer resourceSprite; //maybe make it an array?
     public GameObject nation = null;
 
+    public int ID;
+    
     public int type;
 
     public int grow = 1;
@@ -15,30 +18,40 @@ public class TileProps : MonoBehaviour
 
     public int mapWidth = 80; //this is fro wrapping in future
 
-    //MIGHT PUT THIS STUFF IN ANOTHER SCRIPT ##############################################################################
     public int population;
+    public int agriPop;
     public int recruitPop;
     public int tax; //might change
-    public SpriteRenderer resourceSprite;
     public string resource;
-    public string oldResource;
+    public string oldResource; //this will be removed after map generation is changed
     public string agriResource;
-    //#####################################################################################################################
+
+    public float resourceProduction;
+    public float agriProduction;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Collided with unit");
+        UnitProps unit = collision.gameObject.GetComponent<UnitProps>();
+        GameObject conqueringNation = unit.nation;
+        GetConquered(conqueringNation);
+    }
+
+    public void GetConquered(GameObject newNation)
+    {
+        nation = newNation;
+        newNation.GetComponent<NationProps>().tiles.Add(gameObject.GetComponent<TileProps>());
+    }
 
     public void SwitchType(int i)
     {
         type = i;
     }
-
+ 
     public void SwitchSprite(int i)
     {
         GetComponent<SpriteRenderer>().sprite = sprites[i];
     }
-
-    //MIGHT PUT THIS STUFF IN ANOTHER SCRIPT ##############################################################################
-
-
-    //#####################################################################################################################
 
     public void Grow() //for generating land masses on map
     {
@@ -66,7 +79,7 @@ public class TileProps : MonoBehaviour
                 neighbors[n] = newNeighbor;
             }
             
-            RaycastHit2D hit = Physics2D.Raycast(neighbors[n], neighbors[n], 0, LayerMask.GetMask("Default"));
+            RaycastHit2D hit = Physics2D.Raycast(neighbors[n], neighbors[n], 0, LayerMask.GetMask("Tiles"));
             if (hit)
             {
                 TileProps newTile = hit.collider.gameObject.GetComponent<TileProps>();

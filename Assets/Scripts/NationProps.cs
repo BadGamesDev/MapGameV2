@@ -6,36 +6,41 @@ using UnityEngine;
 public class NationProps : MonoBehaviour
 {
     public string nationName;
-    //public bool AI;
     public List<TileProps> tiles;
     public int population;
-    //public int troops;
     public int money;
     public int debt;
 
     public List<int> populationHistory = new List<int>();
 
-    //MIGHT PUT THIS STUFF IN ANOTHER SCRIPT ##############################################################################
-    public int Timber;
+    public Dictionary<string, float> resources;
 
-    //public int Lead;
+    public NationProps()
+    {
+        resources = new Dictionary<string, float>
+        {
+            { "coal", 0f },
+            { "gold", 0f },
+            { "iron", 0f },
+            { "timber", 0f },
+            { "grain", 0f },
+            { "cotton", 0f }
+        };
+    }
 
-    //public int Sulphur;
+    public void GainTile(int ID)
+    {   
+    }
 
-    //public int Copper;
-
-    public int Iron;
-
-    public int Coal;
-
-    //public int Rubber;
-
-    public int Gold;
-
-    //public int Oil;
-
-        //AGRICULTURE
-    public int wheat;
-    public int cotton;
-    //#####################################################################################################################
+    public void AddResource(string resourceName, float amount)
+    {
+        if (resources.ContainsKey(resourceName))
+        {
+            resources[resourceName] += amount;
+        }
+        else
+        {
+            resources.Add(resourceName, amount);
+        }
+    }
 }

@@ -14,7 +14,7 @@ public class UnitControl : MonoBehaviour
         {
             if(delay >= 0.5)
             {
-                RaycastHit2D hit = Physics2D.Raycast(path[currNode], path[currNode], 0, LayerMask.GetMask("Default"));
+                RaycastHit2D hit = Physics2D.Raycast(path[currNode], path[currNode], 0, LayerMask.GetMask("Tiles"));
                 if (hit)
                 {
                     MoveTo(hit.collider.gameObject);

@@ -15,7 +15,7 @@ public class PathGrid : MonoBehaviour
 
     private void Start()
     {
-        defaultMask = LayerMask.GetMask("Default");
+        defaultMask = LayerMask.GetMask("Tiles");
     }
     
     public void DrawGrid()

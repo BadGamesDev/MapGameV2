@@ -63,7 +63,7 @@ public class MapGenerator : MonoBehaviour
 
             pos.y *= 0.86f;
 
-            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Default"));
+            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
 
             if (hit)
             {
@@ -85,9 +85,15 @@ public class MapGenerator : MonoBehaviour
         }
 
         CalcLandTiles();
-        
+
+        AssignID();
+
         PlaceResources();
-        
+
+        SetAgriResource();
+
+        SetPopulation();
+
         GenerateNations();
 
         Invoke("DrawGrid", Time.deltaTime);
@@ -133,12 +139,13 @@ public class MapGenerator : MonoBehaviour
                     pos.x += 0.5f;
                 }
 
-                RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Default"));
+                RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
                 if (hit)
                 {
                     if (hit.collider.gameObject.GetComponent<TileProps>().type > 1)
                     {
                         landTiles += 1;
+                        landTilesList.Add(hit.collider.gameObject.GetComponent<TileProps>());
                     }
                 }
             }
@@ -146,7 +153,35 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void PlaceResources()
+    void AssignID()
+    {
+        int i = 0;
+
+        foreach (TileProps tile in landTilesList)
+        {
+            tile.ID = i;
+            i++;
+        }
+    }
+
+    void SetPopulation()
+    {
+        foreach (TileProps tile in landTilesList)
+        {
+            tile.population = Mathf.RoundToInt(Random.Range(10000,100000));
+            tile.agriPop = tile.population;
+        }
+    }
+
+    void SetAgriResource()
+    {
+        foreach (TileProps tile in landTilesList)
+        {
+            tile.agriResource = "Grain";
+        }
+    }
+
+    void PlaceResources() //change this to the new method
     {
         int resourceTarget = Mathf.RoundToInt(landTiles * resourceFreq);
         string curResource = null;
@@ -156,7 +191,7 @@ public class MapGenerator : MonoBehaviour
         while (resourcePlaced <= resourceTarget && attempts < 1000)
         {
             Vector2 pos = new Vector2(Mathf.RoundToInt(Random.value * (mapSize.x - 1)), Mathf.RoundToInt(Random.value * (mapSize.y - 1)));
-            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Default"));
+            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
             if (hit)
             {
                 if (hit.collider.gameObject.name.Contains("Tile"))

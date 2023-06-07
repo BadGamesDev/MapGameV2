@@ -37,7 +37,7 @@ public class Controls : MonoBehaviour
                 }
                 else
                 {
-                    hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Default"));
+                    hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
                     if (hit)
                     {
                         unit.GetComponent<UnitControl>().path = new List<Vector2>();

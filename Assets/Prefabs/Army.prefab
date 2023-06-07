@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 2172309133561275033}
   - component: {fileID: 2172309133561275039}
   - component: {fileID: -436085422724363299}
-  m_Layer: 6
+  - component: {fileID: -1147815275042568964}
+  - component: {fileID: 1306545502783407345}
+  m_Layer: 8
   m_Name: Army
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +98,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -111,12 +113,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 0.575}
-      - {x: 0.5, y: 0.285}
-      - {x: 0.5, y: -0.285}
-      - {x: 0, y: -0.575}
-      - {x: -0.5, y: -0.285}
-      - {x: -0.5, y: 0.285}
+    - - {x: 0, y: 0.475}
+      - {x: 0.4, y: 0.185}
+      - {x: 0.4, y: -0.185}
+      - {x: 0, y: -0.475}
+      - {x: -0.4, y: -0.185}
+      - {x: -0.4, y: 0.185}
 --- !u!114 &-436085422724363299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,3 +134,37 @@ MonoBehaviour:
   path: []
   currNode: 0
   delay: 0.5
+--- !u!114 &-1147815275042568964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172309133561275034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a69fb2dcb1c0f7f4391c23075bcc0d57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nation: {fileID: 0}
+--- !u!50 &1306545502783407345
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172309133561275034}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

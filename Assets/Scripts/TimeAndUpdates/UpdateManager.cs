@@ -5,12 +5,14 @@ using static TimeManager;
 
 public class UpdateManager : MonoBehaviour
 {
-    public TileProps[] provinces;
+    public TileProps[] tiles;
     public NationProps[] nations;
+
+    public ResourceManager resourceManager;
 
     private void Start()
     {
-        provinces = FindObjectsOfType<TileProps>();
+        tiles = FindObjectsOfType<TileProps>();
         nations = FindObjectsOfType<NationProps>();
 
         SetInitialRecruits();
@@ -21,7 +23,7 @@ public class UpdateManager : MonoBehaviour
 
     public void SetInitialRecruits()
     {
-        foreach (TileProps province in provinces)
+        foreach (TileProps province in tiles)
         {
             province.recruitPop = Mathf.RoundToInt(province.population / 10);
         }
@@ -63,7 +65,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateProvProps()
     {
-        foreach (TileProps tile in provinces)
+        foreach (TileProps tile in tiles) //population
         {
             float populationIncrease = tile.population * Random.Range(0.0001f, 0.0005f);
             tile.population += Mathf.RoundToInt(populationIncrease);
@@ -73,6 +75,8 @@ public class UpdateManager : MonoBehaviour
                 float recruitPopIncrease = tile.population * Random.Range(0.0003f, 0.0005f);
                 tile.recruitPop += Mathf.RoundToInt(recruitPopIncrease);
             }
+
+            tile.agriProduction = tile.agriPop * 0.01f;
         }
     }
 
@@ -101,17 +105,23 @@ public class UpdateManager : MonoBehaviour
 
         //    nation.troops = nationTroops;
         //}
+        foreach (NationProps nation in nations) //calculate production
+        {
+            foreach (TileProps tile in nation.tiles)
+            {
+                nation.AddResource(tile.agriResource, tile.agriProduction);
+            }
+        }
 
         foreach (NationProps nation in nations) //calculate tax
         {
             int nationTax = 0;
 
-            foreach (TileProps province in nation.tiles)
+            foreach (TileProps tile in nation.tiles)
             {
-                province.tax = Mathf.RoundToInt(province.population * 0.002f);
-                nationTax += province.tax;
+                tile.tax = Mathf.RoundToInt((tile.agriProduction * resourceManager.resources.Find(r => r.Name == tile.agriResource).Price) * 0.1f);
+                nationTax += tile.tax;
             }
-
             nation.money += nationTax;
         }
 
