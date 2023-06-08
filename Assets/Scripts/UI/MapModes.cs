@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MapModes : MonoBehaviour
 {
+    public MapGenerator mapGenerator;
+
     public enum Mode
     {
         terrain,
@@ -14,15 +16,10 @@ public class MapModes : MonoBehaviour
     public Mode currentMode = Mode.terrain;
     public List<TileProps> tiles;
 
-    private void Start()
-    {
-        tiles = new List<TileProps>(FindObjectsOfType<TileProps>());
-    }
-
     private void Update()
     {
-        //These will probably by moved to another script
-        if (Input.GetKeyDown(KeyCode.T))
+
+        if (Input.GetKeyDown(KeyCode.T)) //do NOT hardcode keys
         {
             currentMode = Mode.terrain;
         }
@@ -36,7 +33,7 @@ public class MapModes : MonoBehaviour
         {
             currentMode = Mode.resource;
         }
-        //#################################################
+
         switch (currentMode)
         {
             case Mode.terrain:
@@ -54,69 +51,66 @@ public class MapModes : MonoBehaviour
 
     private void ApplyTerrainMapMode()
     {
-        foreach (TileProps tile in tiles)
+        foreach (TileProps tile in mapGenerator.landTilesList)
         {
             tile.SwitchSprite(tile.type);
-
             tile.GetComponent<Renderer>().material.color = Color.white;
         }
     }
 
     private void ApplyPoliticalMapMode()
     {
-        foreach (TileProps tile in tiles)
+        foreach (TileProps tile in mapGenerator.landTilesList)
         {
-            if (tile.nation == null)
+            if (tile.nation != null)
             {
-
+                if (tile.nation.GetComponent<NationProps>().nationName == "Blue Nation")
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.yellow;
+                }
+                else if (tile.nation.GetComponent<NationProps>().nationName == "Red Nation")
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.red;
+                }
             }
-            else if (tile.nation.GetComponent<NationProps>().nationName == "Blue Nation")
+            else
             {
                 tile.SwitchSprite(0);
-                tile.GetComponent<Renderer>().material.color = Color.yellow;
-            }
-            else if (tile.nation.GetComponent<NationProps>().nationName == "Red Nation")
-            {
-                tile.SwitchSprite(0);
-                tile.GetComponent<Renderer>().material.color = Color.red;
+                tile.GetComponent<Renderer>().material.color = Color.white;
             }
         }
     }
 
-    private void ApplyResourceMapMode()
+    private void ApplyResourceMapMode() //might add resource sprites later
     {
-        foreach (TileProps tile in tiles)
+        foreach (TileProps tile in mapGenerator.landTilesList)
         {
-            if (tile.type != 1) //this is a temporary solution make a separate land tiles list
+            if (tile.resource == "Timber")
             {
-                if (tile.resource == "Timber")
-                {
-                    //tile.SwitchSprite(0); RESOURCE SPRITES WILL BE ADDED
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.green;
-                }
-                else if (tile.resource == "Iron")
-                {
-                    //tile.SwitchSprite(0); RESOURCE SPRITES WILL BE ADDED
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.gray;
-                }
-                else if (tile.resource == "Coal")
-                {
-                    //tile.SwitchSprite(0); RESOURCE SPRITES WILL BE ADDED
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.black;
-                }
-                else if (tile.resource == "Gold")
-                {
-                    //tile.SwitchSprite(0); RESOURCE SPRITES WILL BE ADDED
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.yellow;
-                }
-                else
-                {
-                        tile.SwitchSprite(0);
-                }
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.green;
+            }
+            else if (tile.resource == "Iron")
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.gray;
+            }
+            else if (tile.resource == "Coal")
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.black;
+            }
+            else if (tile.resource == "Gold")
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.yellow;
+            }
+            else
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.white;
             }
         }
     }

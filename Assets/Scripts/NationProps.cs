@@ -13,34 +13,66 @@ public class NationProps : MonoBehaviour
 
     public List<int> populationHistory = new List<int>();
 
-    public Dictionary<string, float> resources;
+    public Dictionary<string, float> supply;
+    public Dictionary<string, float> demand;
+
 
     public NationProps()
     {
-        resources = new Dictionary<string, float>
-        {
-            { "coal", 0f },
-            { "gold", 0f },
-            { "iron", 0f },
-            { "timber", 0f },
-            { "grain", 0f },
-            { "cotton", 0f }
-        };
+        supply = new Dictionary<string, float>();
+        demand = new Dictionary<string, float>();
     }
 
-    public void GainTile(int ID)
-    {   
-    }
-
-    public void AddResource(string resourceName, float amount)
+    void Update()
     {
-        if (resources.ContainsKey(resourceName))
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            resources[resourceName] += amount;
+            Debug.Log("Supply:");
+            foreach (KeyValuePair<string, float> supplyItem in supply)
+            {
+                Debug.Log(supplyItem.Key + ": " + supplyItem.Value);
+            }
+
+            Debug.Log("Demand:");
+            foreach (KeyValuePair<string, float> demandItem in demand)
+            {
+                Debug.Log(demandItem.Key + ": " + demandItem.Value);
+            }
+
+            Debug.Log("Global Supply:");
+            foreach (KeyValuePair<string, float> globalSupplyItem in GameObject.FindObjectOfType<UpdateManager>().globalSupply)
+            {
+                Debug.Log(globalSupplyItem.Key + ": " + globalSupplyItem.Value);
+            }
+
+            Debug.Log("Global Demand:");
+            foreach (KeyValuePair<string, float> globalDemandItem in GameObject.FindObjectOfType<UpdateManager>().globalDemand)
+            {
+                Debug.Log(globalDemandItem.Key + ": " + globalDemandItem.Value);
+            }
+        }
+    }
+
+    public void AddSupply(string resourceName, float amount)
+    {
+        if (supply.ContainsKey(resourceName))
+        {
+            supply[resourceName] += amount;
         }
         else
         {
-            resources.Add(resourceName, amount);
+            supply.Add(resourceName, amount);
+        }
+    }
+    public void AddDemand(string resourceName, float amount)
+    {
+        if (demand.ContainsKey(resourceName))
+        {
+            demand[resourceName] += amount;
+        }
+        else
+        {
+            demand.Add(resourceName, amount);
         }
     }
 }

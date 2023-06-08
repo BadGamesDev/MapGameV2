@@ -334,6 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 601574b52ae288c408b45d22991ffd3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapGenerator: {fileID: 519420034}
   currentMode: 0
   tiles: []
 --- !u!114 &1630243733
@@ -364,7 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d30731db5f44541b71509d1b3ae5fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  provinces: []
+  tiles: []
   nations: []
   resourceManager: {fileID: 1630243735}
 --- !u!114 &1630243735

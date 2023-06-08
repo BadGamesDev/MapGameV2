@@ -75,7 +75,6 @@ public class MapGenerator : MonoBehaviour
 
                     newTile.grow = Mathf.RoundToInt(grow.x + Random.value * (grow.y - grow.x));
                     newTile.freq = freq;
-                    newTile.mapWidth = (int)mapSize.x;
 
                     newTile.Grow();
 
@@ -96,30 +95,23 @@ public class MapGenerator : MonoBehaviour
 
         GenerateNations();
 
-        Invoke("DrawGrid", Time.deltaTime);
+        Invoke(nameof(DrawGrid), Time.deltaTime);
     }
 
     void GenerateNations()
     {
         List<TileProps> availableTiles = FindObjectsOfType<TileProps>().Where(tile => tile.type != 1).ToList();
 
-        if (availableTiles.Count < 2)
-        {
-            Debug.LogWarning("Not enough available tiles to generate nations.");
-            return;
-        }
-
-        // Generate two nations
         for (int i = 0; i < 2; i++)
         {
-            GameObject nationObj = Instantiate(nationPrefab);
-            NationProps nation = nationObj.GetComponent<NationProps>();
+            GameObject newNation = Instantiate(nationPrefab);
+            NationProps nation = newNation.GetComponent<NationProps>();
             nation.nationName = i == 0 ? "Blue Nation" : "Red Nation";
 
-            // Select a random tile for the nation
             int randomIndex = Random.Range(0, availableTiles.Count);
             TileProps randomTile = availableTiles[randomIndex];
-            randomTile.nation = nationObj;
+            
+            randomTile.nation = newNation;
             nation.tiles.Add(randomTile);
 
             availableTiles.RemoveAt(randomIndex);

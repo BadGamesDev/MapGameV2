@@ -10,6 +10,15 @@ public class UpdateManager : MonoBehaviour
 
     public ResourceManager resourceManager;
 
+    public Dictionary<string, float> globalDemand { get; private set; } // MIGHT MOVE TO SOMEWHERE ELSE
+    public Dictionary<string, float> globalSupply { get; private set; }
+
+    public UpdateManager()
+    {
+        globalSupply = new Dictionary<string, float>();
+        globalDemand = new Dictionary<string, float>();
+    }
+
     private void Start()
     {
         tiles = FindObjectsOfType<TileProps>();
@@ -32,33 +41,86 @@ public class UpdateManager : MonoBehaviour
     public void OnDayTick()
     {
         UpdateProvProps();
+        CalculateNationalDemand();
+        CalculateNationalSupply();
+        CalculateGlobalDemand();
+        CalculateGlobalSupply();
         UpdateNationProps();
     }
 
     public void OnMonthTick()
     {
-        //PayTroopWages();
         UpdateGraphData();
     }
 
-    public void UpdateGraphData()
+    public void CalculateNationalDemand()
     {
-        foreach (NationProps nation in nations) //calculation is happening twice. Find a better way
+        foreach (NationProps nation in nations)
         {
-            int nationPopulation = 0;
+            nation.demand.Clear();
 
-            foreach (TileProps province in nation.tiles)
+            foreach (TileProps tile in nation.tiles)
             {
-                nationPopulation += province.population;
+                nation.AddDemand("Grain", tile.population * 0.05f);
             }
+        }
+    }
 
-            nation.population = nationPopulation;
+    public void CalculateNationalSupply()
+    {
+        foreach (NationProps nation in nations)
+        {
+            nation.supply.Clear();
 
-            nation.populationHistory.Add(nation.population);
-
-            if (nation.populationHistory.Count > 30)
+            foreach (TileProps tile in nation.tiles)
             {
-                nation.populationHistory.RemoveAt(0);
+                nation.AddSupply(tile.agriResource, tile.agriProduction);
+            }
+        }
+    }
+
+    public void CalculateGlobalDemand()
+    {
+        globalDemand.Clear();
+
+        foreach (NationProps nation in nations)
+        {
+            foreach (KeyValuePair<string, float> demandItem in nation.demand)
+            {
+                string resourceName = demandItem.Key;
+                float amount = demandItem.Value;
+
+                if (globalDemand.ContainsKey(resourceName))
+                {
+                    globalDemand[resourceName] += amount;
+                }
+                else
+                {
+                    globalDemand.Add(resourceName, amount);
+                }
+            }
+        }
+    }
+
+    public void CalculateGlobalSupply()
+    {
+        globalSupply.Clear();
+
+        foreach (NationProps nation in nations)
+        {
+            foreach (KeyValuePair<string, float> supplyItem in nation.supply)
+            {
+                string resourceName = supplyItem.Key;
+                float amount = supplyItem.Value;
+
+                if (globalSupply.ContainsKey(resourceName))
+                {
+                    globalSupply[resourceName] += amount;
+                }
+                else
+                {
+                    globalSupply.Add(resourceName, amount);
+                }
             }
         }
     }
@@ -94,25 +156,6 @@ public class UpdateManager : MonoBehaviour
             nation.population = nationPopulation;
         }
 
-        //foreach (NationProps nation in nations) //calculate troops
-        //{
-        //    int nationTroops = 0;
-
-        //    foreach (TileProps province in nation.tiles)
-        //    {
-        //        nationTroops += province.troops;
-        //    }
-
-        //    nation.troops = nationTroops;
-        //}
-        foreach (NationProps nation in nations) //calculate production
-        {
-            foreach (TileProps tile in nation.tiles)
-            {
-                nation.AddResource(tile.agriResource, tile.agriProduction);
-            }
-        }
-
         foreach (NationProps nation in nations) //calculate tax
         {
             int nationTax = 0;
@@ -143,18 +186,16 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    //public void PayTroopWages()
-    //{
-    //    foreach (NationProps nation in nations) //calculate wages
-    //    {
-    //        int nationWage = 0;
+    public void UpdateGraphData()
+    {
+        foreach (NationProps nation in nations)
+        {
+            nation.populationHistory.Add(nation.population);
 
-    //        foreach (TileProps province in nation.tiles)
-    //        {
-    //            nationWage += province.provTroops * 5;
-    //        }
-
-    //        nation.money -= nationWage;
-    //    }
-    //}
+            if (nation.populationHistory.Count > 30)
+            {
+                nation.populationHistory.RemoveAt(0);
+            }
+        }
+    }
 }
