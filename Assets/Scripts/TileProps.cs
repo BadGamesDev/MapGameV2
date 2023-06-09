@@ -16,18 +16,66 @@ public class TileProps : MonoBehaviour
     public int grow = 1;
     public int freq = 1;
 
-    public int population;
-    public int agriPop;
     public int recruitPop;
+
+    public float agriPop;
+    public float resourcePop;
+    public float industryPop;
+    public float totalPop;
     
     public string resource;
-    public string oldResource; //this will be removed after map generation is changed
     public string agriResource;
 
-    public float resourceProduction;
     public float agriProduction;
+    public float resourceProduction;
+    public float industryProduction;
+
+    public float agriGDP;
+    public float resourceGDP;
+    public float industryGDP;
+    public float totalGDP;
+
 
     public int tax; //might change
+
+
+    public void SetPopulationRatios(float agriRatio, float resourceRatio, float industryRatio)
+    {
+        float totalRatio = agriRatio + resourceRatio + industryRatio;
+
+        agriPop = totalPop * (agriRatio / totalRatio);
+        resourcePop = totalPop * (resourceRatio / totalRatio);
+        industryPop = totalPop * (industryRatio / totalRatio);
+    }
+
+    public void IncreasePopulation(float percentageIncrease)
+    {
+        agriPop += agriPop * percentageIncrease;
+        resourcePop += resourcePop * percentageIncrease;
+        industryPop += industryPop * percentageIncrease;
+
+        totalPop = agriPop + resourcePop + industryPop;
+    }
+
+    public int GetTotalPopulation()
+    {
+        return Mathf.RoundToInt(totalPop);
+    }
+
+    public int GetAgriPopulation()
+    {
+        return Mathf.RoundToInt(agriPop);
+    }
+
+    public int GetResourcePopulation()
+    {
+        return Mathf.RoundToInt(resourcePop);
+    }
+
+    public int GetIndustryPopulation()
+    {
+        return Mathf.RoundToInt(industryPop);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

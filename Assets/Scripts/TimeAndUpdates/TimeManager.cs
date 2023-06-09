@@ -28,8 +28,6 @@ public class TimeManager : MonoBehaviour
         day = 1;
         month = 1;
         year = 1480;
-
-        timeMultiplier = 10;
     }
 
     void Update()

@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16c6b4975146aa4cadc16600dd50975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 1
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,7 +244,6 @@ MonoBehaviour:
   mapSize: {x: 80, y: 40}
   grow: {x: 10, y: 20}
   freq: 6
-  resourceFreq: 0.5
   landTiles: 0
   landTilesList: []
 --- !u!114 &519420035
@@ -352,7 +351,7 @@ MonoBehaviour:
   day: 0
   month: 0
   year: 0
-  timeMultiplier: 0
+  timeMultiplier: 1
 --- !u!114 &1630243734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,6 +366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tiles: []
   nations: []
+  mapGenerator: {fileID: 519420034}
   resourceManager: {fileID: 1630243735}
 --- !u!114 &1630243735
 MonoBehaviour:

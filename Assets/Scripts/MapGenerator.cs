@@ -16,8 +16,6 @@ public class MapGenerator : MonoBehaviour
     public Vector2 grow = new Vector2(4, 7);
     public int freq = 3;
 
-    public float resourceFreq = 0.4f;
-
     public int landTiles = 0;
 
     public List<TileProps> landTilesList;
@@ -160,8 +158,8 @@ public class MapGenerator : MonoBehaviour
     {
         foreach (TileProps tile in landTilesList)
         {
-            tile.population = Mathf.RoundToInt(Random.Range(10000,100000));
-            tile.agriPop = tile.population;
+            tile.totalPop = Mathf.RoundToInt(Random.Range(10000,100000));
+            tile.SetPopulationRatios(30,40,30);
         }
     }
 
@@ -175,44 +173,44 @@ public class MapGenerator : MonoBehaviour
 
     void PlaceResources() //change this to the new method
     {
-        int resourceTarget = Mathf.RoundToInt(landTiles * resourceFreq);
-        string curResource = null;
-        int resourcePlaced = 0;
-        int attempts = 0;
-
-        while (resourcePlaced <= resourceTarget && attempts < 1000)
+        for (int x = 0; x < mapSize.x; x++)
         {
-            Vector2 pos = new Vector2(Mathf.RoundToInt(Random.value * (mapSize.x - 1)), Mathf.RoundToInt(Random.value * (mapSize.y - 1)));
-            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
-            if (hit)
+            for (int y = 0; y < mapSize.y; y++)
             {
-                if (hit.collider.gameObject.name.Contains("Tile"))
-                {
-                    if (hit.collider.gameObject.GetComponent<TileProps>().type != 0 && hit.collider.gameObject.GetComponent<TileProps>().type != 1)
-                    {
-                        hit.collider.gameObject.GetComponent<TileProps>().resource = curResource;
-                        resourcePlaced += 1;
+                Vector2 pos = new Vector2(x, y * 0.86f);
 
-                        if (resourcePlaced / (float)resourceTarget > 0.95f)
+                if (y % 2 == 0)
+                {
+                    pos.x += 0.5f;
+                }
+
+                RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
+                if (hit)
+                {
+                    TileProps tile = hit.collider.gameObject.GetComponent<TileProps>();
+                    if (tile.type > 1)
+                    {
+                        int randomNumber = Random.Range(1, 101);
+                        if (randomNumber > 95)
                         {
-                            curResource = "Gold";
+                            tile.resource = "Gold";
                         }
-                        else if (resourcePlaced / (float)resourceTarget > 0.85f)
+                        else if (randomNumber > 75)
                         {
-                            curResource = "Coal";
+                            tile.resource = "Coal";
                         }
-                        else if (resourcePlaced / (float)resourceTarget > 0.60f)
+                        else if (randomNumber > 50)
                         {
-                            curResource = "Iron";
+                            tile.resource = "Iron";
                         }
                         else
                         {
-                            curResource = "Timber";
+                            tile.resource = "Timber";
                         }
                     }
                 }
             }
-        } 
+        }
     }
 
     void DrawGrid()

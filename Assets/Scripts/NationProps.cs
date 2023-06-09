@@ -23,36 +23,6 @@ public class NationProps : MonoBehaviour
         demand = new Dictionary<string, float>();
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            Debug.Log("Supply:");
-            foreach (KeyValuePair<string, float> supplyItem in supply)
-            {
-                Debug.Log(supplyItem.Key + ": " + supplyItem.Value);
-            }
-
-            Debug.Log("Demand:");
-            foreach (KeyValuePair<string, float> demandItem in demand)
-            {
-                Debug.Log(demandItem.Key + ": " + demandItem.Value);
-            }
-
-            Debug.Log("Global Supply:");
-            foreach (KeyValuePair<string, float> globalSupplyItem in GameObject.FindObjectOfType<UpdateManager>().globalSupply)
-            {
-                Debug.Log(globalSupplyItem.Key + ": " + globalSupplyItem.Value);
-            }
-
-            Debug.Log("Global Demand:");
-            foreach (KeyValuePair<string, float> globalDemandItem in GameObject.FindObjectOfType<UpdateManager>().globalDemand)
-            {
-                Debug.Log(globalDemandItem.Key + ": " + globalDemandItem.Value);
-            }
-        }
-    }
-
     public void AddSupply(string resourceName, float amount)
     {
         if (supply.ContainsKey(resourceName))

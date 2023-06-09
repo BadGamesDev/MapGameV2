@@ -8,16 +8,8 @@ public class UpdateManager : MonoBehaviour
     public TileProps[] tiles;
     public NationProps[] nations;
 
+    public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
-
-    public Dictionary<string, float> globalDemand { get; private set; } // MIGHT MOVE TO SOMEWHERE ELSE
-    public Dictionary<string, float> globalSupply { get; private set; }
-
-    public UpdateManager()
-    {
-        globalSupply = new Dictionary<string, float>();
-        globalDemand = new Dictionary<string, float>();
-    }
 
     private void Start()
     {
@@ -34,17 +26,17 @@ public class UpdateManager : MonoBehaviour
     {
         foreach (TileProps province in tiles)
         {
-            province.recruitPop = Mathf.RoundToInt(province.population / 10);
+            province.recruitPop = Mathf.RoundToInt(province.totalPop / 10);
         }
     }
 
     public void OnDayTick()
     {
+        CalculateGlobalDemand();
+        CalculateGlobalSupply();
         UpdateProvProps();
         CalculateNationalDemand();
         CalculateNationalSupply();
-        CalculateGlobalDemand();
-        CalculateGlobalSupply();
         UpdateNationProps();
     }
 
@@ -61,7 +53,7 @@ public class UpdateManager : MonoBehaviour
 
             foreach (TileProps tile in nation.tiles)
             {
-                nation.AddDemand("Grain", tile.population * 0.05f);
+                nation.AddDemand("Grain", tile.totalPop * 0.01f);
             }
         }
     }
@@ -81,22 +73,21 @@ public class UpdateManager : MonoBehaviour
 
     public void CalculateGlobalDemand()
     {
-        globalDemand.Clear();
-
         foreach (NationProps nation in nations)
         {
             foreach (KeyValuePair<string, float> demandItem in nation.demand)
             {
+                resourceManager.globalDemand[demandItem.Key] = 0f;
                 string resourceName = demandItem.Key;
                 float amount = demandItem.Value;
 
-                if (globalDemand.ContainsKey(resourceName))
+                if (resourceManager.globalDemand.ContainsKey(resourceName))
                 {
-                    globalDemand[resourceName] += amount;
+                    resourceManager.globalDemand[resourceName] += amount;
                 }
                 else
                 {
-                    globalDemand.Add(resourceName, amount);
+                    resourceManager.globalDemand.Add(resourceName, amount);
                 }
             }
         }
@@ -104,22 +95,21 @@ public class UpdateManager : MonoBehaviour
 
     public void CalculateGlobalSupply()
     {
-        globalSupply.Clear();
-
         foreach (NationProps nation in nations)
         {
             foreach (KeyValuePair<string, float> supplyItem in nation.supply)
             {
+                resourceManager.globalSupply[supplyItem.Key] = 0f;
                 string resourceName = supplyItem.Key;
                 float amount = supplyItem.Value;
 
-                if (globalSupply.ContainsKey(resourceName))
+                if (resourceManager.globalSupply.ContainsKey(resourceName))
                 {
-                    globalSupply[resourceName] += amount;
+                    resourceManager.globalSupply[resourceName] += amount;
                 }
                 else
                 {
-                    globalSupply.Add(resourceName, amount);
+                    resourceManager.globalSupply.Add(resourceName, amount);
                 }
             }
         }
@@ -127,18 +117,35 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateProvProps()
     {
-        foreach (TileProps tile in tiles) //population
+        foreach (TileProps tile in mapGenerator.landTilesList) 
         {
-            float populationIncrease = tile.population * Random.Range(0.0001f, 0.0005f);
-            tile.population += Mathf.RoundToInt(populationIncrease);
+            //POPULATION ###################################################################################
+            tile.IncreasePopulation(0.01f);
+            
+            //ECONOMY ######################################################################################
+            tile.agriProduction = tile.GetAgriPopulation() * 0.01f;
+            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f;
+            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f;
 
-            if (tile.recruitPop < tile.population * 0.10)
+            float globalAgriSupplyAmount = resourceManager.globalSupply[tile.agriResource];//agri
+            float globalAgriDemandAmount = resourceManager.globalDemand[tile.agriResource];
+                
+            float agriDemandRatio = 1.0f;
+            if (globalAgriSupplyAmount > globalAgriDemandAmount)
             {
-                float recruitPopIncrease = tile.population * Random.Range(0.0003f, 0.0005f);
-                tile.recruitPop += Mathf.RoundToInt(recruitPopIncrease);
+                agriDemandRatio = globalAgriDemandAmount / globalAgriSupplyAmount; 
             }
+            tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio);
 
-            tile.agriProduction = tile.agriPop * 0.01f;
+            float globalResourceSupplyAmount = resourceManager.globalSupply[tile.resource];//resource
+            float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
+
+            float resourceDemandRatio = 1.0f;
+            if (globalResourceSupplyAmount > globalResourceDemandAmount)
+            {
+                resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
+            }
+            tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
         }
     }
 
@@ -150,7 +157,7 @@ public class UpdateManager : MonoBehaviour
 
             foreach (TileProps province in nation.tiles)
             {
-                nationPopulation += province.population;
+                nationPopulation += province.GetTotalPopulation();
             }
 
             nation.population = nationPopulation;
