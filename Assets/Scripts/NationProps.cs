@@ -8,6 +8,12 @@ public class NationProps : MonoBehaviour
     public string nationName;
     public List<TileProps> tiles;
     public int population;
+
+    public float agriGDP;
+    public float resourceGDP;
+    public float industryGDP;
+    public float totalGDP;
+
     public int money;
     public int debt;
 

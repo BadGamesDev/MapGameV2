@@ -32,11 +32,11 @@ public class UpdateManager : MonoBehaviour
 
     public void OnDayTick()
     {
+        CalculateNationalDemand();
+        CalculateNationalSupply();
         CalculateGlobalDemand();
         CalculateGlobalSupply();
         UpdateProvProps();
-        CalculateNationalDemand();
-        CalculateNationalSupply();
         UpdateNationProps();
     }
 
@@ -67,17 +67,19 @@ public class UpdateManager : MonoBehaviour
             foreach (TileProps tile in nation.tiles)
             {
                 nation.AddSupply(tile.agriResource, tile.agriProduction);
+                nation.AddSupply(tile.resource, tile.resourceProduction);
             }
         }
     }
 
     public void CalculateGlobalDemand()
     {
+        //resourceManager.globalDemand.Clear();
+
         foreach (NationProps nation in nations)
         {
             foreach (KeyValuePair<string, float> demandItem in nation.demand)
             {
-                resourceManager.globalDemand[demandItem.Key] = 0f;
                 string resourceName = demandItem.Key;
                 float amount = demandItem.Value;
 
@@ -95,11 +97,12 @@ public class UpdateManager : MonoBehaviour
 
     public void CalculateGlobalSupply()
     {
+        //resourceManager.globalSupply.Clear();
+
         foreach (NationProps nation in nations)
         {
             foreach (KeyValuePair<string, float> supplyItem in nation.supply)
             {
-                resourceManager.globalSupply[supplyItem.Key] = 0f;
                 string resourceName = supplyItem.Key;
                 float amount = supplyItem.Value;
 
@@ -141,11 +144,13 @@ public class UpdateManager : MonoBehaviour
             float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
 
             float resourceDemandRatio = 1.0f;
-            if (globalResourceSupplyAmount > globalResourceDemandAmount)
-            {
-                resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
-            }
+            //if (globalResourceSupplyAmount > globalResourceDemandAmount)
+            //{
+            //    resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
+            //}
             tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
+
+            tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
         }
     }
 
@@ -162,6 +167,28 @@ public class UpdateManager : MonoBehaviour
 
             nation.population = nationPopulation;
         }
+
+        foreach (NationProps nation in nations) //calculate GDP
+        {
+            float agriGDP = 0;
+            float resourceGDP = 0;
+            float industryGDP = 0;
+            float totalGDP = 0;
+
+            foreach (TileProps tile in nation.tiles)
+            {
+                agriGDP += tile.agriGDP;
+                resourceGDP += tile.resourceGDP;
+                industryGDP += tile.industryGDP;
+                totalGDP += tile.totalGDP;
+            }
+
+            nation.agriGDP = agriGDP;
+            nation.resourceGDP = resourceGDP;
+            nation.industryGDP = industryGDP;
+            nation.totalGDP = totalGDP;
+        }
+
 
         foreach (NationProps nation in nations) //calculate tax
         {
