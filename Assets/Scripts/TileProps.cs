@@ -16,6 +16,7 @@ public class TileProps : MonoBehaviour
     public int grow = 1;
     public int freq = 1;
 
+    public bool isReinforceTile;
     public int recruitPop;
 
     public float agriPop;
@@ -75,17 +76,6 @@ public class TileProps : MonoBehaviour
     public int GetIndustryPopulation()
     {
         return Mathf.RoundToInt(industryPop);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        GetConquered(collision.gameObject.GetComponent<UnitProps>().nation);
-    }
-
-    public void GetConquered(GameObject newNation)
-    {
-        nation = newNation;
-        newNation.GetComponent<NationProps>().tiles.Add(gameObject.GetComponent<TileProps>());
     }
 
     public void SwitchType(int i)

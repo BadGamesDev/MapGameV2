@@ -27,7 +27,7 @@ public class TimeManager : MonoBehaviour
     {
         day = 1;
         month = 1;
-        year = 1480;
+        year = 1780;
     }
 
     void Update()

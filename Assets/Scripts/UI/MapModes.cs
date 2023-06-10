@@ -10,7 +10,8 @@ public class MapModes : MonoBehaviour
     {
         terrain,
         political,
-        resource
+        resource,
+        recruitment
     }
 
     public Mode currentMode = Mode.terrain;
@@ -112,6 +113,16 @@ public class MapModes : MonoBehaviour
                 tile.SwitchSprite(0);
                 tile.GetComponent<Renderer>().material.color = Color.white;
             }
+        }
+    }
+
+    private void ApplyRecruitmentMapMode()
+    {
+        foreach (TileProps tile in mapGenerator.landTilesList)
+        {
+            tile.SwitchSprite(0);
+            
+            tile.GetComponent<Renderer>().material.color = Color.white;
         }
     }
 }

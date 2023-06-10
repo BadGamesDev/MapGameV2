@@ -4,5 +4,9 @@ using UnityEngine;
 
 public class UnitProps : MonoBehaviour
 {
-    public GameObject nation;
+    public NationProps nation;
+    public List<TileProps> reinforceTiles = new List<TileProps>();
+
+    public int desiredSize;
+    public int curSize;
 }
