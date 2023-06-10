@@ -10,7 +10,7 @@ public class TileInteractions : MonoBehaviour
 
     private void Start()
     {
-        gameState = GameObject.FindObjectOfType<GameState>();
+        gameState = FindObjectOfType<GameState>();
     }
 
     private void OnMouseDown()
@@ -19,35 +19,52 @@ public class TileInteractions : MonoBehaviour
         {
             if (gameState.recruitModeArmy == true && tileProps.nation != null)
             {
-                Vector3 spawnPosition = transform.position;
-                Instantiate(Army, spawnPosition, Quaternion.identity);
-                
-                UnitProps ArmyProps = Army.GetComponent<UnitProps>();
-                ArmyProps.nation = tileProps.nation;
-                ArmyProps.reinforceTiles.Add(tileProps);
-
-                gameState.recruitModeArmy = false;
-                gameState.recruitModeTiles = true;
+                RecruitArmy();
+            }
+            else if (gameState.recruitModeTiles == true && tileProps.nation != null)
+            {
+                AssignRecruitTiles();
             }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GetConquered(collision.gameObject.GetComponent<UnitProps>().nation);
-        Debug.Log("Clicked Tile: " + name);
+        NationProps collidingNation = collision.gameObject.GetComponent<UnitProps>().nation;
+        
+        if (collidingNation != null && collidingNation != tileProps.nation)
+        { 
+            GetConquered(collidingNation); 
+        }
     }
 
-    public void GetConquered(GameObject newNation)
+    public void RecruitArmy()
     {
-        if (newNation != null && newNation != tileProps.nation)
+        Vector3 spawnPosition = transform.position;
+        GameObject newArmy = Instantiate(Army, spawnPosition, Quaternion.identity);
+
+        UnitProps ArmyProps = newArmy.GetComponent<UnitProps>();
+        ArmyProps.nation = tileProps.nation;
+        ArmyProps.reinforceTiles.Add(tileProps);
+
+        tileProps.isReinforceTile = true;
+
+        gameState.recruitModeArmy = false;
+        gameState.recruitModeTiles = true;
+    }
+
+    public void AssignRecruitTiles()
+    {
+        tileProps.isReinforceTile = true;
+    }
+
+    public void GetConquered(NationProps newNation)
+    {
+        if (tileProps.nation != null)
         {
-            if (tileProps.nation != null)
-            {
-                tileProps.nation.GetComponent<NationProps>().tiles.Remove(tileProps);
-            }
-            newNation.GetComponent<NationProps>().tiles.Add(tileProps);
-            tileProps.nation = newNation;
+            tileProps.nation.GetComponent<NationProps>().tiles.Remove(tileProps);
         }
+        newNation.GetComponent<NationProps>().tiles.Add(tileProps);
+        tileProps.nation = newNation;
     }
 }

@@ -109,7 +109,7 @@ public class MapGenerator : MonoBehaviour
             int randomIndex = Random.Range(0, availableTiles.Count);
             TileProps randomTile = availableTiles[randomIndex];
             
-            randomTile.nation = newNation;
+            randomTile.nation = nation;
             nation.tiles.Add(randomTile);
 
             availableTiles.RemoveAt(randomIndex);

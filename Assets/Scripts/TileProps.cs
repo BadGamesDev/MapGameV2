@@ -7,7 +7,7 @@ public class TileProps : MonoBehaviour
 {
     public Sprite[] sprites;
     public SpriteRenderer resourceSprite; //maybe make it an array?
-    public GameObject nation = null;
+    public NationProps nation = null;
 
     public int ID;
     
@@ -39,6 +39,10 @@ public class TileProps : MonoBehaviour
 
     public int tax; //might change
 
+    private void Start()
+    {
+        isReinforceTile = false;
+    }
 
     public void SetPopulationRatios(float agriRatio, float resourceRatio, float industryRatio)
     {

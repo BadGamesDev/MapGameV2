@@ -5,6 +5,7 @@ using UnityEngine;
 public class MapModes : MonoBehaviour
 {
     public MapGenerator mapGenerator;
+    public GameState gameState;
 
     public enum Mode
     {
@@ -35,6 +36,11 @@ public class MapModes : MonoBehaviour
             currentMode = Mode.resource;
         }
 
+        if (gameState.recruitModeArmy)
+        {
+            currentMode = Mode.recruitment;
+        }
+
         switch (currentMode)
         {
             case Mode.terrain:
@@ -46,6 +52,9 @@ public class MapModes : MonoBehaviour
                 break;
             case Mode.resource:
                 ApplyResourceMapMode();
+                break;
+            case Mode.recruitment:
+                ApplyRecruitmentMapMode();
                 break;
         }
     }
@@ -120,9 +129,23 @@ public class MapModes : MonoBehaviour
     {
         foreach (TileProps tile in mapGenerator.landTilesList)
         {
-            tile.SwitchSprite(0);
-            
-            tile.GetComponent<Renderer>().material.color = Color.white;
+                if (tile.nation != null && tile.isReinforceTile == false)
+                {
+                        tile.SwitchSprite(0);
+                        tile.GetComponent<Renderer>().material.color = Color.green;
+                }
+                
+                else if (tile.nation != null && tile.isReinforceTile == true)
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.red;
+                }
+
+                else
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.white;
+                }
         }
     }
 }

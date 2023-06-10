@@ -773,6 +773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapGenerator: {fileID: 519420034}
+  gameState: {fileID: 1630243737}
   currentMode: 0
   tiles: []
 --- !u!114 &1630243733
