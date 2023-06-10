@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class TileInteractions : MonoBehaviour
     public TileProps tileProps;
     public GameState gameState;
     public GameObject Army;
+
+    public static event Action<UnitProps> ArmyRecruited;
 
     private void Start()
     {
@@ -42,10 +45,14 @@ public class TileInteractions : MonoBehaviour
     {
         Vector3 spawnPosition = transform.position;
         GameObject newArmy = Instantiate(Army, spawnPosition, Quaternion.identity);
+        UnitProps armyProps = newArmy.GetComponent<UnitProps>();
+        
+        ArmyRecruited?.Invoke(armyProps);
+        
+        gameState.activeUnit = armyProps;
 
-        UnitProps ArmyProps = newArmy.GetComponent<UnitProps>();
-        ArmyProps.nation = tileProps.nation;
-        ArmyProps.reinforceTiles.Add(tileProps);
+        armyProps.nation = tileProps.nation;
+        armyProps.reinforceTiles.Add(tileProps);
 
         tileProps.isReinforceTile = true;
 
@@ -55,6 +62,7 @@ public class TileInteractions : MonoBehaviour
 
     public void AssignRecruitTiles()
     {
+        gameState.activeUnit.reinforceTiles.Add(tileProps);
         tileProps.isReinforceTile = true;
     }
 

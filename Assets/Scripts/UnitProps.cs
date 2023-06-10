@@ -9,4 +9,7 @@ public class UnitProps : MonoBehaviour
 
     public int desiredSize;
     public int curSize;
+    public int availablePop;
+
+    
 }

@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static TimeManager;
+using static TileInteractions;
 
 public class UpdateManager : MonoBehaviour
 {
+    public List<UnitProps> armies;
     public TileProps[] tiles;
     public NationProps[] nations;
 
@@ -13,13 +16,15 @@ public class UpdateManager : MonoBehaviour
 
     private void Start()
     {
+        armies = new List<UnitProps>();
         tiles = FindObjectsOfType<TileProps>();
         nations = FindObjectsOfType<NationProps>();
-
-        SetInitialRecruits();
-
+        
+        ArmyRecruited += OnArmyRecruited;
         dayTickSend += OnDayTick;
         monthTickSend += OnMonthTick;
+
+        SetInitialRecruits();
     }
 
     public void SetInitialRecruits()
@@ -30,12 +35,18 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
+    private void OnArmyRecruited(UnitProps newArmy)
+    {
+        armies.Add(newArmy);
+    }
+
     public void OnDayTick()
     {
         CalculateNationalDemand();
         CalculateNationalSupply();
         CalculateGlobalDemand();
         CalculateGlobalSupply();
+        UpdateArmyProps();
         UpdateProvProps();
         UpdateNationProps();
     }
@@ -118,12 +129,25 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
+    public void UpdateArmyProps()
+    {
+        foreach (UnitProps army in armies)
+        {
+            army.availablePop = army.reinforceTiles.Sum(tile => tile.recruitPop);
+        }
+    }
+
     public void UpdateProvProps()
     {
         foreach (TileProps tile in mapGenerator.landTilesList) 
         {
             //POPULATION ###################################################################################
-            tile.IncreasePopulation(0.01f);
+            tile.IncreasePopulation(0.001f);
+
+            if (tile.recruitPop < tile.totalPop)
+            {
+                tile.recruitPop += Mathf.RoundToInt(tile.totalPop * 0.005f);
+            }
             
             //ECONOMY ######################################################################################
             tile.agriProduction = tile.GetAgriPopulation() * 0.01f;
