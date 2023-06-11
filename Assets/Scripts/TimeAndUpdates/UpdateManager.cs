@@ -133,7 +133,28 @@ public class UpdateManager : MonoBehaviour
     {
         foreach (UnitProps army in armies)
         {
-            army.availablePop = army.reinforceTiles.Sum(tile => tile.recruitPop);
+            army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
+
+            if (army.curSize < army.desiredSize)
+            {
+                int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop));
+                float reinforcements = totalPop * 0.01f;
+                reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop - 1); //might find a better way than -1
+                int reinforcementsInt = Mathf.RoundToInt(reinforcements);
+
+                foreach (TileProps tile in army.reinforceTiles)
+                {
+                    int totalReinforcePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
+
+                    float tileRatio = tile.recruitPop / totalReinforcePop;
+
+                    float tileReinforcements = reinforcements * tileRatio;
+                    tile.recruitPop -= Mathf.RoundToInt(tileReinforcements);
+                }
+                
+                army.curSize += reinforcementsInt;
+                army.availablePop -= reinforcementsInt;
+            }
         }
     }
 

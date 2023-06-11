@@ -6,6 +6,7 @@ public class GameState : MonoBehaviour
 {
     public TileProps activeTile;
     public UnitProps activeUnit;
+    
     public bool recruitModeArmy;
     public bool recruitModeTiles;
 

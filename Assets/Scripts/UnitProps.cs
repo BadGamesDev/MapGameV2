@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitProps : MonoBehaviour
 {
@@ -10,6 +11,4 @@ public class UnitProps : MonoBehaviour
     public int desiredSize;
     public int curSize;
     public int availablePop;
-
-    
 }

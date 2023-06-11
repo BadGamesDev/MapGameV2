@@ -12,6 +12,7 @@ public class MapModes : MonoBehaviour
         terrain,
         political,
         resource,
+        population,
         recruitment
     }
 
@@ -36,6 +37,11 @@ public class MapModes : MonoBehaviour
             currentMode = Mode.resource;
         }
 
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            currentMode = Mode.population;
+        }
+
         if (gameState.recruitModeArmy)
         {
             currentMode = Mode.recruitment;
@@ -46,9 +52,11 @@ public class MapModes : MonoBehaviour
             case Mode.terrain:
                 ApplyTerrainMapMode();
                 break;
-
             case Mode.political:
                 ApplyPoliticalMapMode();
+                break;
+            case Mode.population:
+                ApplyPopulationMapMode();
                 break;
             case Mode.resource:
                 ApplyResourceMapMode();
@@ -146,6 +154,37 @@ public class MapModes : MonoBehaviour
                     tile.SwitchSprite(0);
                     tile.GetComponent<Renderer>().material.color = Color.white;
                 }
+        }
+    }
+
+    private void ApplyPopulationMapMode()
+    {
+        float minPopulation = Mathf.Infinity;
+        float maxPopulation = 0f;
+        foreach (TileProps tile in mapGenerator.landTilesList)
+        {
+            float population = tile.GetTotalPopulation();
+            if (population < minPopulation)
+            {
+                minPopulation = population;
+            }
+            if (population > maxPopulation)
+            {
+                maxPopulation = population;
+            }
+        }
+
+        foreach (TileProps tile in mapGenerator.landTilesList)
+        {
+            tile.SwitchSprite(0);
+            float population = tile.GetTotalPopulation();
+
+            float populationRatio = (population - minPopulation) / (maxPopulation - minPopulation);
+
+            Color color = Color.Lerp(Color.green, Color.white, populationRatio);
+
+            // Set the sprite color of the tile
+            tile.GetComponent<Renderer>().material.color = color;
         }
     }
 }

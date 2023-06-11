@@ -5,7 +5,7 @@ using UnityEngine;
 public class PathGrid : MonoBehaviour
 {
     public bool drawGrid = true;
-    float delay = 2;
+    //float delay = 2; might delete
 
     private PathNode[,] grid;
     public int width = 0;
@@ -57,7 +57,7 @@ public class PathGrid : MonoBehaviour
             }
         }
     }
-    
+    //might delete
     //private void Update()
     //{
     //    delay -= Time.deltaTime;
