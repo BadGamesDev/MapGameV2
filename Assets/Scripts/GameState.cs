@@ -5,14 +5,19 @@ using UnityEngine;
 public class GameState : MonoBehaviour
 {
     public TileProps activeTile;
-    public UnitProps activeUnit;
-    
-    public bool recruitModeArmy;
-    public bool recruitModeTiles;
+    public ArmyProps activeArmy;
+
+    public Mode gameMode;
+
+    public enum Mode
+    {
+        recruitModeArmy,
+        recruitModeTiles,
+        freeMode
+    }
 
     private void Start()
     {
-        recruitModeArmy = false;
-        recruitModeTiles = false;
+        gameMode = Mode.freeMode;
     }
 }

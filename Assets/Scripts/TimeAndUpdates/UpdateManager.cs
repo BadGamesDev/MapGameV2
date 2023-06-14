@@ -7,7 +7,7 @@ using static TileInteractions;
 
 public class UpdateManager : MonoBehaviour
 {
-    public List<UnitProps> armies;
+    public List<ArmyProps> armies;
     public TileProps[] tiles;
     public NationProps[] nations;
 
@@ -16,7 +16,7 @@ public class UpdateManager : MonoBehaviour
 
     private void Start()
     {
-        armies = new List<UnitProps>();
+        armies = new List<ArmyProps>();
         tiles = FindObjectsOfType<TileProps>();
         nations = FindObjectsOfType<NationProps>();
         
@@ -35,7 +35,7 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    private void OnArmyRecruited(UnitProps newArmy)
+    private void OnArmyRecruited(ArmyProps newArmy)
     {
         armies.Add(newArmy);
     }
@@ -131,7 +131,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateArmyProps()
     {
-        foreach (UnitProps army in armies)
+        foreach (ArmyProps army in armies)
         {
             army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
 

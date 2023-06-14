@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitProps : MonoBehaviour
+public class ArmyProps : MonoBehaviour
 {
     public NationProps nation;
     public List<TileProps> reinforceTiles = new List<TileProps>();

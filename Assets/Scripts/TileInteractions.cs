@@ -9,7 +9,7 @@ public class TileInteractions : MonoBehaviour
     public GameState gameState;
     public GameObject Army;
 
-    public static event Action<UnitProps> ArmyRecruited;
+    public static event Action<ArmyProps> ArmyRecruited;
 
     private void Start()
     {
@@ -20,11 +20,11 @@ public class TileInteractions : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            if (gameState.recruitModeArmy == true && tileProps.nation != null)
+            if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
             {
                 RecruitArmy();
             }
-            else if (gameState.recruitModeTiles == true && tileProps.nation != null)
+            else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation)
             {
                 AssignRecruitTiles();
             }
@@ -33,7 +33,7 @@ public class TileInteractions : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        NationProps collidingNation = collision.gameObject.GetComponent<UnitProps>().nation;
+        NationProps collidingNation = collision.gameObject.GetComponent<ArmyProps>().nation;
         
         if (collidingNation != null && collidingNation != tileProps.nation)
         { 
@@ -45,24 +45,23 @@ public class TileInteractions : MonoBehaviour
     {
         Vector3 spawnPosition = transform.position;
         GameObject newArmy = Instantiate(Army, spawnPosition, Quaternion.identity);
-        UnitProps armyProps = newArmy.GetComponent<UnitProps>();
-        
+        ArmyProps armyProps = newArmy.GetComponent<ArmyProps>();
+
+        gameState.activeArmy = armyProps;
+        tileProps.nation.armies.Add(armyProps);
         ArmyRecruited?.Invoke(armyProps);
-        
-        gameState.activeUnit = armyProps;
 
         armyProps.nation = tileProps.nation;
         armyProps.reinforceTiles.Add(tileProps);
 
         tileProps.isReinforceTile = true;
 
-        gameState.recruitModeArmy = false;
-        gameState.recruitModeTiles = true;
+        gameState.gameMode = GameState.Mode.recruitModeTiles;
     }
 
     public void AssignRecruitTiles()
     {
-        gameState.activeUnit.reinforceTiles.Add(tileProps);
+        gameState.activeArmy.reinforceTiles.Add(tileProps);
         tileProps.isReinforceTile = true;
     }
 

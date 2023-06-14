@@ -29,7 +29,7 @@ public class CamControl : MonoBehaviour
             speed += scroll * 10; //not ideal
         }
 
-        if (scroll < 0 && cam.orthographicSize < 30)
+        if (scroll < 0 && cam.orthographicSize < 18)
         {
             cam.orthographicSize -= scroll * 10;
         }

@@ -143,7 +143,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void AssignID()
+    void AssignID()//not used for now
     {
         int i = 0;
 

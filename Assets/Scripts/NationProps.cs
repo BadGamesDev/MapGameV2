@@ -7,6 +7,7 @@ public class NationProps : MonoBehaviour
 {
     public string nationName;
     public List<TileProps> tiles;
+    public List<ArmyProps> armies;
     public int population;
 
     public float agriGDP;

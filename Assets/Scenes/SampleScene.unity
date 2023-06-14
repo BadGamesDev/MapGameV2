@@ -209,7 +209,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1630243736}
         m_TargetAssemblyTypeName: RecruitmentManager, Assembly-CSharp
-        m_MethodName: RecruitArmy
+        m_MethodName: RecruitArmyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -555,6 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b80466aec87cd3439ce9a5c29ab469f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: {fileID: 1630243737}
 --- !u!1 &776282283
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,7 +911,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapGenerator: {fileID: 519420034}
   gameState: {fileID: 1630243737}
-  currentMode: 0
+  mapMode: 0
   tiles: []
 --- !u!114 &1630243733
 MonoBehaviour:
@@ -970,6 +971,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: {fileID: 1630243737}
+  mapModes: {fileID: 1630243732}
   desiredSizeInput: {fileID: 1745250243}
 --- !u!114 &1630243737
 MonoBehaviour:
@@ -984,9 +986,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeTile: {fileID: 0}
-  activeUnit: {fileID: 0}
-  recruitModeArmy: 0
-  recruitModeTiles: 0
+  activeArmy: {fileID: 0}
+  gameMode: 0
 --- !u!1 &1699131098
 GameObject:
   m_ObjectHideFlags: 0

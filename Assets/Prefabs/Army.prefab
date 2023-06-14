@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2172309133561275033}
   - component: {fileID: 2172309133561275039}
   - component: {fileID: -436085422724363299}
-  - component: {fileID: -1147815275042568964}
+  - component: {fileID: -4760098470870953994}
+  - component: {fileID: -3660662086798442028}
   - component: {fileID: 1306545502783407345}
   m_Layer: 8
   m_Name: Army
@@ -134,7 +135,7 @@ MonoBehaviour:
   path: []
   currNode: 0
   delay: 0.5
---- !u!114 &-1147815275042568964
+--- !u!114 &-4760098470870953994
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,6 +148,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nation: {fileID: 0}
+  reinforceTiles: []
+  desiredSize: 0
+  curSize: 0
+  availablePop: 0
+--- !u!114 &-3660662086798442028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172309133561275034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d26059dfa26dfa4ba50834bae292f40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armyProps: {fileID: -4760098470870953994}
+  gameState: {fileID: 0}
 --- !u!50 &1306545502783407345
 Rigidbody2D:
   serializedVersion: 4

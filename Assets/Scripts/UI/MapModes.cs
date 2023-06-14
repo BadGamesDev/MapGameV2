@@ -16,7 +16,7 @@ public class MapModes : MonoBehaviour
         recruitment
     }
 
-    public Mode currentMode = Mode.terrain;
+    public Mode mapMode = Mode.terrain;
     public List<TileProps> tiles;
 
     private void Update()
@@ -24,30 +24,35 @@ public class MapModes : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T)) //do NOT hardcode keys
         {
-            currentMode = Mode.terrain;
+            mapMode = Mode.terrain;
         }
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            currentMode = Mode.political;
+            mapMode = Mode.political;
         }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            currentMode = Mode.resource;
+            mapMode = Mode.resource;
         }
 
         if (Input.GetKeyDown(KeyCode.U))
         {
-            currentMode = Mode.population;
+            mapMode = Mode.population;
         }
 
-        if (gameState.recruitModeArmy)
+        if (gameState.gameMode == GameState.Mode.recruitModeArmy)
         {
-            currentMode = Mode.recruitment;
+            mapMode = Mode.recruitment;
         }
 
-        switch (currentMode)
+        if (gameState.gameMode == GameState.Mode.recruitModeTiles)
+        {
+            mapMode = Mode.recruitment;
+        }
+
+        switch (mapMode)
         {
             case Mode.terrain:
                 ApplyTerrainMapMode();
@@ -137,23 +142,38 @@ public class MapModes : MonoBehaviour
     {
         foreach (TileProps tile in mapGenerator.landTilesList)
         {
-                if (tile.nation != null && tile.isReinforceTile == false)
+            if (tile.nation != null && tile.isReinforceTile == false)
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.green;
+            }
+
+            else if (tile.nation != null && tile.isReinforceTile == true)
+            {
+                if (gameState.activeArmy == null) //doesn't feel right, maybe it can be simplified
                 {
                         tile.SwitchSprite(0);
-                        tile.GetComponent<Renderer>().material.color = Color.green;
+                        tile.GetComponent<Renderer>().material.color = Color.red;
                 }
-                
-                else if (tile.nation != null && tile.isReinforceTile == true)
-                {
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.red;
-                }
-
                 else
                 {
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.white;
+                    if (tile.nation.armies.Find(army => army == gameState.activeArmy).reinforceTiles.Contains(tile))
+                    {
+                        tile.SwitchSprite(0);
+                        tile.GetComponent<Renderer>().material.color = Color.magenta;
+                    }
+                    else
+                    {
+                        tile.SwitchSprite(0);
+                        tile.GetComponent<Renderer>().material.color = Color.red;
+                    }
                 }
+            }
+            else
+            {
+                tile.SwitchSprite(0);
+                tile.GetComponent<Renderer>().material.color = Color.white;
+            }
         }
     }
 
