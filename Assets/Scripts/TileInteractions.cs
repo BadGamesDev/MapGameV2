@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TileInteractions : MonoBehaviour
 {
     public TileProps tileProps;
+    public MainUI mainUI;
     public GameState gameState;
     public GameObject Army;
 
@@ -13,6 +15,7 @@ public class TileInteractions : MonoBehaviour
 
     private void Start()
     {
+        mainUI = FindObjectOfType<MainUI>();
         gameState = FindObjectOfType<GameState>();
     }
 
@@ -53,6 +56,8 @@ public class TileInteractions : MonoBehaviour
 
         armyProps.nation = tileProps.nation;
         armyProps.reinforceTiles.Add(tileProps);
+
+        mainUI.ArmyDesiredSizeInput.gameObject.SetActive(true);
 
         tileProps.isReinforceTile = true;
 

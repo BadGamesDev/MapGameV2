@@ -11,4 +11,10 @@ public class ArmyProps : MonoBehaviour
     public int desiredSize;
     public int curSize;
     public int availablePop;
+
+    public int maxInfantry;
+    public int curInfantry;
+
+    public int maxCavalry;
+    public int curCavalry;
 }

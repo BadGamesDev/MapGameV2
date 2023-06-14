@@ -160,7 +160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -484, y: 232}
+  m_AnchoredPosition: {x: -841, y: 491}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &41965238
@@ -875,6 +875,7 @@ GameObject:
   - component: {fileID: 1630243735}
   - component: {fileID: 1630243736}
   - component: {fileID: 1630243737}
+  - component: {fileID: 1630243738}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -971,8 +972,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: {fileID: 1630243737}
+  mainUI: {fileID: 1630243738}
   mapModes: {fileID: 1630243732}
-  desiredSizeInput: {fileID: 1745250243}
 --- !u!114 &1630243737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -988,6 +989,19 @@ MonoBehaviour:
   activeTile: {fileID: 0}
   activeArmy: {fileID: 0}
   gameMode: 0
+--- !u!114 &1630243738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630243729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5d0123acf2cde647ba942e6113fb77f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ArmyDesiredSizeInput: {fileID: 1745250243}
 --- !u!1 &1699131098
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,7 +1092,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -484, y: 194.6}
+  m_AnchoredPosition: {x: -841, y: 440}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1745250243

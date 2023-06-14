@@ -5,16 +5,15 @@ using TMPro;
 public class RecruitmentManager : MonoBehaviour
 {
     public GameState gameState;
+    public MainUI mainUI;
     public MapModes mapModes; //ATROCIOUS SOLUTION! FIND ANOTHER WAY!
 
-    public TMP_InputField desiredSizeInput;
 
     public void RecruitArmyButton()
     {
         gameState.activeArmy = null;
 
-        desiredSizeInput.gameObject.SetActive(true);
-        desiredSizeInput.onEndEdit.AddListener(OnArmySizeEntered);
+        mainUI.ArmyDesiredSizeInput.onEndEdit.AddListener(OnArmySizeEntered);
 
         gameState.gameMode = GameState.Mode.recruitModeArmy;
     }
@@ -24,8 +23,8 @@ public class RecruitmentManager : MonoBehaviour
         int size = int.Parse(input);
         gameState.activeArmy.desiredSize = size;
 
-        desiredSizeInput.gameObject.SetActive(false);
-        desiredSizeInput.onEndEdit.RemoveListener(OnArmySizeEntered);
+        mainUI.ArmyDesiredSizeInput.gameObject.SetActive(false);
+        mainUI.ArmyDesiredSizeInput.onEndEdit.RemoveListener(OnArmySizeEntered);
 
         gameState.gameMode = GameState.Mode.freeMode;
         mapModes.mapMode = MapModes.Mode.political;

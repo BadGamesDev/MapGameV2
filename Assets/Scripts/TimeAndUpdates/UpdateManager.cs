@@ -133,23 +133,36 @@ public class UpdateManager : MonoBehaviour
     {
         foreach (ArmyProps army in armies)
         {
-            army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
+            army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));//get recruit pops
 
             if (army.curSize < army.desiredSize)
             {
-                int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop));
+                int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop)); //total pop of tiles (used for reinforce speed)
                 float reinforcements = totalPop * 0.01f;
-                reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop - 1); //might find a better way than -1
-                int reinforcementsInt = Mathf.RoundToInt(reinforcements);
 
-                foreach (TileProps tile in army.reinforceTiles)
+                reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop - 1); //might find a better way than -1
+                int reinforcementsInt = Mathf.RoundToInt(reinforcements); //reinforcement number int
+
+                float infantryRatio = army.curInfantry / (float)(army.curInfantry + army.curCavalry);
+                float cavalryRatio = army.curCavalry / (float)(army.curInfantry + army.curCavalry);
+
+                int infantryToAdd = Mathf.RoundToInt(reinforcementsInt * infantryRatio);
+                int cavalryToAdd = Mathf.RoundToInt(reinforcementsInt * cavalryRatio);
+
+                foreach (TileProps tile in army.reinforceTiles) //get how much reinforcement each tile gives
                 {
                     int totalReinforcePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
 
                     float tileRatio = tile.recruitPop / totalReinforcePop;
 
                     float tileReinforcements = reinforcements * tileRatio;
-                    tile.recruitPop -= Mathf.RoundToInt(tileReinforcements);
+                    tile.recruitPop -= Mathf.RoundToInt(tileReinforcements); //This is not int, might need a change
+                }
+
+                if (army.nation.supply["Iron"] >= infantryToAdd * 1 + cavalryToAdd * 3)
+                {
+                    army.curInfantry += infantryToAdd;
+                    army.curCavalry += cavalryToAdd;
                 }
                 
                 army.curSize += reinforcementsInt;
