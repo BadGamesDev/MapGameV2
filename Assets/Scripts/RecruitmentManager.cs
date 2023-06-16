@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.Burst.Intrinsics;
 
 public class RecruitmentManager : MonoBehaviour
 {
@@ -12,21 +13,23 @@ public class RecruitmentManager : MonoBehaviour
     public void RecruitArmyButton()
     {
         gameState.activeArmy = null;
-
-        mainUI.ArmyDesiredSizeInput.onEndEdit.AddListener(OnArmySizeEntered);
-
         gameState.gameMode = GameState.Mode.recruitModeArmy;
     }
 
-    private void OnArmySizeEntered(string input)
+    public void AssignTroopValues()
     {
-        int size = int.Parse(input);
-        gameState.activeArmy.desiredSize = size;
+        int infantryCount = int.Parse(mainUI.armyInfantrySizeInput.text);
+        int cavalryCount = int.Parse(mainUI.armyCavalrySizeInput.text);
 
-        mainUI.ArmyDesiredSizeInput.gameObject.SetActive(false);
-        mainUI.ArmyDesiredSizeInput.onEndEdit.RemoveListener(OnArmySizeEntered);
+        gameState.activeArmy.maxInfantry = infantryCount;
+        gameState.activeArmy.maxCavalry = cavalryCount;
+        gameState.activeArmy.desiredSize = infantryCount + cavalryCount;
 
-        gameState.gameMode = GameState.Mode.freeMode;
+        mainUI.armyInfantrySizeInput.gameObject.SetActive(false);
+        mainUI.armyCavalrySizeInput.gameObject.SetActive(false);
+        mainUI.armySizeDoneButton.gameObject.SetActive(false);
+        
         mapModes.mapMode = MapModes.Mode.political;
+        gameState.gameMode = GameState.Mode.freeMode;
     }
 }

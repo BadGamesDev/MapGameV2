@@ -157,7 +157,7 @@ public class MapModes : MonoBehaviour
                 }
                 else
                 {
-                    if (tile.nation.armies.Find(army => army == gameState.activeArmy).reinforceTiles.Contains(tile))
+                    if (tile.nation.armies.Find(army => army == gameState.activeArmy).reinforceTiles.Contains(tile)) //A BUG HAPPENS HERE FOR SOME FUCKING REASON
                     {
                         tile.SwitchSprite(0);
                         tile.GetComponent<Renderer>().material.color = Color.magenta;

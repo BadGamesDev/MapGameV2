@@ -57,7 +57,9 @@ public class TileInteractions : MonoBehaviour
         armyProps.nation = tileProps.nation;
         armyProps.reinforceTiles.Add(tileProps);
 
-        mainUI.ArmyDesiredSizeInput.gameObject.SetActive(true);
+        mainUI.armyInfantrySizeInput.gameObject.SetActive(true);
+        mainUI.armyCavalrySizeInput.gameObject.SetActive(true);
+        mainUI.armySizeDoneButton.gameObject.SetActive(true);
 
         tileProps.isReinforceTile = true;
 
