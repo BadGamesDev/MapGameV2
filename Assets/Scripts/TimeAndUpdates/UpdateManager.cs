@@ -1,9 +1,9 @@
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TimeManager;
 using static TileInteractions;
+using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF ADDING ARMIES TO THE LIST
 
 public class UpdateManager : MonoBehaviour
 {
@@ -22,6 +22,7 @@ public class UpdateManager : MonoBehaviour
         nations = FindObjectsOfType<NationProps>();
         
         ArmyRecruited += OnArmyRecruited;
+        ArmyRecruitedAI += OnArmyRecruited;
         dayTickSend += OnDayTick;
         monthTickSend += OnMonthTick;
 
@@ -55,6 +56,7 @@ public class UpdateManager : MonoBehaviour
     public void OnMonthTick()
     {
         UpdateGraphData();
+        AutoNationExpansion();
     }
 
     public void CalculateNationalDemand() //setting everything to 0 seems to be working for now
@@ -157,7 +159,7 @@ public class UpdateManager : MonoBehaviour
             if (army.curSize < army.desiredSize)
             {
                 int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop)); //total pop of tiles (used for reinforce speed)
-                float reinforcements = totalPop * 0.01f;
+                float reinforcements = totalPop * 0.001f;
 
                 reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop);//is there a problem here?
                 int reinforcementsInt = Mathf.RoundToInt(reinforcements); //reinforcement number int
@@ -175,7 +177,7 @@ public class UpdateManager : MonoBehaviour
                 int adjustedCavalryToAdd = capCavalryToAdd;
 
                 float requiredIron = capInfantryToAdd * 1 + capCavalryToAdd * 3;
-                float availableIron = army.nation.supply["Iron"] - army.nation.demand["Iron"];
+                float availableIron = resourceManager.globalSupply["Iron"] - army.nation.demand["Iron"]; //SEPARATE THE NATION AND WORLD SUPPLY IN THE FUTURE
 
                 if (availableIron <= requiredIron) //MIGHT CAUSE SOME ERRORS DUE TO ROUNDING !!! (adjusting reinforcements according to available resources)
                 {
@@ -243,10 +245,12 @@ public class UpdateManager : MonoBehaviour
             float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
 
             float resourceDemandRatio = 1.0f;
-            //if (globalResourceSupplyAmount > globalResourceDemandAmount)
-            //{
-            //    resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
-            //}
+            
+            if (globalResourceSupplyAmount > globalResourceDemandAmount)
+            {
+                resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
+            }
+            
             tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
 
             tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
@@ -297,8 +301,8 @@ public class UpdateManager : MonoBehaviour
 
             foreach (TileProps tile in nation.tiles)
             {
-                tile.tax = Mathf.RoundToInt((tile.agriProduction * resourceManager.resources.Find(r => r.Name == tile.agriResource).Price) * 0.1f)
-                + Mathf.RoundToInt((tile.resourceProduction * resourceManager.resources.Find(r => r.Name == tile.resource).Price) * 0.1f);
+                tile.tax = Mathf.RoundToInt(tile.agriGDP * 0.1f)
+                + Mathf.RoundToInt(tile.resourceGDP * 0.1f);
                 //+ Mathf.RoundToInt((tile.resourceProduction * resourceManager.resources.Find(r => r.Name == tile.resource).Price) * 0.1f);
 
                 nationTax += tile.tax;
@@ -316,7 +320,7 @@ public class UpdateManager : MonoBehaviour
                 string resource = kvp.Key;
                 float quantity = kvp.Value;
 
-                if (resourceManager.resourcePrices.TryGetValue(resource, out float price))
+                if (resourceManager.resourcePrices.TryGetValue(resource, out float price)) //SUS
                 {
                     nationBuy += price * quantity;
                 }
@@ -339,7 +343,7 @@ public class UpdateManager : MonoBehaviour
                 nationInterest = Mathf.RoundToInt(nation.debt * 0.004f);
             }
 
-            nation.expense = nationBuy;// + nationWages + nationInterest;
+            nation.expense = nationBuy + nationWages + nationInterest;
 
             foreach (var key in nation.govBuy.Keys.ToList()) //FEELS WRONG
             {
@@ -369,6 +373,60 @@ public class UpdateManager : MonoBehaviour
 
                 nation.debt += i * -1;
                 nation.money += i * -1;
+            }
+        }
+    }
+
+    public void AutoNationExpansion()
+    {
+        foreach (NationProps nation in nations)
+        {
+            List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
+            foreach (TileProps tile in nation.tiles)
+            {
+                if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
+                {
+                    borderTiles.Add(tile);
+                }
+            }
+
+            List<TileProps> unclaimedNeighbors = new List<TileProps>(); //get neighbors of bordertiles
+            foreach (TileProps tile in borderTiles)
+            {
+                foreach (Vector2 neighborPos in tile.neighbors)
+                {
+                    RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero);
+                    if (hit.collider != null)
+                    {
+                        TileProps neighborTile = hit.collider.GetComponent<TileProps>();
+                        if (neighborTile != null && neighborTile.nation == null && neighborTile.type != 1)
+                        {
+                            unclaimedNeighbors.Add(neighborTile);
+                        }
+                    }
+                }
+            }
+
+            if (unclaimedNeighbors.Count > 0) //choose expansion target
+            {
+                TileProps randomNeighbor = unclaimedNeighbors[Random.Range(0, unclaimedNeighbors.Count)];
+                randomNeighbor.nation = nation;
+                nation.tiles.Add(randomNeighbor);
+            }
+
+            bool IsTileOwnedByNation(Vector2 position) //method used to see if a tile is border
+            {
+                RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
+                if (hit.collider != null)
+                {
+                    TileProps tile = hit.collider.GetComponent<TileProps>();
+                    if (tile != null && tile.nation == nation)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
     }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1861846184206092309}
   - component: {fileID: 1861846184206092308}
+  - component: {fileID: -3870087925522699869}
   m_Layer: 0
   m_Name: Nation
   m_TagString: Untagged
@@ -44,6 +45,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78290b26d9933c44aef762e306b49a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nationName: 
+  isAI: 1
   tiles: []
+  armies: []
+  nationName: 
   population: 0
+  agriGDP: 0
+  resourceGDP: 0
+  industryGDP: 0
+  totalGDP: 0
+  income: 0
+  expense: 0
+  money: 0
+  debt: 0
+  populationHistory: 
+--- !u!114 &-3870087925522699869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861846184206092307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a3d02be6a516140b6e008f16b87a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nationProps: {fileID: 1861846184206092308}
+  Army: {fileID: 2172309133561275034, guid: e2c21a905868af541a327eed7239ade7, type: 3}

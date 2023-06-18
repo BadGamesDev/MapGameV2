@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class TileInteractions : MonoBehaviour
@@ -11,7 +8,7 @@ public class TileInteractions : MonoBehaviour
     public GameState gameState;
     public GameObject Army;
 
-    public static event Action<ArmyProps> ArmyRecruited;
+    public static event Action<ArmyProps> ArmyRecruited; //for update manager
 
     private void Start()
     {
@@ -21,6 +18,11 @@ public class TileInteractions : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(gameState.playerNation == null) // THIS IS A TEMPORARY SOLUTION FIX IT IN THE FUTURE, BAD FOR PERFORMANCE
+        {
+            gameState.playerNation = tileProps.nation;
+        }
+
         if (Input.GetMouseButton(0))
         {
             if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)

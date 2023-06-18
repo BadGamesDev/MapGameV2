@@ -9,6 +9,8 @@ public class TileProps : MonoBehaviour
     public SpriteRenderer resourceSprite; //maybe make it an array?
     public NationProps nation = null;
 
+    public List<Vector2> neighbors;
+
     public int ID;
     
     public int type;
@@ -39,9 +41,19 @@ public class TileProps : MonoBehaviour
 
     public int tax; //might change
 
-    private void Start()
+    private void Awake()
     {
         isReinforceTile = false;
+
+        neighbors = new List<Vector2>
+        {
+            new Vector2(transform.position.x + 1, transform.position.y),
+            new Vector2(transform.position.x - 1, transform.position.y),
+            new Vector2(transform.position.x + 0.5f, transform.position.y + 0.86f),
+            new Vector2(transform.position.x - 0.5f, transform.position.y + 0.86f),
+            new Vector2(transform.position.x + 0.5f, transform.position.y - 0.86f),
+            new Vector2(transform.position.x - 0.5f, transform.position.y - 0.86f)
+        };
     }
 
     public void SetPopulationRatios(float agriRatio, float resourceRatio, float industryRatio)
@@ -94,16 +106,6 @@ public class TileProps : MonoBehaviour
     
     public void Grow() //for generating land masses on map
     {
-        List<Vector2> neighbors = new List<Vector2>
-        {
-            new Vector2(transform.position.x + 1, transform.position.y),
-            new Vector2(transform.position.x - 1, transform.position.y),
-            new Vector2(transform.position.x + 0.5f, transform.position.y + 0.86f),
-            new Vector2(transform.position.x - 0.5f, transform.position.y + 0.86f),
-            new Vector2(transform.position.x + 0.5f, transform.position.y - 0.86f),
-            new Vector2(transform.position.x - 0.5f, transform.position.y - 0.86f)
-        };
-
         for (int i = 0; i < freq; i++)
         {
             int n = Mathf.RoundToInt(Random.value * 5);

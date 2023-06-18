@@ -49,27 +49,4 @@ public class ResourceManager : MonoBehaviour
             globalDemand.Add(resource.Name, 0f);
         }
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            DisplaySupplyAndDemand();
-        }
-    }
-
-    private void DisplaySupplyAndDemand()
-    {
-        Debug.Log("Supply:");
-        foreach (KeyValuePair<string, float> supply in globalSupply)
-        {
-            Debug.Log(supply.Key + ": " + supply.Value);
-        }
-
-        Debug.Log("Demand:");
-        foreach (KeyValuePair<string, float> demand in globalDemand)
-        {
-            Debug.Log(demand.Key + ": " + demand.Value);
-        }
-    }
 }

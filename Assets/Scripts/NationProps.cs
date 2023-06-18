@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class NationProps : MonoBehaviour
 {
+    public bool isAI = true; //will change this in the future
+
     public List<TileProps> tiles;
     public List<ArmyProps> armies;
     
