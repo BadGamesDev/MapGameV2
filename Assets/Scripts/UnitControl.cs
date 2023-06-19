@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class UnitControl : MonoBehaviour
 {
+    public TimeManager timeManager;
     public List<Vector2> path = new List<Vector2>();
     public int currNode = 0;
-    public float delay = 0.5f;
+    public float delay = 5;
 
+    private void Start()
+    {
+        timeManager = FindObjectOfType<TimeManager>();
+    }
     private void Update()
     {
         if (path.Count > 0)
         {
-            if(delay >= 0.5)
+            if(delay >= 5)
             {
                 RaycastHit2D hit = Physics2D.Raycast(path[currNode], path[currNode], 0, LayerMask.GetMask("Tiles"));
                 if (hit)
@@ -24,12 +29,12 @@ public class UnitControl : MonoBehaviour
                     Debug.Log("No Tile Found");
                     path = new List<Vector2>();
                     currNode = 0;
-                    delay = 0.5f;
+                    delay = 5;
                 }
             }
             else
             {
-                delay += Time.deltaTime;
+                delay += Time.deltaTime * timeManager.timeMultiplier;
             }
         }
     }

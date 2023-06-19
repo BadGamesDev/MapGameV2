@@ -377,6 +377,14 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
+    public void UpdateBattles()//THIS MIGHT BE AN ATROCIOUS WAY OF IMPLEMENTING COMBAT...
+    {
+        foreach(TileProps tile in tiles)
+        {
+            //tile.GetComponent<Collider2D>
+        }
+    }
+
     public void AutoNationExpansion()
     {
         foreach (NationProps nation in nations)
