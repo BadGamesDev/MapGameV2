@@ -5155,6 +5155,7 @@ GameObject:
   - component: {fileID: 1630243738}
   - component: {fileID: 1630243739}
   - component: {fileID: 1630243740}
+  - component: {fileID: 1630243741}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -5342,6 +5343,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeManager: {fileID: 1630243733}
   calendarText: {fileID: 1559514422}
+--- !u!114 &1630243741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630243729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 855da4888e3027b4da26aec45c0db6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1642888405
 GameObject:
   m_ObjectHideFlags: 0

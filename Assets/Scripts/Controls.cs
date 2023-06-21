@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 
-public class Controls : MonoBehaviour
+public class Controls : MonoBehaviour //might need a better name
 {
     public GameState gameState;
     GameObject unit;
@@ -19,10 +19,10 @@ public class Controls : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
             if (hit)
             {
-                unit.GetComponent<UnitControl>().path = new List<Vector2>();
-                unit.GetComponent<UnitControl>().currNode = 0;
-                unit.GetComponent<UnitControl>().delay = 0.5f;
-                unit.GetComponent<UnitControl>().path = GetComponent<PathFinding>().GetPath(unit.transform.position, hit.collider.gameObject.transform.position, 9);
+                unit.GetComponent<ArmyMovement>().path = new List<Vector2>();
+                unit.GetComponent<ArmyMovement>().currNode = 0;
+                unit.GetComponent<ArmyMovement>().delay = 0.5f;
+                unit.GetComponent<ArmyMovement>().path = GetComponent<PathFinding>().GetPath(unit.transform.position, hit.collider.gameObject.transform.position, 9);
             }
         }
     }

@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2172309133561275032}
   - component: {fileID: 2172309133561275033}
+  - component: {fileID: 1306545502783407345}
   - component: {fileID: 2172309133561275039}
   - component: {fileID: -436085422724363299}
   - component: {fileID: -4760098470870953994}
   - component: {fileID: -3660662086798442028}
-  - component: {fileID: 1306545502783407345}
   m_Layer: 8
   m_Name: Army
   m_TagString: Untagged
@@ -89,6 +89,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!50 &1306545502783407345
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2172309133561275034}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!60 &2172309133561275039
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -132,6 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f560a168644964ba9490cb8ea8927a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  armyProps: {fileID: -4760098470870953994}
+  timeManager: {fileID: 0}
   path: []
   currNode: 0
   delay: 0.5
@@ -152,6 +175,10 @@ MonoBehaviour:
   desiredSize: 0
   curSize: 0
   availablePop: 0
+  maxInfantry: 0
+  curInfantry: 0
+  maxCavalry: 0
+  curCavalry: 0
 --- !u!114 &-3660662086798442028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,24 +193,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armyProps: {fileID: -4760098470870953994}
   gameState: {fileID: 0}
---- !u!50 &1306545502783407345
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2172309133561275034}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
