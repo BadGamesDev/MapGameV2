@@ -5,6 +5,7 @@ public class TileInteractions : MonoBehaviour
 {
     public TileProps tileProps;
     public MainUI mainUI;
+    public TileUI tileUI;
     public GameState gameState;
     public GameObject Army;
 
@@ -13,6 +14,7 @@ public class TileInteractions : MonoBehaviour
     private void Start()
     {
         mainUI = FindObjectOfType<MainUI>();
+        tileUI = FindObjectOfType<TileUI>();
         gameState = FindObjectOfType<GameState>();
     }
 
@@ -25,7 +27,20 @@ public class TileInteractions : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
+            if (gameState.gameMode == GameState.Mode.freeMode && tileProps.nation != null)
+            {
+                gameState.activeTile = tileProps;
+
+                if(tileProps.nation == gameState.playerNation)
+                {
+                    tileUI.UpdateTileUI();
+                }
+                else 
+                {
+                    tileUI.UpdateTileUI();
+                }
+            }
+            else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
             {
                 RecruitArmy();
             }
