@@ -24,6 +24,8 @@ public class NationProps : MonoBehaviour
     public int money;
     public int debt;
 
+    public float infrastructureBudget;
+
     public List<int> populationHistory = new List<int>();
 
     public Dictionary<string, float> govBuy;
@@ -63,6 +65,11 @@ public class NationProps : MonoBehaviour
         demand["Coal"] = 0;
         demand["Timber"] = 0;
         demand["Gold"] = 0;
+    }
+
+    private void Start()
+    {
+        infrastructureBudget = 100;
     }
 
     public void GovBuy(string resourceName, float amount)

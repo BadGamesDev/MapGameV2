@@ -87,15 +87,15 @@ public class MapModes : MonoBehaviour
         {
             if (tile.nation != null)
             {
-                if (tile.nation.GetComponent<NationProps>().nationName == "Blue Nation")
-                {
-                    tile.SwitchSprite(0);
-                    tile.GetComponent<Renderer>().material.color = Color.yellow;
-                }
-                else if (tile.nation.GetComponent<NationProps>().nationName == "Red Nation")
+                if (tile.nation.GetComponent<NationProps>().nationName == "0")
                 {
                     tile.SwitchSprite(0);
                     tile.GetComponent<Renderer>().material.color = Color.red;
+                }
+                else if (tile.nation.GetComponent<NationProps>().nationName == "1")
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.yellow;
                 }
             }
             else

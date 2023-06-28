@@ -22,4 +22,10 @@ public class GameState : MonoBehaviour
     {
         gameMode = Mode.freeMode;
     }
+
+    public void ChoosePlayerNation()
+    {
+        playerNation = GameObject.Find("Nation0").GetComponent<NationProps>(); //Hardcoding this is kinda bad, but it is fine for now
+        playerNation.isAI = false;
+    }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
+    public GameState gameState;
+
     public GameObject tilePrefab;
     public GameObject nationPrefab;
     public GameObject tilesParent;
@@ -104,7 +106,8 @@ public class MapGenerator : MonoBehaviour
         {
             GameObject newNation = Instantiate(nationPrefab);
             NationProps nation = newNation.GetComponent<NationProps>();
-            nation.nationName = i == 0 ? "Blue Nation" : "Red Nation";
+            newNation.name = "Nation" + i.ToString();
+            nation.nationName = i.ToString();
 
             int randomIndex = Random.Range(0, availableTiles.Count);
             TileProps randomTile = availableTiles[randomIndex];
@@ -114,6 +117,8 @@ public class MapGenerator : MonoBehaviour
 
             availableTiles.RemoveAt(randomIndex);
         }
+
+        gameState.ChoosePlayerNation();
     }
 
     void CalcLandTiles()

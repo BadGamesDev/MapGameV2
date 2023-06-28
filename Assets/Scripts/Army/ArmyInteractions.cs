@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ArmyInteractions : MonoBehaviour
 {
@@ -16,15 +17,13 @@ public class ArmyInteractions : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            if (gameState.gameMode == GameState.Mode.freeMode)
+            if (!EventSystem.current.IsPointerOverGameObject()) //APPARENTLY THIS IS ACTUALLY BAD BUT I DON'T KNOW WHY
             {
-                gameState.activeArmy = armyProps;
+                if (gameState.gameMode == GameState.Mode.freeMode)
+                {
+                    gameState.activeArmy = armyProps;
+                }
             }
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
     }
 }

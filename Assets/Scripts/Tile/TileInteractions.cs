@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TileInteractions : MonoBehaviour
 {
@@ -18,35 +19,36 @@ public class TileInteractions : MonoBehaviour
         gameState = FindObjectOfType<GameState>();
     }
 
-    private void OnMouseDown()
+    private void OnMouseDown() //mousedown is bad UI but it is fine for now
     {
-        if(gameState.playerNation == null) // THIS IS A TEMPORARY SOLUTION FIX IT IN THE FUTURE, BAD FOR PERFORMANCE
-        {
-            gameState.playerNation = tileProps.nation;
-        }
-
         if (Input.GetMouseButton(0))
         {
-            if (gameState.gameMode == GameState.Mode.freeMode && tileProps.nation != null)
+            if (!EventSystem.current.IsPointerOverGameObject()) //APPARENTLY THIS IS ACTUALLY BAD BUT I DON'T KNOW WHY
             {
-                gameState.activeTile = tileProps;
+                if (gameState.gameMode == GameState.Mode.freeMode && tileProps.type != 1)
+                {
+                    gameState.activeTile = tileProps;
 
-                if(tileProps.nation == gameState.playerNation)
-                {
-                    tileUI.UpdateTileUI();
+                    if (tileProps.nation == gameState.playerNation)
+                    {
+                        tileUI.OpenTileUI();
+                        tileUI.UpdateTileUI();
+                    }
+                    else
+                    {
+                        tileUI.OpenTileUI();
+                        tileUI.UpdateTileUI();
+                    }
                 }
-                else 
+
+                else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
                 {
-                    tileUI.UpdateTileUI();
+                    RecruitArmy();
                 }
-            }
-            else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
-            {
-                RecruitArmy();
-            }
-            else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation)
-            {
-                AssignRecruitTiles();
+                else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation)
+                {
+                    AssignRecruitTiles();
+                }
             }
         }
     }

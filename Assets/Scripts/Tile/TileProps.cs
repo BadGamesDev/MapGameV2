@@ -38,11 +38,19 @@ public class TileProps : MonoBehaviour
     public float industryGDP;
     public float totalGDP;
 
+    public float agriPerCapGDP;
+    public float resourcePerCapGDP;
+    public float industryPerCapGDP;
+    public float totalPerCapGDP;
+
+    public float infrastructureLevel; //SUBJECT TO CHANGE
 
     public int tax; //might change
 
     private void Awake()
     {
+        infrastructureLevel = 0; //kinda bad
+        
         isReinforceTile = false;
 
         neighbors = new List<Vector2>

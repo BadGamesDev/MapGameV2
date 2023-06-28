@@ -18,7 +18,7 @@ public class SupplyDemandUI : MonoBehaviour
 
     private void Update()
     {
-        nation = FindObjectOfType<NationProps>();
+        nation = GameObject.Find("Nation0").GetComponent<NationProps>();
         UpdateSupplyDemandDisplay();
     }
 

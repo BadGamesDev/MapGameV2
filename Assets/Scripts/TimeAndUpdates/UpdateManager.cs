@@ -12,6 +12,7 @@ public class UpdateManager : MonoBehaviour
     public NationProps[] nations;
 
     public MainUI mainUI; //for debugging
+    public TileUI tileUI;
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
 
@@ -20,7 +21,7 @@ public class UpdateManager : MonoBehaviour
         armies = new List<ArmyProps>();
         tiles = FindObjectsOfType<TileProps>();
         nations = FindObjectsOfType<NationProps>();
-        
+
         ArmyRecruited += OnArmyRecruited;
         ArmyRecruitedAI += OnArmyRecruited;
         dayTickSend += OnDayTick;
@@ -51,6 +52,7 @@ public class UpdateManager : MonoBehaviour
         UpdateArmyProps();
         UpdateProvProps();
         UpdateNationProps();
+        UpdateTileUI();
     }
 
     public void OnMonthTick()
@@ -98,7 +100,7 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void CalculateGlobalDemand() 
+    public void CalculateGlobalDemand()
     {
         foreach (string resourceName in resourceManager.globalDemand.Keys.ToList())
         {
@@ -194,8 +196,8 @@ public class UpdateManager : MonoBehaviour
                 army.curInfantry += adjustedInfantryToAdd;
                 army.curCavalry += adjustedCavalryToAdd;
 
-               
-                    
+
+
                 int finalReinforcement = adjustedInfantryToAdd + adjustedCavalryToAdd;
 
                 foreach (TileProps tile in army.reinforceTiles) //get how much reinforcement each tile gives to substract them
@@ -216,7 +218,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateProvProps()
     {
-        foreach (TileProps tile in mapGenerator.landTilesList) 
+        foreach (TileProps tile in mapGenerator.landTilesList)
         {
             //POPULATION ###################################################################################
             tile.IncreasePopulation(0.001f);
@@ -225,19 +227,19 @@ public class UpdateManager : MonoBehaviour
             {
                 tile.recruitPop += Mathf.RoundToInt(tile.totalPop * 0.005f);
             }
-            
+
             //ECONOMY ######################################################################################
-            tile.agriProduction = tile.GetAgriPopulation() * 0.01f;
-            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f;
-            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f;
+            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * tile.infrastructureLevel;
+            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * tile.infrastructureLevel;
+            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * tile.infrastructureLevel;
 
             float globalAgriSupplyAmount = resourceManager.globalSupply[tile.agriResource];//agri
             float globalAgriDemandAmount = resourceManager.globalDemand[tile.agriResource];
-                
+
             float agriDemandRatio = 1.0f;
             if (globalAgriSupplyAmount > globalAgriDemandAmount)
             {
-                agriDemandRatio = globalAgriDemandAmount / globalAgriSupplyAmount; 
+                agriDemandRatio = globalAgriDemandAmount / globalAgriSupplyAmount;
             }
             tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio);
 
@@ -245,15 +247,34 @@ public class UpdateManager : MonoBehaviour
             float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
 
             float resourceDemandRatio = 1.0f;
-            
+
             if (globalResourceSupplyAmount > globalResourceDemandAmount)
             {
                 resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
             }
-            
+
             tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
 
             tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
+
+            tile.totalPerCapGDP = tile.agriGDP / tile.GetTotalPopulation();
+            tile.agriPerCapGDP = tile.resourceGDP / tile.GetAgriPopulation();
+            tile.resourcePerCapGDP = tile.industryGDP / tile.GetResourcePopulation();
+            //tile.industryPerCapGDP = tile.agriGDP / tile.GetIndustryPopulation();
+
+            //DEVELOPMENT ###################################################################################
+            if (tile.nation != null) //THIS SHIT IS BAD FOR PERFORMANCE, HAVING A LIST OF OWNED TILES WOULD FIX A LOT OF STUFF
+            {
+                tile.infrastructureLevel += 0.002f + 0.00015f * tile.nation.infrastructureBudget - 0.00050f * tile.infrastructureLevel; //Really bad formula but who cares?
+            }
+        }
+    }
+
+    public void UpdateProvInfrasturcture()
+    {
+        foreach (TileProps tile in mapGenerator.landTilesList) //MAKE THIS AN OWNED TILES ONLY LIST IN THE FUTURE
+        {
+             //Will add more things to this formula
         }
     }
 
@@ -309,7 +330,7 @@ public class UpdateManager : MonoBehaviour
             }
             nation.income = nationTax;
         }
-        
+
         //calculate expense
         foreach (NationProps nation in nations)
         {
@@ -329,7 +350,7 @@ public class UpdateManager : MonoBehaviour
                     Debug.LogError("Resource price not found: " + resource);
                 }
             }
-            
+
             float nationWages = 0;
             foreach (ArmyProps army in nation.armies)
             {
@@ -350,7 +371,7 @@ public class UpdateManager : MonoBehaviour
                 nation.govBuy[key] = 0;
             }
         }
-        
+
         //calculate balance
         foreach (NationProps nation in nations)
         {
@@ -358,7 +379,7 @@ public class UpdateManager : MonoBehaviour
 
             nation.money += Mathf.RoundToInt(nationBalance);
         }
-        
+
         //calculate debt
         foreach (NationProps nation in nations)
         {
@@ -379,7 +400,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateBattles()//THIS MIGHT BE AN ATROCIOUS WAY OF IMPLEMENTING COMBAT...
     {
-        foreach(TileProps tile in tiles)
+        foreach (TileProps tile in tiles)
         {
             //tile.GetComponent<Collider2D>
         }
@@ -449,6 +470,14 @@ public class UpdateManager : MonoBehaviour
             {
                 nation.populationHistory.RemoveAt(0);
             }
+        }
+    }
+
+    public void UpdateTileUI()
+    {
+        if (tileUI.panelUI.activeSelf == true)
+        { 
+            tileUI.UpdateTileUI();
         }
     }
 }

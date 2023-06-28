@@ -8,6 +8,7 @@ public class TileUI : MonoBehaviour
 {
     public GameState gameState;
 
+    public GameObject panelUI;
     public Image tileTerrainImage;
 
     public TMP_Text totalPopText;
@@ -16,6 +17,22 @@ public class TileUI : MonoBehaviour
     public TMP_Text industryPopText;
 
     public TMP_Text resourceTypeText; //Thinking of making this an image;
+
+    public void OpenTileUI()
+    {
+        panelUI.SetActive(true);
+    }
+
+    public void CloseTileUI()
+    {
+        panelUI.SetActive(false);
+    }
+
+    public void SettleTile()
+    {
+        gameState.activeTile.nation = gameState.playerNation; //hard coding feels bad... again
+        gameState.playerNation.tiles.Add(gameState.activeTile);
+    }
 
     public void UpdateTileUI()
     {
