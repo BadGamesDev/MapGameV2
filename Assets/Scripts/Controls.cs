@@ -5,25 +5,5 @@ using UnityEngine;
 
 public class Controls : MonoBehaviour //might need a better name
 {
-    public GameState gameState;
-    GameObject unit;
 
-    private void Update()
-    {
-        if (Input.GetMouseButtonUp(0) && gameState.activeArmy != null && gameState.gameMode == GameState.Mode.freeMode)
-        {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 pos = new Vector2(mousePosition.x, mousePosition.y);
-
-            unit = gameState.activeArmy.gameObject;
-            RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
-            if (hit)
-            {
-                unit.GetComponent<ArmyMovement>().path = new List<Vector2>();
-                unit.GetComponent<ArmyMovement>().currNode = 0;
-                unit.GetComponent<ArmyMovement>().delay = 0.5f;
-                unit.GetComponent<ArmyMovement>().path = GetComponent<PathFinding>().GetPath(unit.transform.position, hit.collider.gameObject.transform.position, 9);
-            }
-        }
-    }
 }

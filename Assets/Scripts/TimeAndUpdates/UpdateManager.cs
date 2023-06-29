@@ -50,7 +50,7 @@ public class UpdateManager : MonoBehaviour
         CalculateGlobalDemand();
         CalculateGlobalSupply();
         UpdateArmyProps();
-        UpdateProvProps();
+        UpdateTileProps();
         UpdateNationProps();
         UpdateTileUI();
     }
@@ -216,7 +216,7 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void UpdateProvProps()
+    public void UpdateTileProps()
     {
         foreach (TileProps tile in mapGenerator.landTilesList)
         {
@@ -265,7 +265,7 @@ public class UpdateManager : MonoBehaviour
             //DEVELOPMENT ###################################################################################
             if (tile.nation != null) //THIS SHIT IS BAD FOR PERFORMANCE, HAVING A LIST OF OWNED TILES WOULD FIX A LOT OF STUFF
             {
-                tile.infrastructureLevel += 0.002f + 0.00015f * tile.nation.infrastructureBudget - 0.00050f * tile.infrastructureLevel; //Really bad formula but who cares?
+                tile.infrastructureLevel += 0.002f + 0.00015f * tile.nation.developmentBudget - 0.00050f * tile.infrastructureLevel; //Really bad formula but who cares?
             }
         }
     }
@@ -318,13 +318,12 @@ public class UpdateManager : MonoBehaviour
         //calculate income
         foreach (NationProps nation in nations)
         {
-            int nationTax = 0;
+            float nationTax = 0;
+            float nationTaxLevel = nation.taxLevel;
 
             foreach (TileProps tile in nation.tiles)
             {
-                tile.tax = Mathf.RoundToInt(tile.agriGDP * 0.1f)
-                + Mathf.RoundToInt(tile.resourceGDP * 0.1f);
-                //+ Mathf.RoundToInt((tile.resourceProduction * resourceManager.resources.Find(r => r.Name == tile.resource).Price) * 0.1f);
+                tile.tax = (tile.agriGDP + tile.resourceGDP) * (nationTaxLevel / 100); //Industry missing for now
 
                 nationTax += tile.tax;
             }

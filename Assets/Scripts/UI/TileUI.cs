@@ -11,6 +11,8 @@ public class TileUI : MonoBehaviour
     public GameObject panelUI;
     public Image tileTerrainImage;
 
+    public TMP_Text tileOwnerText;
+
     public TMP_Text totalPopText;
     public TMP_Text agriPopText;
     public TMP_Text resourcePopText;
@@ -36,6 +38,15 @@ public class TileUI : MonoBehaviour
 
     public void UpdateTileUI()
     {
+        if (gameState.activeTile.nation != null)
+        { 
+            tileOwnerText.text = gameState.activeTile.nation.name; 
+        }
+        else
+        {
+            tileOwnerText.text = "Unoccupied";
+        }
+
         totalPopText.text = gameState.activeTile.totalPop.ToString();
         agriPopText.text = gameState.activeTile.agriPop.ToString();
         resourcePopText.text = gameState.activeTile.resourcePop.ToString();

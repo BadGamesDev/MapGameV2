@@ -45,7 +45,7 @@ public class TileProps : MonoBehaviour
 
     public float infrastructureLevel; //SUBJECT TO CHANGE
 
-    public int tax; //might change
+    public float tax; //might change
 
     private void Awake()
     {

@@ -58,6 +58,8 @@ MonoBehaviour:
   expense: 0
   money: 0
   debt: 0
+  taxLevel: 20
+  developmentBudget: 20
   populationHistory: 
 --- !u!114 &-3870087925522699869
 MonoBehaviour:

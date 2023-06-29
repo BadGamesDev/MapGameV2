@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -19,9 +20,9 @@ public class TileInteractions : MonoBehaviour
         gameState = FindObjectOfType<GameState>();
     }
 
-    private void OnMouseDown() //mousedown is bad UI but it is fine for now
+    private void OnMouseOver()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonUp(0))
         {
             if (!EventSystem.current.IsPointerOverGameObject()) //APPARENTLY THIS IS ACTUALLY BAD BUT I DON'T KNOW WHY
             {
@@ -48,6 +49,29 @@ public class TileInteractions : MonoBehaviour
                 else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation)
                 {
                     AssignRecruitTiles();
+                }
+            }
+        }
+
+        else if (Input.GetMouseButtonUp(1))
+        {
+            if (!EventSystem.current.IsPointerOverGameObject()) //SAME PROBLEM AS STATED ABOVE
+            {
+                if (gameState.activeArmy != null && gameState.gameMode == GameState.Mode.freeMode)
+                {
+                    Debug.Log("Mobe");
+                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 pos = new Vector2(mousePosition.x, mousePosition.y);
+
+                    GameObject army = gameState.activeArmy.gameObject;
+                    RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
+                    if (hit)
+                    {
+                        army.GetComponent<ArmyMovement>().path = new List<Vector2>();
+                        army.GetComponent<ArmyMovement>().currNode = 0;
+                        army.GetComponent<ArmyMovement>().delay = 0.5f;
+                        army.GetComponent<ArmyMovement>().path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh + Move everything from camera to controler
+                    }
                 }
             }
         }
