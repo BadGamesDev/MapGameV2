@@ -5,7 +5,6 @@
     public class PathGrid : MonoBehaviour
     {
         public bool drawGrid = true;
-        //float delay = 2; might delete
 
         private PathNode[,] grid;
         public int width = 0;

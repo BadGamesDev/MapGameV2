@@ -7,30 +7,51 @@ public class ArmyMovement : MonoBehaviour
     private ArmyTracker armyTracker;
     public ArmyProps armyProps;
     public TimeManager timeManager;
+    public MapGenerator mapGenerator; //I REALLY don't like referencing this shit everywhere
 
     public List<Vector2> path = new List<Vector2>();
 
     public int currNode = 0;
-    public float delay = 5;
+    public float delay = 0;
 
     private void Start()
     {
         timeManager = FindObjectOfType<TimeManager>();
-        
+        mapGenerator = FindObjectOfType<MapGenerator>();
         armyTracker = ArmyTracker.instance;
         armyTracker.AddArmy(armyProps, transform.position);
     }
 
-    private void Update()
+    public void MarchArmy()
     {
         if (path.Count > 0)
         {
             if (delay >= 5)
             {
-                RaycastHit2D hit = Physics2D.Raycast(path[currNode], path[currNode], 0, LayerMask.GetMask("Tiles"));
+                int tileLayer = LayerMask.GetMask("Tiles");
+                RaycastHit2D hit = Physics2D.Raycast(path[currNode+1], path[currNode+1], 0, tileLayer);
                 if (hit)
                 {
                     MoveTo(hit.collider.gameObject);
+                    List<TileProps> neighbors = armyProps.GetNeighbors();
+
+                    bool hasFOW = neighbors.Exists(tile => tile.FOW == true);
+
+                    if (hasFOW)
+                    {
+                        foreach (TileProps neighbor in neighbors)
+                        {
+                            if (!armyProps.nation.discoveredTiles.Contains(neighbor))
+                            {
+                                armyProps.nation.discoveredTiles.Add(neighbor);
+                            }
+                        }
+                        mapGenerator.ClearFOW();
+                    }
+                    else
+                    {
+                        Debug.Log("None of the neighbors have fog of war enabled.");
+                    }
                 }
                 else
                 {
@@ -42,7 +63,7 @@ public class ArmyMovement : MonoBehaviour
             }
             else
             {
-                delay += Time.deltaTime * timeManager.timeMultiplier; //maybe also add unit speed
+                delay += 1;
             }
         }
     }
@@ -57,11 +78,11 @@ public class ArmyMovement : MonoBehaviour
 
         armyTracker.UpdateArmyPosition(armyProps, transform.position);
 
-        if (currNode >= path.Count)
+        if (currNode >= path.Count - 1)
         {
             path = new List<Vector2>();
             currNode = 0;
-            delay = 0.5f;
+            delay = 0.0f;
         }
     }
 }

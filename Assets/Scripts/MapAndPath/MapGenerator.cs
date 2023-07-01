@@ -7,6 +7,7 @@ public class MapGenerator : MonoBehaviour
 {
     public GameState gameState;
 
+    public GameObject fowPrefab;
     public GameObject tilePrefab;
     public GameObject nationPrefab;
     public GameObject tilesParent;
@@ -41,8 +42,12 @@ public class MapGenerator : MonoBehaviour
                     pos.x += 0.5f;
                 }
 
-                tilePrefab.GetComponent<TileProps>().SwitchType(1); // maybe there is a better way?
-                Instantiate(tilePrefab, pos, Quaternion.identity, tilesParent.transform);
+                tilePrefab.GetComponent<TileProps>().SwitchType(1);
+                GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity, tilesParent.transform);
+
+                GameObject fog = Instantiate(fowPrefab, tile.transform.position, Quaternion.identity, tile.transform);
+                TileProps tileProps = tile.GetComponent<TileProps>();
+                tileProps.FOW = fog;
             }
         }
 
@@ -95,7 +100,20 @@ public class MapGenerator : MonoBehaviour
 
         GenerateNations();
 
+        ClearFOW();
+
         Invoke(nameof(DrawGrid), Time.deltaTime);
+    }
+
+    public void ClearFOW()
+    {
+        foreach (TileProps tile in gameState.playerNation.discoveredTiles)
+        {
+            if (tile.FOW.activeSelf)
+            {
+                tile.FOW.SetActive(false);
+            }
+        }
     }
 
     void GenerateNations()
@@ -116,6 +134,9 @@ public class MapGenerator : MonoBehaviour
             nation.tiles.Add(randomTile);
 
             availableTiles.RemoveAt(randomIndex);
+
+            nation.discoveredTiles.Add(randomTile);
+            nation.discoveredTiles.AddRange(nation.GetNationNeighbors());
         }
 
         gameState.ChoosePlayerNation();

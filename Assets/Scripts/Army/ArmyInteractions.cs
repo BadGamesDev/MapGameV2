@@ -7,21 +7,27 @@ public class ArmyInteractions : MonoBehaviour
 {
     public ArmyProps armyProps;
     public GameState gameState;
-
+    public ArmyUI armyUI;
+    
     private void Start()
     {
         gameState = FindObjectOfType<GameState>();
+        armyUI = FindObjectOfType<ArmyUI>();
     }
 
-    private void OnMouseDown()
+    private void OnMouseOver()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonUp(0))
         {
-            if (!EventSystem.current.IsPointerOverGameObject()) //APPARENTLY THIS IS ACTUALLY BAD BUT I DON'T KNOW WHY
+            if (gameState.playerNation == armyProps.nation) //This is temporary, player should be able to check armies of everyone
             {
-                if (gameState.gameMode == GameState.Mode.freeMode)
+                if (!EventSystem.current.IsPointerOverGameObject()) //Apparently this is not a good way of making sure you don't click behind UI but it works for now.
                 {
-                    gameState.activeArmy = armyProps;
+                    if (gameState.gameMode == GameState.Mode.freeMode)
+                    {
+                        gameState.activeArmy = armyProps;
+                        armyUI.OpenArmyUI();
+                    }
                 }
             }
         }

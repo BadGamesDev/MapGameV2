@@ -155,9 +155,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armyProps: {fileID: -4760098470870953994}
   timeManager: {fileID: 0}
+  mapGenerator: {fileID: 0}
   path: []
   currNode: 0
-  delay: 0.5
+  delay: 0
 --- !u!114 &-4760098470870953994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nation: {fileID: 0}
   reinforceTiles: []
+  reinforce: 0
   desiredSize: 0
   curSize: 0
   availablePop: 0
@@ -193,3 +195,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armyProps: {fileID: -4760098470870953994}
   gameState: {fileID: 0}
+  armyUI: {fileID: 0}

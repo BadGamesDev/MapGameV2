@@ -142,13 +142,13 @@ public class MapModes : MonoBehaviour
     {
         foreach (TileProps tile in mapGenerator.landTilesList)
         {
-            if (tile.nation != null && tile.isReinforceTile == false)
+            if (tile.nation == gameState.playerNation && tile.isReinforceTile == false)
             {
                 tile.SwitchSprite(0);
                 tile.GetComponent<Renderer>().material.color = Color.green;
             }
 
-            else if (tile.nation != null && tile.isReinforceTile == true)
+            else if (tile.nation == gameState.playerNation && tile.isReinforceTile == true)
             {
                 if (gameState.activeArmy == null) //doesn't feel right, maybe it can be simplified
                 {
@@ -157,7 +157,7 @@ public class MapModes : MonoBehaviour
                 }
                 else
                 {
-                    if (tile.nation.armies.Find(army => army == gameState.activeArmy).reinforceTiles.Contains(tile)) //A BUG HAPPENS HERE FOR SOME FUCKING REASON
+                    if (tile.nation.armies.Find(army => army == gameState.activeArmy).reinforceTiles.Contains(tile))
                     {
                         tile.SwitchSprite(0);
                         tile.GetComponent<Renderer>().material.color = Color.magenta;

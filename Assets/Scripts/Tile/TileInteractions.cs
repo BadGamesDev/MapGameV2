@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class TileInteractions : MonoBehaviour
 {
     public TileProps tileProps;
-    public MainUI mainUI;
+    public MainUI mainUI; //for recruitment numbers input
     public TileUI tileUI;
     public GameState gameState;
     public GameObject Army;
@@ -22,9 +22,9 @@ public class TileInteractions : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (!EventSystem.current.IsPointerOverGameObject()) //apparently this is bad I don't know why
         {
-            if (!EventSystem.current.IsPointerOverGameObject()) //APPARENTLY THIS IS ACTUALLY BAD BUT I DON'T KNOW WHY
+            if (Input.GetMouseButtonUp(0)) //Open UI
             {
                 if (gameState.gameMode == GameState.Mode.freeMode && tileProps.type != 1)
                 {
@@ -42,35 +42,29 @@ public class TileInteractions : MonoBehaviour
                     }
                 }
 
-                else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null)
+                else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null && tileProps.nation == gameState.playerNation)
                 {
                     RecruitArmy();
                 }
-                else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation)
+                
+                else if (gameState.gameMode == GameState.Mode.recruitModeTiles == true && tileProps.nation == gameState.activeArmy.nation && tileProps.nation == gameState.playerNation)
                 {
                     AssignRecruitTiles();
                 }
             }
-        }
 
-        else if (Input.GetMouseButtonUp(1))
-        {
-            if (!EventSystem.current.IsPointerOverGameObject()) //SAME PROBLEM AS STATED ABOVE
+            else if (Input.GetMouseButtonUp(1)) //MOVE ARMY
             {
                 if (gameState.activeArmy != null && gameState.gameMode == GameState.Mode.freeMode)
                 {
-                    Debug.Log("Mobe");
                     Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector2 pos = new Vector2(mousePosition.x, mousePosition.y);
+                    Vector2 targetPos = new Vector2(mousePosition.x, mousePosition.y);
 
                     GameObject army = gameState.activeArmy.gameObject;
-                    RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
+                    RaycastHit2D hit = Physics2D.Raycast(targetPos, targetPos, 0, LayerMask.GetMask("Tiles"));
                     if (hit)
                     {
-                        army.GetComponent<ArmyMovement>().path = new List<Vector2>();
-                        army.GetComponent<ArmyMovement>().currNode = 0;
-                        army.GetComponent<ArmyMovement>().delay = 0.5f;
-                        army.GetComponent<ArmyMovement>().path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh + Move everything from camera to controler
+                        army.GetComponent<ArmyMovement>().path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh can probably be simplified + also move everything from camera to controler
                     }
                 }
             }

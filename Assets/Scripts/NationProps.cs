@@ -7,6 +7,7 @@ public class NationProps : MonoBehaviour
 {
     public bool isAI = true; //will change this in the future
 
+    public List<TileProps> discoveredTiles;
     public List<TileProps> tiles;
     public List<ArmyProps> armies;
     
@@ -115,5 +116,100 @@ public class NationProps : MonoBehaviour
         {
             demand.Add(resourceName, amount);
         }
+    }
+
+    public List<TileProps> GetNationNeighbors()
+    {
+        List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
+
+        foreach (TileProps tile in tiles)
+        {
+            if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
+            {
+                borderTiles.Add(tile);
+            }
+        }
+
+        List<TileProps> neighbors = new List<TileProps>(); //get neighbors of bordertiles
+        foreach (TileProps tile in borderTiles)
+        {
+            foreach (Vector2 neighborPos in tile.neighbors)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero);
+                if (hit.collider != null)
+                {
+                    TileProps neighborTile = hit.collider.GetComponent<TileProps>();
+                    
+                    if (neighborTile != null) //I feel like I don't need this check
+                    {
+                        neighbors.Add(neighborTile);
+                    }
+                }
+            }
+        }
+
+        bool IsTileOwnedByNation(Vector2 position) //method used to see if a tile is border with the lambda thingy
+        {
+            RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
+            if (hit.collider != null)
+            {
+                TileProps tile = hit.collider.GetComponent<TileProps>();
+                if (tile != null && tile.nation == this)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return neighbors;
+    }
+
+    public List<TileProps> GetNationEmptyNeighbors()
+    {
+        List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
+        
+        foreach (TileProps tile in tiles)
+        {
+            if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
+            {
+                borderTiles.Add(tile);
+            }
+        }
+
+        List<TileProps> unclaimedNeighbors = new List<TileProps>(); //get neighbors of bordertiles
+        foreach (TileProps tile in borderTiles)
+        {
+            foreach (Vector2 neighborPos in tile.neighbors)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero);
+                if (hit.collider != null)
+                {
+                    TileProps neighborTile = hit.collider.GetComponent<TileProps>();
+                    if (neighborTile != null && neighborTile.nation == null && neighborTile.type != 1)
+                    {
+                        unclaimedNeighbors.Add(neighborTile);
+                    }
+                }
+            }
+        }
+
+        bool IsTileOwnedByNation(Vector2 position) //method used to see if a tile is border with the lambda thingy
+        {
+            RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
+            if (hit.collider != null)
+            {
+                TileProps tile = hit.collider.GetComponent<TileProps>();
+                if (tile != null && tile.nation == this)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return unclaimedNeighbors;
     }
 }

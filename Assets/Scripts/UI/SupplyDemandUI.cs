@@ -16,6 +16,13 @@ public class SupplyDemandUI : MonoBehaviour
     public NationProps nation;
     public ResourceManager resourceManager;
 
+    private void Start() //doing this here feels bad.
+    {
+        resourceManager.InitializeResourcePrices();
+        resourceManager.InitializeResources();
+        resourceManager.InitializeSupplyDemand();
+    }
+
     private void Update()
     {
         nation = GameObject.Find("Nation0").GetComponent<NationProps>();
@@ -45,7 +52,7 @@ public class SupplyDemandUI : MonoBehaviour
             demandText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(demandAmount))}";
         }
 
-        foreach (var supplyItem in resourceManager.globalSupply)
+        foreach (var supplyItem in resourceManager.globalSupply) // THERE IS A BUG HERE FOR SOME FUCKING REASON
         {
             string resourceName = supplyItem.Key;
             float supplyAmount = supplyItem.Value;

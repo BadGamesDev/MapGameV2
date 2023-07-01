@@ -13,6 +13,7 @@ public class UpdateManager : MonoBehaviour
 
     public MainUI mainUI; //for debugging
     public TileUI tileUI;
+    public ArmyUI armyUI;
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
 
@@ -52,7 +53,9 @@ public class UpdateManager : MonoBehaviour
         UpdateArmyProps();
         UpdateTileProps();
         UpdateNationProps();
+        MoveArmies();
         UpdateTileUI();
+        UpdateArmyUI();
     }
 
     public void OnMonthTick()
@@ -158,10 +161,10 @@ public class UpdateManager : MonoBehaviour
         {
             army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));//get recruit pops
 
-            if (army.curSize < army.desiredSize)
+            if (army.curSize < army.desiredSize && army.reinforce == true)
             {
                 int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop)); //total pop of tiles (used for reinforce speed)
-                float reinforcements = totalPop * 0.001f;
+                float reinforcements = totalPop * 0.1f;
 
                 reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop);//is there a problem here?
                 int reinforcementsInt = Mathf.RoundToInt(reinforcements); //reinforcement number int
@@ -221,11 +224,11 @@ public class UpdateManager : MonoBehaviour
         foreach (TileProps tile in mapGenerator.landTilesList)
         {
             //POPULATION ###################################################################################
-            tile.IncreasePopulation(0.001f);
+            tile.IncreasePopulation(0.0001f);
 
-            if (tile.recruitPop < tile.totalPop)
+            if (tile.recruitPop < tile.totalPop / 10)
             {
-                tile.recruitPop += Mathf.RoundToInt(tile.totalPop * 0.005f);
+                tile.recruitPop += Mathf.RoundToInt(tile.totalPop * 0.001f);
             }
 
             //ECONOMY ######################################################################################
@@ -409,52 +412,11 @@ public class UpdateManager : MonoBehaviour
     {
         foreach (NationProps nation in nations)
         {
-            List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
-            foreach (TileProps tile in nation.tiles)
+            if (nation.GetNationEmptyNeighbors().Count > 0 && nation.isAI == true) //choose expansion target
             {
-                if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
-                {
-                    borderTiles.Add(tile);
-                }
-            }
-
-            List<TileProps> unclaimedNeighbors = new List<TileProps>(); //get neighbors of bordertiles
-            foreach (TileProps tile in borderTiles)
-            {
-                foreach (Vector2 neighborPos in tile.neighbors)
-                {
-                    RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero);
-                    if (hit.collider != null)
-                    {
-                        TileProps neighborTile = hit.collider.GetComponent<TileProps>();
-                        if (neighborTile != null && neighborTile.nation == null && neighborTile.type != 1)
-                        {
-                            unclaimedNeighbors.Add(neighborTile);
-                        }
-                    }
-                }
-            }
-
-            if (unclaimedNeighbors.Count > 0) //choose expansion target
-            {
-                TileProps randomNeighbor = unclaimedNeighbors[Random.Range(0, unclaimedNeighbors.Count)];
+                TileProps randomNeighbor = nation.GetNationEmptyNeighbors()[Random.Range(0, nation.GetNationEmptyNeighbors().Count)];
                 randomNeighbor.nation = nation;
                 nation.tiles.Add(randomNeighbor);
-            }
-
-            bool IsTileOwnedByNation(Vector2 position) //method used to see if a tile is border
-            {
-                RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
-                if (hit.collider != null)
-                {
-                    TileProps tile = hit.collider.GetComponent<TileProps>();
-                    if (tile != null && tile.nation == nation)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
             }
         }
     }
@@ -477,6 +439,22 @@ public class UpdateManager : MonoBehaviour
         if (tileUI.panelUI.activeSelf == true)
         { 
             tileUI.UpdateTileUI();
+        }
+    }
+    
+    public void UpdateArmyUI()
+    {
+        if(armyUI.panelUI.activeSelf == true)
+        {
+            armyUI.UpdateArmyUI();
+        }
+    }
+
+    public void MoveArmies() //ABSOLUTELY ATROCIOUS, OPTIMISE THIS SHIT ASAP
+    {
+        foreach (ArmyProps army in armies)
+        {
+            army.gameObject.GetComponent<ArmyMovement>().MarchArmy();
         }
     }
 }

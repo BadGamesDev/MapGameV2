@@ -7,22 +7,32 @@ using UnityEngine.UI;
 public class TileUI : MonoBehaviour
 {
     public GameState gameState;
+    public MapGenerator mapGenerator; //not a big fan of referencing this here
 
     public GameObject panelUI;
+    public Button buttonSettleTile; //not a big fan of referencing it like this either
     public Image tileTerrainImage;
 
     public TMP_Text tileOwnerText;
-
     public TMP_Text totalPopText;
     public TMP_Text agriPopText;
     public TMP_Text resourcePopText;
     public TMP_Text industryPopText;
-
     public TMP_Text resourceTypeText; //Thinking of making this an image;
 
     public void OpenTileUI()
     {
         panelUI.SetActive(true);
+
+        if (gameState.playerNation.GetNationEmptyNeighbors().Contains(gameState.activeTile))
+        {
+            buttonSettleTile.interactable = true;
+        }
+
+        else
+        { 
+            buttonSettleTile.interactable = false; 
+        }
     }
 
     public void CloseTileUI()
@@ -30,17 +40,11 @@ public class TileUI : MonoBehaviour
         panelUI.SetActive(false);
     }
 
-    public void SettleTile()
-    {
-        gameState.activeTile.nation = gameState.playerNation; //hard coding feels bad... again
-        gameState.playerNation.tiles.Add(gameState.activeTile);
-    }
-
     public void UpdateTileUI()
     {
         if (gameState.activeTile.nation != null)
-        { 
-            tileOwnerText.text = gameState.activeTile.nation.name; 
+        {
+            tileOwnerText.text = gameState.activeTile.nation.name;
         }
         else
         {
@@ -53,5 +57,23 @@ public class TileUI : MonoBehaviour
         industryPopText.text = gameState.activeTile.industryPop.ToString();
 
         resourceTypeText.text = gameState.activeTile.resource;
+    }
+
+    public void SettleTile()
+    {
+        gameState.activeTile.nation = gameState.playerNation; //hard coding feels bad... again
+        gameState.playerNation.tiles.Add(gameState.activeTile);
+
+        List<TileProps> neighbors = gameState.playerNation.GetNationNeighbors(); //No need to get all the nation neighbors, just get tile neighbors
+
+        foreach (TileProps neighbor in neighbors)
+        {
+            if (!gameState.playerNation.discoveredTiles.Contains(neighbor))
+            {
+                gameState.playerNation.discoveredTiles.Add(neighbor);
+            }
+        }
+
+        mapGenerator.ClearFOW();
     }
 }

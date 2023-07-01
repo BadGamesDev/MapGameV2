@@ -8,16 +8,8 @@ public class ResourceManager : MonoBehaviour
     public Dictionary<string, float> resourcePrices;
     public Dictionary<string, float> globalDemand;
     public Dictionary<string, float> globalSupply;
-    
 
-    private void Awake()
-    {
-        InitializeResourcePrices();
-        InitializeResources();
-        InitializeSupplyDemand();
-    }
-
-    private void InitializeResourcePrices()
+    public void InitializeResourcePrices()
     {
         resourcePrices = new Dictionary<string, float>
         {
@@ -29,7 +21,7 @@ public class ResourceManager : MonoBehaviour
         };
     }
 
-    private void InitializeResources()
+    public void InitializeResources()
     {
         resources = new List<Resource>();
         foreach (KeyValuePair<string, float> resource in resourcePrices)
@@ -39,7 +31,7 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    private void InitializeSupplyDemand()
+    public void InitializeSupplyDemand()
     {
         globalSupply = new Dictionary<string, float>();
         globalDemand = new Dictionary<string, float>();
