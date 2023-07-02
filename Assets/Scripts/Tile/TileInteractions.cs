@@ -61,10 +61,15 @@ public class TileInteractions : MonoBehaviour
                     Vector2 targetPos = new Vector2(mousePosition.x, mousePosition.y);
 
                     GameObject army = gameState.activeArmy.gameObject;
+                    ArmyMovement armyMovement = army.GetComponent<ArmyMovement>();
+                    
+                    armyMovement.delay = 0;
+                    armyMovement.currNode = 0;
+
                     RaycastHit2D hit = Physics2D.Raycast(targetPos, targetPos, 0, LayerMask.GetMask("Tiles"));
                     if (hit)
                     {
-                        army.GetComponent<ArmyMovement>().path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh can probably be simplified + also move everything from camera to controler
+                        armyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh can probably be simplified + also move everything from camera to controler
                     }
                 }
             }

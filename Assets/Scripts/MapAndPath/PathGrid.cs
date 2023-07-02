@@ -56,31 +56,26 @@
                 }
             }
         }
-        //might delete
-        //private void Update()
-        //{
-        //    delay -= Time.deltaTime;
 
-        //    if (drawGrid && delay < 0)
-        //    {
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            for (int y = 0; y < height; y++)
-        //            {
-        //                if (grid[x, y].open == 10)
-        //                {
-        //                    Debug.DrawLine(grid[x, y].pos - new Vector2(0.5f, 0.5f), grid[x, y].pos + new Vector2(0.5f, 0.5f), Color.red, 0.5f);
-        //                }
-        //                else if (grid[x,y].open == 5)
-        //                {
-        //                    Debug.DrawLine(grid[x, y].pos - new Vector2(0.5f, 0.5f), grid[x, y].pos + new Vector2(0.5f, 0.5f), Color.yellow, 0.5f);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+    private void Update() //This is just for debug
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (grid[x, y].open == 10)
+                {
+                    Debug.DrawLine(grid[x, y].pos - new Vector2(0.5f, 0.5f), grid[x, y].pos + new Vector2(0.5f, 0.5f), Color.red, 0.5f);
+                }
+                else if (grid[x, y].open == 5)
+                {
+                    Debug.DrawLine(grid[x, y].pos - new Vector2(0.5f, 0.5f), grid[x, y].pos + new Vector2(0.5f, 0.5f), Color.yellow, 0.5f);
+                }
+            }
+        }
+    }
 
-        public PathNode GetNode(Vector2 pos)
+    public PathNode GetNode(Vector2 pos)
         {
             pos.y = Mathf.RoundToInt(pos.y / 0.86f);
             if (pos.y % 2 == 0)

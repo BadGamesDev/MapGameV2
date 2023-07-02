@@ -22,7 +22,7 @@ public class ArmyMovement : MonoBehaviour
         armyTracker.AddArmy(armyProps, transform.position);
     }
 
-    public void MarchArmy()
+    public void MarchArmy() //called in updateManager everyday
     {
         if (path.Count > 0)
         {

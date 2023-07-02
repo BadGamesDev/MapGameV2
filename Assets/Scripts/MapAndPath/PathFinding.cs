@@ -36,7 +36,7 @@ public class PathFinding : MonoBehaviour
             for (int y = 0; y < grid.height; y++)
             {
                 PathNode pathNode = grid.GetNodeInt(x, y);
-                pathNode.gCost = 9999999;
+                pathNode.gCost = 999999;
                 pathNode.CalcFcost();
                 pathNode.cameFromNode = null;
             }
@@ -87,7 +87,13 @@ public class PathFinding : MonoBehaviour
                 }
             }
         }
-        
+
+        PathNode closestNode = GetClosestNode(endNode);
+        if (closestNode != null)
+        {
+            return CalcPath(closestNode);
+        }
+
         Debug.Log("No Path Found");
         pathVect.Add(startPos);
         return pathVect;
@@ -118,36 +124,37 @@ public class PathFinding : MonoBehaviour
     {
         List<PathNode> neighborList = new List<PathNode>();
 
-        if (currNode.pos.x - 1 > 0)
+        if (currNode.pos.x - 1 >= 0) //can move left
         {
-            neighborList.Add(grid.GetNode(currNode.pos - new Vector2(1, 0)));
+            neighborList.Add(grid.GetNode(currNode.pos + new Vector2(-1, 0)));
         }
-        if (currNode.pos.x + 1 < grid.width)
+        
+        if (currNode.pos.x + 1 < grid.width) //can move right
         {
             neighborList.Add(grid.GetNode(currNode.pos + new Vector2(1, 0)));
         }
 
         if (Mathf.RoundToInt((currNode.pos.y + 0.86f) / 0.86f) < grid.height)
         {
-            if(currNode.pos.x - 0.5f > 0)
+            if(currNode.pos.x - 0.5f >= 0) //can move upper left
             {
                 neighborList.Add(grid.GetNode(currNode.pos + new Vector2(-0.5f, 0.86f)));
             }
 
-            if (currNode.pos.x + 0.5f < grid.width)
+            if (currNode.pos.x + 0.5f < grid.width) //can move upper right
             {
                 neighborList.Add(grid.GetNode(currNode.pos + new Vector2(0.5f, 0.86f)));
             }
         }
 
-        if (currNode.pos.y - 0.86f > 0)
+        if (currNode.pos.y - 0.86f >= 0)
         {
-            if (currNode.pos.x - 0.5f > 0)
+            if (currNode.pos.x - 0.5f >= 0) //can move bottom left
             {
                 neighborList.Add(grid.GetNode(currNode.pos + new Vector2(-0.5f, -0.86f)));
             }
 
-            if (currNode.pos.x + 0.5f < grid.width)
+            if (currNode.pos.x + 0.5f < grid.width) //can move bottom right
             {
                 neighborList.Add(grid.GetNode(currNode.pos + new Vector2(0.5f, -0.86f)));
             }
@@ -175,6 +182,24 @@ public class PathFinding : MonoBehaviour
             pathVector.Add(path[n].pos);
         }
         return pathVector;
+    }
+
+    private PathNode GetClosestNode(PathNode targetNode)
+    {
+        PathNode closestNode = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (PathNode node in closedNodes)
+        {
+            float distance = CalcDistance(node.pos, targetNode.pos);
+            if (distance < closestDistance && node.open <= 9)
+            {
+                closestNode = node;
+                closestDistance = distance;
+            }
+        }
+
+        return closestNode;
     }
 }
 
