@@ -25,7 +25,7 @@ public class ArmyProps : MonoBehaviour
         reinforce = true;
     }
 
-    public List<TileProps> GetNeighbors() // I might just get the neighbors of the parent tile instead of doing this bullshit
+    public List<TileProps> GetNeighbors() //I might just get the neighbors of the parent tile instead of doing this bullshit
     {
         List<Vector2> Coords = new List<Vector2> //get coords of neighbors
         {

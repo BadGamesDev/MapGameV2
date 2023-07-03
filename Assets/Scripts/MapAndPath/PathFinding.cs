@@ -94,7 +94,7 @@ public class PathFinding : MonoBehaviour
             return CalcPath(closestNode);
         }
 
-        Debug.Log("No Path Found");
+        Debug.Log("No Path Found"); //This part is mostly useless now
         pathVect.Add(startPos);
         return pathVect;
     }

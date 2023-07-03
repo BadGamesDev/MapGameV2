@@ -129,7 +129,8 @@ public class MapGenerator : MonoBehaviour
 
             int randomIndex = Random.Range(0, availableTiles.Count);
             TileProps randomTile = availableTiles[randomIndex];
-            
+
+            randomTile.infrastructureLevel = 20;
             randomTile.nation = nation;
             nation.tiles.Add(randomTile);
 

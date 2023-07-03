@@ -20,7 +20,11 @@ public class NationProps : MonoBehaviour
     public float totalGDP;
 
     public float income;
+    public float taxIncome;
+
     public float expense;
+    public float devExpense;
+    public float milExpense;
 
     public int money;
     public int debt;
@@ -116,6 +120,31 @@ public class NationProps : MonoBehaviour
         {
             demand.Add(resourceName, amount);
         }
+    }
+
+    public void CalcTaxIncome()
+    {
+        float nationTax = 0;
+        float nationTaxLevel = taxLevel;
+
+        foreach (TileProps tile in tiles) //Maybe move this to tile update?
+        {
+            tile.tax = (tile.agriGDP + tile.resourceGDP) * (nationTaxLevel); //Industry missing for now
+
+            nationTax += tile.tax;
+        }
+        taxIncome = nationTax;
+        income = nationTax; //Thi is placeholder until another method is made
+    }
+
+    public void CalcDevExpense()
+    {
+
+    }
+
+    public void CalcMilExpense()
+    {
+
     }
 
     public List<TileProps> GetNationNeighbors()

@@ -14,6 +14,7 @@ public class UpdateManager : MonoBehaviour
     public MainUI mainUI; //for debugging
     public TileUI tileUI;
     public ArmyUI armyUI;
+    public EconomyUI economyUI;
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
 
@@ -232,9 +233,9 @@ public class UpdateManager : MonoBehaviour
             }
 
             //ECONOMY ######################################################################################
-            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * tile.infrastructureLevel;
-            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * tile.infrastructureLevel;
-            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * tile.infrastructureLevel;
+            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * (tile.infrastructureLevel + 0.20f); //placeholder formula
+            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * (tile.infrastructureLevel + 0.20f);
+            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * (tile.infrastructureLevel + 0.20f);
 
             float globalAgriSupplyAmount = resourceManager.globalSupply[tile.agriResource];//agri
             float globalAgriDemandAmount = resourceManager.globalDemand[tile.agriResource];
@@ -268,16 +269,10 @@ public class UpdateManager : MonoBehaviour
             //DEVELOPMENT ###################################################################################
             if (tile.nation != null) //THIS SHIT IS BAD FOR PERFORMANCE, HAVING A LIST OF OWNED TILES WOULD FIX A LOT OF STUFF
             {
-                tile.infrastructureLevel += 0.002f + 0.00015f * tile.nation.developmentBudget - 0.00050f * tile.infrastructureLevel; //Really bad formula but who cares?
+                float developmentCost = (tile.totalPop / 500) * tile.nation.developmentBudget;
+                tile.infrastructureLevel += 0.002f + 0.015f * tile.nation.developmentBudget - 0.0005f * tile.infrastructureLevel; //Really bad formula but who cares?
+                tile.nation.GovBuy("Timber", developmentCost); //PLEASE THINK ABOUT THIS! FEELS HORRIBLE FOR PERFORMANCE, AND KINDA STUPID EVEN IN GAMEPLAY TERMS
             }
-        }
-    }
-
-    public void UpdateProvInfrasturcture()
-    {
-        foreach (TileProps tile in mapGenerator.landTilesList) //MAKE THIS AN OWNED TILES ONLY LIST IN THE FUTURE
-        {
-             //Will add more things to this formula
         }
     }
 
@@ -321,16 +316,7 @@ public class UpdateManager : MonoBehaviour
         //calculate income
         foreach (NationProps nation in nations)
         {
-            float nationTax = 0;
-            float nationTaxLevel = nation.taxLevel;
-
-            foreach (TileProps tile in nation.tiles)
-            {
-                tile.tax = (tile.agriGDP + tile.resourceGDP) * (nationTaxLevel / 100); //Industry missing for now
-
-                nationTax += tile.tax;
-            }
-            nation.income = nationTax;
+            nation.CalcTaxIncome();
         }
 
         //calculate expense
@@ -408,7 +394,7 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void AutoNationExpansion()
+    public void AutoNationExpansion() //THINKING OF REMOVING THIS SHIT
     {
         foreach (NationProps nation in nations)
         {
@@ -450,7 +436,12 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void MoveArmies() //ABSOLUTELY ATROCIOUS, OPTIMISE THIS SHIT ASAP
+    public void UpdateEconomyUI()
+    {
+
+    }
+
+    public void MoveArmies() //PLEASE FOR THE LOVE OF GOD OPTIMISE THIS
     {
         foreach (ArmyProps army in armies)
         {

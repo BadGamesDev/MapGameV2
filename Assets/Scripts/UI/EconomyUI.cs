@@ -10,17 +10,22 @@ public class EconomyUI : MonoBehaviour
 
     public Slider sliderTaxLevel;
     public Slider sliderDevBudget;
+    public Slider sliderMilBudget;
+
+    public TMP_Text taxIncomeText;
+    public TMP_Text devExpenseText;
+    public TMP_Text milExpenseText;
 
     //public TMP_Text textTaxLevel;
     //public TMP_Text textDevBudget;
 
     public void OnTaxationSliderChanged()
     {
-        gameState.playerNation.taxLevel = sliderTaxLevel.value * 100f;
+        gameState.playerNation.taxLevel = sliderTaxLevel.value;
     }
 
     public void OnDevelopmentSliderChanged()
     {
-        gameState.playerNation.developmentBudget = sliderDevBudget.value * 100f;
+        gameState.playerNation.developmentBudget = sliderDevBudget.value;
     }
 }

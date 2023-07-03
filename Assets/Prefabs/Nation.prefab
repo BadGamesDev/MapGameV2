@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAI: 1
+  discoveredTiles: []
   tiles: []
   armies: []
   nationName: 
@@ -58,8 +59,8 @@ MonoBehaviour:
   expense: 0
   money: 0
   debt: 0
-  taxLevel: 20
-  developmentBudget: 20
+  taxLevel: 0.2
+  developmentBudget: 0.2
   populationHistory: 
 --- !u!114 &-3870087925522699869
 MonoBehaviour:
