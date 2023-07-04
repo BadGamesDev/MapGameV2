@@ -186,7 +186,7 @@ public class MapGenerator : MonoBehaviour
         foreach (TileProps tile in landTilesList)
         {
             tile.totalPop = Mathf.RoundToInt(Random.Range(10000,100000));
-            tile.SetPopulationRatios(30,40,30);
+            tile.SetPopulationRatios(80,20,0);
         }
     }
 

@@ -28,4 +28,9 @@ public class EconomyUI : MonoBehaviour
     {
         gameState.playerNation.developmentBudget = sliderDevBudget.value;
     }
+
+    public void OnMilitarySliderChanged()
+    {
+        gameState.playerNation.militaryBudget = sliderDevBudget.value;
+    }
 }

@@ -460,14 +460,14 @@ RectTransform:
   m_Children:
   - {fileID: 957149832}
   - {fileID: 1300739430}
-  - {fileID: 1695105982}
-  - {fileID: 295193644}
-  - {fileID: 898000248}
+  - {fileID: 654563723}
   - {fileID: 208675579}
   - {fileID: 1691197745}
-  - {fileID: 1017415801}
-  - {fileID: 654563723}
+  - {fileID: 1695105982}
+  - {fileID: 295193644}
   - {fileID: 1266231399}
+  - {fileID: 898000248}
+  - {fileID: 1017415801}
   - {fileID: 1631027538}
   m_Father: {fileID: 1291603588}
   m_RootOrder: 5
@@ -1414,7 +1414,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2222,7 +2222,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 3
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4235,7 +4235,7 @@ RectTransform:
   - {fileID: 613390292}
   - {fileID: 2077723226}
   m_Father: {fileID: 64626253}
-  m_RootOrder: 8
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5903,7 +5903,7 @@ GameObject:
   - component: {fileID: 898000250}
   - component: {fileID: 898000249}
   m_Layer: 5
-  m_Name: TextTaxation (1)
+  m_Name: TaxationNumberText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5922,7 +5922,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 4
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6429,7 +6429,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -7810,7 +7810,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10306,12 +10306,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d30731db5f44541b71509d1b3ae5fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: {fileID: 1630243737}
   armies: []
   tiles: []
   nations: []
   mainUI: {fileID: 1630243738}
   tileUI: {fileID: 1630243742}
   armyUI: {fileID: 1630243744}
+  economyUI: {fileID: 1630243743}
   mapGenerator: {fileID: 519420034}
   resourceManager: {fileID: 1630243735}
 --- !u!114 &1630243735
@@ -10479,6 +10481,10 @@ MonoBehaviour:
   gameState: {fileID: 1630243737}
   sliderTaxLevel: {fileID: 957149833}
   sliderDevBudget: {fileID: 1300739431}
+  sliderMilBudget: {fileID: 654563724}
+  taxIncomeText: {fileID: 898000249}
+  devExpenseText: {fileID: 1017415802}
+  milExpenseText: {fileID: 1631027539}
 --- !u!114 &1630243744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11343,7 +11349,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11459,7 +11465,7 @@ GameObject:
   - component: {fileID: 1695105984}
   - component: {fileID: 1695105983}
   m_Layer: 5
-  m_Name: TextTaxation
+  m_Name: TaxationHeaderText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11478,7 +11484,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 64626253}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

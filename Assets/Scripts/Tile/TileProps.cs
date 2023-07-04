@@ -45,6 +45,7 @@ public class TileProps : MonoBehaviour
     public float totalPerCapGDP;
 
     public float infrastructureLevel; //SUBJECT TO CHANGE
+    public float devCost;
 
     public float tax; //might change
 

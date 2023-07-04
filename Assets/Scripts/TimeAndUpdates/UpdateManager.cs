@@ -7,6 +7,7 @@ using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF A
 
 public class UpdateManager : MonoBehaviour
 {
+    public GameState gameState;
     public List<ArmyProps> armies;
     public TileProps[] tiles;
     public NationProps[] nations;
@@ -57,12 +58,13 @@ public class UpdateManager : MonoBehaviour
         MoveArmies();
         UpdateTileUI();
         UpdateArmyUI();
+        UpdateEconomyUI();
     }
 
     public void OnMonthTick()
     {
         UpdateGraphData();
-        AutoNationExpansion();
+        //AutoNationExpansion();
     }
 
     public void CalculateNationalDemand() //setting everything to 0 seems to be working for now
@@ -76,7 +78,7 @@ public class UpdateManager : MonoBehaviour
 
             foreach (TileProps tile in nation.tiles)
             {
-                nation.AddDemand("Grain", tile.totalPop * 0.01f);
+                nation.AddDemand("Grain", tile.totalPop * 0.004f);
             }
 
             foreach (ArmyProps army in nation.armies) //maybe move the requirements inside the army props script?
@@ -192,15 +194,18 @@ public class UpdateManager : MonoBehaviour
                     adjustedCavalryToAdd = Mathf.RoundToInt(capCavalryToAdd * ironRatio);
 
                     army.nation.GovBuy("Iron", availableIron);
+                    float militaryCost = resourceManager.resourcePrices["Iron"] * availableIron; //I guess it works. This is the best way I can do it for now
+                    army.nation.expenseMil += militaryCost;
                 }
                 else
                 {
                     army.nation.GovBuy("Iron", requiredIron);
+                    float militaryCost = resourceManager.resourcePrices["Iron"] * requiredIron; //I guess it works. This is the best way I can do it for now
+                    army.nation.expenseMil += militaryCost;
                 }
+
                 army.curInfantry += adjustedInfantryToAdd;
                 army.curCavalry += adjustedCavalryToAdd;
-
-
 
                 int finalReinforcement = adjustedInfantryToAdd + adjustedCavalryToAdd;
 
@@ -233,9 +238,9 @@ public class UpdateManager : MonoBehaviour
             }
 
             //ECONOMY ######################################################################################
-            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * (tile.infrastructureLevel + 0.20f); //placeholder formula
-            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * (tile.infrastructureLevel + 0.20f);
-            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * (tile.infrastructureLevel + 0.20f);
+            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f); //placeholder formula, also I feel like development could be simplified so that I don't have to divide it by 100.
+            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f);
+            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f);
 
             float globalAgriSupplyAmount = resourceManager.globalSupply[tile.agriResource];//agri
             float globalAgriDemandAmount = resourceManager.globalDemand[tile.agriResource];
@@ -269,9 +274,7 @@ public class UpdateManager : MonoBehaviour
             //DEVELOPMENT ###################################################################################
             if (tile.nation != null) //THIS SHIT IS BAD FOR PERFORMANCE, HAVING A LIST OF OWNED TILES WOULD FIX A LOT OF STUFF
             {
-                float developmentCost = (tile.totalPop / 500) * tile.nation.developmentBudget;
                 tile.infrastructureLevel += 0.002f + 0.015f * tile.nation.developmentBudget - 0.0005f * tile.infrastructureLevel; //Really bad formula but who cares?
-                tile.nation.GovBuy("Timber", developmentCost); //PLEASE THINK ABOUT THIS! FEELS HORRIBLE FOR PERFORMANCE, AND KINDA STUPID EVEN IN GAMEPLAY TERMS
             }
         }
     }
@@ -316,7 +319,17 @@ public class UpdateManager : MonoBehaviour
         //calculate income
         foreach (NationProps nation in nations)
         {
-            nation.CalcTaxIncome();
+            float nationTax = 0;
+            float nationTaxLevel = nation.taxLevel;
+
+            foreach (TileProps tile in nation.tiles) //Maybe move this to tile update?
+            {
+                tile.tax = (tile.agriGDP + tile.resourceGDP) * (nationTaxLevel); //Industry missing for now
+
+                nationTax += tile.tax;
+            }
+            nation.income = nationTax; //this is just placeholder, income calculation will not be simple like this
+            nation.incomeTax = nationTax;
         }
 
         //calculate expense
@@ -339,10 +352,10 @@ public class UpdateManager : MonoBehaviour
                 }
             }
 
-            float nationWages = 0;
+            float nationMilWages = 0;
             foreach (ArmyProps army in nation.armies)
             {
-                nationWages += army.curInfantry * 0.1f
+                nationMilWages += army.curInfantry * 0.1f
                 + army.curCavalry * 0.15f;
             }
 
@@ -352,12 +365,27 @@ public class UpdateManager : MonoBehaviour
                 nationInterest = Mathf.RoundToInt(nation.debt * 0.004f);
             }
 
-            nation.expense = nationBuy + nationWages + nationInterest;
+            nation.expense = nationBuy + nationMilWages + nationInterest;
 
             foreach (var key in nation.govBuy.Keys.ToList()) //FEELS WRONG
             {
                 nation.govBuy[key] = 0;
             }
+            
+            float nationExpenseDev = 0;
+            foreach (TileProps tile in nation.tiles) //Maybe move this to tile update?
+            {
+                float developmentReq = (tile.totalPop / 500) * nation.developmentBudget;
+                tile.nation.GovBuy("Timber", developmentReq);
+                float developmentCost = resourceManager.resourcePrices["Timber"] * developmentReq;
+                nationExpenseDev += developmentCost;
+            }
+
+            nation.expenseDev = nationExpenseDev;
+          
+            int nationExpenseMil = 0;//mil expense is calculated in the UpdateArmyProps. (yeah I know, couldn't do it ny other way). 
+
+            nation.expenseMil = nationExpenseMil;
         }
 
         //calculate balance
@@ -394,18 +422,18 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void AutoNationExpansion() //THINKING OF REMOVING THIS SHIT
-    {
-        foreach (NationProps nation in nations)
-        {
-            if (nation.GetNationEmptyNeighbors().Count > 0 && nation.isAI == true) //choose expansion target
-            {
-                TileProps randomNeighbor = nation.GetNationEmptyNeighbors()[Random.Range(0, nation.GetNationEmptyNeighbors().Count)];
-                randomNeighbor.nation = nation;
-                nation.tiles.Add(randomNeighbor);
-            }
-        }
-    }
+    //public void AutoNationExpansion() //THINKING OF REMOVING THIS SHIT
+    //{
+    //    foreach (NationProps nation in nations)
+    //    {
+    //        if (nation.GetNationEmptyNeighbors().Count > 0 && nation.isAI == true) //choose expansion target
+    //        {
+    //            TileProps randomNeighbor = nation.GetNationEmptyNeighbors()[Random.Range(0, nation.GetNationEmptyNeighbors().Count)];
+    //            randomNeighbor.nation = nation;
+    //            nation.tiles.Add(randomNeighbor);
+    //        }
+    //    }
+    //}
 
     public void UpdateGraphData()
     {
@@ -438,7 +466,9 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateEconomyUI()
     {
-
+        economyUI.taxIncomeText.text = gameState.playerNation.incomeTax.ToString();
+        economyUI.devExpenseText.text = gameState.playerNation.expenseDev.ToString();
+        economyUI.milExpenseText.text = gameState.playerNation.expenseMil.ToString();
     }
 
     public void MoveArmies() //PLEASE FOR THE LOVE OF GOD OPTIMISE THIS
