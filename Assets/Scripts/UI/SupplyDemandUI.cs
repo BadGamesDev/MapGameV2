@@ -1,20 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class SupplyDemandUI : MonoBehaviour
 {
     public MainUI mainUI;
+    public ResourceManager resourceManager;
+    public NationProps nation;
 
     public List<TMP_Text> supplyTexts;
     public List<TMP_Text> demandTexts;
     public List<TMP_Text> globalSupplyTexts;
     public List<TMP_Text> globalDemandTexts;
-
-    public NationProps nation;
-    public ResourceManager resourceManager;
 
     private void Start() //doing this here feels bad.
     {
@@ -29,7 +26,7 @@ public class SupplyDemandUI : MonoBehaviour
         UpdateSupplyDemandDisplay();
     }
 
-    private void UpdateSupplyDemandDisplay()
+    private void UpdateSupplyDemandDisplay() // add an if statement
     {
         ClearTexts(supplyTexts);
         ClearTexts(demandTexts);

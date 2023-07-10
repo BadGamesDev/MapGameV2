@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -46,7 +44,7 @@ public class ArmyUI : MonoBehaviour
         infantryCount.text = gameState.activeArmy.curInfantry.ToString();
         cavalryCount.text = gameState.activeArmy.curCavalry.ToString();
 
-        maxTroopCount.text = gameState.activeArmy.desiredSize.ToString();
+        maxTroopCount.text = gameState.activeArmy.maxSize.ToString();
         maxInfantryCount.text = gameState.activeArmy.maxInfantry.ToString();
         maxCavalryCount.text = gameState.activeArmy.maxCavalry.ToString();
     }

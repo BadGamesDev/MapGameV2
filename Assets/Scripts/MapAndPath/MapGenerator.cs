@@ -19,9 +19,9 @@ public class MapGenerator : MonoBehaviour
     public Vector2 grow = new Vector2(4, 7);
     public int freq = 3;
 
-    public int landTiles = 0;
+    public int landTileCount = 0;
 
-    public List<TileProps> landTilesList;
+    public List<TileProps> landTiles;
 
     private void Awake()
     {
@@ -92,11 +92,13 @@ public class MapGenerator : MonoBehaviour
 
         AssignID();
 
-        PlaceResources();
+        SetAgriResources();
 
-        SetAgriResource();
+        SetLaborResources();
 
         SetPopulation();
+
+        SetDevelopment();
 
         GenerateNations();
 
@@ -105,9 +107,9 @@ public class MapGenerator : MonoBehaviour
         Invoke(nameof(DrawGrid), Time.deltaTime);
     }
 
-    public void ClearFOW()
+    public void ClearFOW() //referenced in army movement
     {
-        foreach (TileProps tile in gameState.playerNation.discoveredTiles)
+        foreach (TileProps tile in gameState.playerNation.discoveredTiles) //this can be obtimised but the impact on performance is fine for now
         {
             if (tile.FOW.activeSelf)
             {
@@ -124,15 +126,18 @@ public class MapGenerator : MonoBehaviour
         {
             GameObject newNation = Instantiate(nationPrefab);
             NationProps nation = newNation.GetComponent<NationProps>();
+            
             newNation.name = "Nation" + i.ToString();
             nation.nationName = i.ToString();
+            nation.isAI = true;
 
             int randomIndex = Random.Range(0, availableTiles.Count);
             TileProps randomTile = availableTiles[randomIndex];
 
-            randomTile.infrastructureLevel = 20;
+            randomTile.infrastructureLevel = 25;
+            randomTile.totalPop = 10000;
             randomTile.nation = nation;
-            nation.tiles.Add(randomTile);
+            nation.ownedTiles.Add(randomTile);
 
             availableTiles.RemoveAt(randomIndex);
 
@@ -161,8 +166,8 @@ public class MapGenerator : MonoBehaviour
                 {
                     if (hit.collider.gameObject.GetComponent<TileProps>().type > 1)
                     {
-                        landTiles += 1;
-                        landTilesList.Add(hit.collider.gameObject.GetComponent<TileProps>());
+                        landTileCount += 1;
+                        landTiles.Add(hit.collider.gameObject.GetComponent<TileProps>());
                     }
                 }
             }
@@ -174,7 +179,7 @@ public class MapGenerator : MonoBehaviour
     {
         int i = 0;
 
-        foreach (TileProps tile in landTilesList)
+        foreach (TileProps tile in landTiles)
         {
             tile.ID = i;
             i++;
@@ -183,59 +188,49 @@ public class MapGenerator : MonoBehaviour
 
     void SetPopulation()
     {
-        foreach (TileProps tile in landTilesList)
+        foreach (TileProps tile in landTiles)
         {
-            tile.totalPop = Mathf.RoundToInt(Random.Range(10000,100000));
+            tile.totalPop = Mathf.RoundToInt(Random.Range(100,501));
             tile.SetPopulationRatios(80,20,0);
         }
     }
 
-    void SetAgriResource()
+    void SetDevelopment() // might make this weighted by pops in the future
     {
-        foreach (TileProps tile in landTilesList)
+        foreach (TileProps tile in landTiles)
+        {
+            tile.infrastructureLevel = Random.Range(5, 11);
+        }
+    }
+
+    void SetAgriResources() //MORE WILL BE ADDED
+    {
+        foreach (TileProps tile in landTiles)
         {
             tile.agriResource = "Grain";
         }
     }
 
-    void PlaceResources() //change this to the new method
+    void SetLaborResources()
     {
-        for (int x = 0; x < mapSize.x; x++)
-        {
-            for (int y = 0; y < mapSize.y; y++)
+        foreach(TileProps tile in landTiles) 
+        { 
+            int randomNumber = Random.Range(1, 101);
+            if (randomNumber > 95)
             {
-                Vector2 pos = new Vector2(x, y * 0.86f);
-
-                if (y % 2 == 0)
-                {
-                    pos.x += 0.5f;
-                }
-
-                RaycastHit2D hit = Physics2D.Raycast(pos, pos, 0, LayerMask.GetMask("Tiles"));
-                if (hit)
-                {
-                    TileProps tile = hit.collider.gameObject.GetComponent<TileProps>();
-                    if (tile.type > 1)
-                    {
-                        int randomNumber = Random.Range(1, 101);
-                        if (randomNumber > 95)
-                        {
-                            tile.resource = "Gold";
-                        }
-                        else if (randomNumber > 75)
-                        {
-                            tile.resource = "Coal";
-                        }
-                        else if (randomNumber > 50)
-                        {
-                            tile.resource = "Iron";
-                        }
-                        else
-                        {
-                            tile.resource = "Timber";
-                        }
-                    }
-                }
+                tile.resource = "Gold";
+            }
+            else if (randomNumber > 75)
+            {
+                tile.resource = "Coal";
+            }
+            else if (randomNumber > 50)
+            {
+                tile.resource = "Iron";
+            }
+            else
+            {
+                tile.resource = "Timber";
             }
         }
     }

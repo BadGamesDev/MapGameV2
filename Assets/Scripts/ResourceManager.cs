@@ -5,9 +5,16 @@ using UnityEngine;
 public class ResourceManager : MonoBehaviour
 {
     public List<Resource> resources;
+    
     public Dictionary<string, float> resourcePrices;
     public Dictionary<string, float> globalDemand;
     public Dictionary<string, float> globalSupply;
+
+    public class Resource
+    {
+        public string Name { get; set; }
+        public float Price { get; set; }
+    }
 
     public void InitializeResourcePrices()
     {
@@ -16,7 +23,7 @@ public class ResourceManager : MonoBehaviour
             { "Grain", 1.0f },
             { "Timber", 1.5f },
             { "Iron", 2.5f },
-            { "Coal", 5.0f },
+            { "Coal", 4.0f },
             { "Gold", 10.0f },
         };
     }
@@ -35,6 +42,7 @@ public class ResourceManager : MonoBehaviour
     {
         globalSupply = new Dictionary<string, float>();
         globalDemand = new Dictionary<string, float>();
+        
         foreach (Resource resource in resources)
         {
             globalSupply.Add(resource.Name, 0f);

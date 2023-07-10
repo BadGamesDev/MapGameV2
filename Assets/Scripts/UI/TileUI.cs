@@ -62,7 +62,7 @@ public class TileUI : MonoBehaviour
     public void SettleTile()
     {
         gameState.activeTile.nation = gameState.playerNation; //hard coding feels bad... again
-        gameState.playerNation.tiles.Add(gameState.activeTile);
+        gameState.playerNation.ownedTiles.Add(gameState.activeTile);
 
         List<TileProps> neighbors = gameState.playerNation.GetNationNeighbors(); //No need to get all the nation neighbors, just get tile neighbors
 

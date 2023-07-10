@@ -7,6 +7,8 @@ public class MapModes : MonoBehaviour
     public MapGenerator mapGenerator;
     public GameState gameState;
 
+    public List<TileProps> tiles;
+
     public enum Mode
     {
         terrain,
@@ -17,7 +19,6 @@ public class MapModes : MonoBehaviour
     }
 
     public Mode mapMode = Mode.terrain;
-    public List<TileProps> tiles;
 
     private void Update()
     {
@@ -74,7 +75,7 @@ public class MapModes : MonoBehaviour
 
     private void ApplyTerrainMapMode()
     {
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             tile.SwitchSprite(tile.type);
             tile.GetComponent<Renderer>().material.color = Color.white;
@@ -83,7 +84,7 @@ public class MapModes : MonoBehaviour
 
     private void ApplyPoliticalMapMode()
     {
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             if (tile.nation != null)
             {
@@ -108,7 +109,7 @@ public class MapModes : MonoBehaviour
 
     private void ApplyResourceMapMode() //might add resource sprites later
     {
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             if (tile.resource == "Timber")
             {
@@ -140,7 +141,7 @@ public class MapModes : MonoBehaviour
 
     private void ApplyRecruitmentMapMode()
     {
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             if (tile.nation == gameState.playerNation && tile.isReinforceTile == false)
             {
@@ -181,7 +182,7 @@ public class MapModes : MonoBehaviour
     {
         float minPopulation = Mathf.Infinity;
         float maxPopulation = 0f;
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             float population = tile.GetTotalPopulation();
             if (population < minPopulation)
@@ -194,7 +195,7 @@ public class MapModes : MonoBehaviour
             }
         }
 
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             tile.SwitchSprite(0);
             float population = tile.GetTotalPopulation();

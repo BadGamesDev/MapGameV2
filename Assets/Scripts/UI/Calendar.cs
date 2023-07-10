@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Calendar : MonoBehaviour
+public class Calendar : MonoBehaviour // THIS SHIT CAN ALL BE PUT INTO TIME MANAGER. ESPECIALLY THE SPEED METHODS
 {
     public TimeManager timeManager;
     public TMP_Text calendarText;

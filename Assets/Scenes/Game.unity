@@ -3448,7 +3448,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16c6b4975146aa4cadc16600dd50975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 519420031}
   speed: 1
+  minBounds: {x: -30, y: -30}
+  maxBounds: {x: 100, y: 100}
+  minOrthographicSize: 2
+  maxOrthographicSize: 18
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3470,8 +3475,8 @@ MonoBehaviour:
   mapSize: {x: 80, y: 40}
   grow: {x: 10, y: 20}
   freq: 6
-  landTiles: 0
-  landTilesList: []
+  landTileCount: 0
+  landTiles: []
 --- !u!114 &519420035
 MonoBehaviour:
   m_ObjectHideFlags: 0

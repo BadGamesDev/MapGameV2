@@ -33,8 +33,8 @@ public class NationAI : MonoBehaviour
                 while (!foundValidTile && tryCount < 100)
                 {
                     tryCount++;
-                    randomIndex = UnityEngine.Random.Range(0, nationProps.tiles.Count);
-                    randomTile = nationProps.tiles[randomIndex];
+                    randomIndex = UnityEngine.Random.Range(0, nationProps.ownedTiles.Count);
+                    randomTile = nationProps.ownedTiles[randomIndex];
 
                     if (!randomTile.isReinforceTile) //check if already reinforce tile
                     {
@@ -52,7 +52,7 @@ public class NationAI : MonoBehaviour
 
                         armyProps.maxInfantry = 1000; //recruit function AI addition
 
-                        armyProps.desiredSize = armyProps.maxInfantry + armyProps.maxCavalry;
+                        armyProps.maxSize = armyProps.maxInfantry + armyProps.maxCavalry;
 
                         randomTile.isReinforceTile = true;
                     }
@@ -78,7 +78,7 @@ public class NationAI : MonoBehaviour
 
     private TileProps FindTargetTile(ArmyProps army)
     {
-        int randomIndex = UnityEngine.Random.Range(0, nationProps.tiles.Count);
-        return nationProps.tiles[randomIndex];
+        int randomIndex = UnityEngine.Random.Range(0, nationProps.ownedTiles.Count);
+        return nationProps.ownedTiles[randomIndex];
     }
 }

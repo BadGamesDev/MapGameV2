@@ -10,7 +10,7 @@ public class ArmyProps : MonoBehaviour
 
     public bool reinforce;
 
-    public int desiredSize;
+    public int maxSize;
     public int curSize;
     public int availablePop;
 

@@ -1,14 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class NationProps : MonoBehaviour
 {
-    public bool isAI = true; //will change this in the future
+    public bool isAI;
 
     public List<TileProps> discoveredTiles;
-    public List<TileProps> tiles;
+    public List<TileProps> ownedTiles;
+    
     public List<ArmyProps> armies;
     
     public string nationName;
@@ -26,13 +25,13 @@ public class NationProps : MonoBehaviour
     public float expenseDev;
     public float expenseMil;
 
-    public int money;
-    public int debt;
-
     public float taxLevel;
 
     public float developmentBudget;
     public float militaryBudget;
+
+    public int money;
+    public int debt;
 
     public List<int> populationHistory = new List<int>();
 
@@ -42,7 +41,7 @@ public class NationProps : MonoBehaviour
     public Dictionary<string, float> supply;
     public Dictionary<string, float> demand;
 
-    public NationProps()
+    public NationProps() //?
     {
         govBuy = new Dictionary<string, float>();
         govSell = new Dictionary<string, float>();
@@ -127,7 +126,7 @@ public class NationProps : MonoBehaviour
     {
         List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
 
-        foreach (TileProps tile in tiles)
+        foreach (TileProps tile in ownedTiles)
         {
             if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
             {
@@ -171,11 +170,11 @@ public class NationProps : MonoBehaviour
         return neighbors;
     }
 
-    public List<TileProps> GetNationEmptyNeighbors()
+    public List<TileProps> GetNationEmptyNeighbors() // this can be simplified I guess, I already have a get neighbors method
     {
         List<TileProps> borderTiles = new List<TileProps>(); //get bordertiles
         
-        foreach (TileProps tile in tiles)
+        foreach (TileProps tile in ownedTiles)
         {
             if (tile.neighbors.Exists(neighborPos => !IsTileOwnedByNation(neighborPos)))
             {

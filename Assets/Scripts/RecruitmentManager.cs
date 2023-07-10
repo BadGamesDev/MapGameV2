@@ -23,7 +23,7 @@ public class RecruitmentManager : MonoBehaviour
 
         gameState.activeArmy.maxInfantry = infantryCount;
         gameState.activeArmy.maxCavalry = cavalryCount;
-        gameState.activeArmy.desiredSize = infantryCount + cavalryCount;
+        gameState.activeArmy.maxSize = infantryCount + cavalryCount;
 
         mainUI.armyInfantrySizeInput.gameObject.SetActive(false);
         mainUI.armyCavalrySizeInput.gameObject.SetActive(false);

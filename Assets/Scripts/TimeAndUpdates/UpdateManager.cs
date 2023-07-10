@@ -8,16 +8,17 @@ using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF A
 public class UpdateManager : MonoBehaviour
 {
     public GameState gameState;
+    public MapGenerator mapGenerator;
+    public ResourceManager resourceManager;
+    
     public List<ArmyProps> armies;
     public TileProps[] tiles;
-    public NationProps[] nations;
-
+    public NationProps[] nations; //tiles can be an array but this should probably be a list
+    
     public MainUI mainUI; //for debugging
     public TileUI tileUI;
     public ArmyUI armyUI;
     public EconomyUI economyUI;
-    public MapGenerator mapGenerator;
-    public ResourceManager resourceManager;
 
     private void Start()
     {
@@ -76,7 +77,7 @@ public class UpdateManager : MonoBehaviour
                 nation.demand[key] = 0;
             }
 
-            foreach (TileProps tile in nation.tiles)
+            foreach (TileProps tile in nation.ownedTiles)
             {
                 nation.AddDemand("Grain", tile.totalPop * 0.004f);
             }
@@ -98,7 +99,7 @@ public class UpdateManager : MonoBehaviour
                 nation.supply[key] = 0;
             }
 
-            foreach (TileProps tile in nation.tiles)
+            foreach (TileProps tile in nation.ownedTiles)
             {
                 nation.AddSupply(tile.agriResource, tile.agriProduction);
                 nation.AddSupply(tile.resource, tile.resourceProduction);
@@ -164,12 +165,12 @@ public class UpdateManager : MonoBehaviour
         {
             army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));//get recruit pops
 
-            if (army.curSize < army.desiredSize && army.reinforce == true)
+            if (army.curSize < army.maxSize && army.reinforce == true)
             {
                 int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop)); //total pop of tiles (used for reinforce speed)
                 float reinforcements = totalPop * 0.1f;
 
-                reinforcements = Mathf.Min(reinforcements, army.desiredSize - army.curSize, army.availablePop);//is there a problem here?
+                reinforcements = Mathf.Min(reinforcements, army.maxSize - army.curSize, army.availablePop);//is there a problem here?
                 int reinforcementsInt = Mathf.RoundToInt(reinforcements); //reinforcement number int
 
                 float infantryRatio = army.maxInfantry / (float)(army.maxInfantry + army.maxCavalry); //get the ratio of diffent troop types
@@ -227,7 +228,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateTileProps()
     {
-        foreach (TileProps tile in mapGenerator.landTilesList)
+        foreach (TileProps tile in mapGenerator.landTiles)
         {
             //POPULATION ###################################################################################
             tile.IncreasePopulation(0.0001f);
@@ -286,7 +287,7 @@ public class UpdateManager : MonoBehaviour
         {
             int nationPopulation = 0;
 
-            foreach (TileProps province in nation.tiles)
+            foreach (TileProps province in nation.ownedTiles)
             {
                 nationPopulation += province.GetTotalPopulation();
             }
@@ -302,7 +303,7 @@ public class UpdateManager : MonoBehaviour
             float industryGDP = 0;
             float totalGDP = 0;
 
-            foreach (TileProps tile in nation.tiles)
+            foreach (TileProps tile in nation.ownedTiles)
             {
                 agriGDP += tile.agriGDP;
                 resourceGDP += tile.resourceGDP;
@@ -322,7 +323,7 @@ public class UpdateManager : MonoBehaviour
             float nationTax = 0;
             float nationTaxLevel = nation.taxLevel;
 
-            foreach (TileProps tile in nation.tiles) //Maybe move this to tile update?
+            foreach (TileProps tile in nation.ownedTiles) //Maybe move this to tile update?
             {
                 tile.tax = (tile.agriGDP + tile.resourceGDP) * (nationTaxLevel); //Industry missing for now
 
@@ -373,7 +374,7 @@ public class UpdateManager : MonoBehaviour
             }
             
             float nationExpenseDev = 0;
-            foreach (TileProps tile in nation.tiles) //Maybe move this to tile update?
+            foreach (TileProps tile in nation.ownedTiles) //Maybe move this to tile update?
             {
                 float developmentReq = (tile.totalPop / 500) * nation.developmentBudget;
                 tile.nation.GovBuy("Timber", developmentReq);

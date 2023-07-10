@@ -76,15 +76,17 @@ public class TileInteractions : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        NationProps collidingNation = collision.gameObject.GetComponent<ArmyProps>().nation;
+    // Not used for now
+
+    //private void OnTriggerEnter2D(Collider2D collision) 
+    //{
+    //    NationProps collidingNation = collision.gameObject.GetComponent<ArmyProps>().nation;
         
-        if (collidingNation != null && collidingNation != tileProps.nation)
-        { 
-            GetConquered(collidingNation); 
-        }
-    }
+    //    if (collidingNation != null && collidingNation != tileProps.nation)
+    //    { 
+    //        GetConquered(collidingNation); 
+    //    }
+    //}
 
     public void RecruitArmy()
     {
@@ -114,13 +116,14 @@ public class TileInteractions : MonoBehaviour
         tileProps.isReinforceTile = true;
     }
 
-    public void GetConquered(NationProps newNation)
-    {
-        if (tileProps.nation != null)
-        {
-            tileProps.nation.GetComponent<NationProps>().tiles.Remove(tileProps);
-        }
-        newNation.GetComponent<NationProps>().tiles.Add(tileProps);
-        tileProps.nation = newNation;
-    }
+    // REMOVING THIS FOR NOW
+    //public void GetConquered(NationProps newNation) 
+    //{
+    //    if (tileProps.nation != null)
+    //    {
+    //        tileProps.nation.GetComponent<NationProps>().tiles.Remove(tileProps);
+    //    }
+    //    newNation.GetComponent<NationProps>().tiles.Add(tileProps);
+    //    tileProps.nation = newNation;
+    //}
 }
