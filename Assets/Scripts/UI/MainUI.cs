@@ -15,9 +15,10 @@ public class MainUI : MonoBehaviour
     public Button armySizeDoneButton;
 
     public GameObject economyTab;
+    public GameObject tradeTab;
 
 
-    private void Update()
+    public void UpdateMainDisplay() //method name sucks 
     {
         if (gameState.playerNation != null)
         {
@@ -35,6 +36,18 @@ public class MainUI : MonoBehaviour
         else 
         {
             economyTab.SetActive(true);
+        }
+    }
+
+    public void OpenTradeTab() // this is horrible UI, will fix it in the future
+    {
+        if (tradeTab.activeSelf)
+        {
+            tradeTab.SetActive(false);
+        }
+        else
+        {
+            tradeTab.SetActive(true);
         }
     }
 

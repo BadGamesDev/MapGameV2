@@ -75,7 +75,7 @@ public class TileProps : MonoBehaviour
         industryPop = totalPop * (industryRatio / totalRatio);
     }
 
-    public void IncreasePopulation(float percentageIncrease)
+    public void IncreasePopulation(float percentageIncrease) //maybe also add a method for flat increases?
     {
         agriPop += agriPop * percentageIncrease;
         resourcePop += resourcePop * percentageIncrease;

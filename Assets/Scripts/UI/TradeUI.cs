@@ -2,38 +2,26 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class SupplyDemandUI : MonoBehaviour
+public class TradeUI : MonoBehaviour
 {
+    public GameState gameState; //this can be done in update manager for an extremely small improvement in performance
     public MainUI mainUI;
-    public ResourceManager resourceManager;
-    public NationProps nation;
 
-    public List<TMP_Text> supplyTexts;
+    public ResourceManager resourceManager;
+
+    public List<TMP_Text> supplyTexts; //lists are filled manually in the editor
     public List<TMP_Text> demandTexts;
     public List<TMP_Text> globalSupplyTexts;
     public List<TMP_Text> globalDemandTexts;
 
-    private void Start() //doing this here feels bad.
-    {
-        resourceManager.InitializeResourcePrices();
-        resourceManager.InitializeResources();
-        resourceManager.InitializeSupplyDemand();
-    }
-
-    private void Update()
-    {
-        nation = GameObject.Find("Nation0").GetComponent<NationProps>();
-        UpdateSupplyDemandDisplay();
-    }
-
-    private void UpdateSupplyDemandDisplay() // add an if statement
+    public void UpdateSupplyDemandDisplay() // add an if statement so that it is only updated when open
     {
         ClearTexts(supplyTexts);
         ClearTexts(demandTexts);
         ClearTexts(globalSupplyTexts);
         ClearTexts(globalDemandTexts);
 
-        foreach (var supplyItem in nation.supply)
+        foreach (var supplyItem in gameState.playerNation.supply)
         {
             string resourceName = supplyItem.Key;
             float supplyAmount = supplyItem.Value;
@@ -41,11 +29,11 @@ public class SupplyDemandUI : MonoBehaviour
             supplyText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(supplyAmount))}"; // might be bad for performance
         }
 
-        foreach (var demandItem in nation.demand)
+        foreach (var demandItem in gameState.playerNation.demand)
         {
             string resourceName = demandItem.Key;
             float demandAmount = demandItem.Value;
-            TMP_Text demandText = GetTextObject(demandTexts, resourceName);
+            TMP_Text demandText = GetTextObject(demandTexts, resourceName); // I feel like I should just do this once
             demandText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(demandAmount))}";
         }
 
@@ -66,15 +54,7 @@ public class SupplyDemandUI : MonoBehaviour
         }
     }
 
-    private void ClearTexts(List<TMP_Text> texts)
-    {
-        foreach (var text in texts)
-        {
-            text.text = string.Empty;
-        }
-    }
-
-    private TMP_Text GetTextObject(List<TMP_Text> texts, string resourceName)
+    public TMP_Text GetTextObject(List<TMP_Text> texts, string resourceName)
     {
         TMP_Text textObject = texts.Find(text => text.name.Equals(resourceName));
 
@@ -84,5 +64,13 @@ public class SupplyDemandUI : MonoBehaviour
         }
 
         return textObject;
+    }
+
+    public void ClearTexts(List<TMP_Text> texts)
+    {
+        foreach (var text in texts)
+        {
+            text.text = string.Empty;
+        }
     }
 }

@@ -135,7 +135,8 @@ public class MapGenerator : MonoBehaviour
             TileProps randomTile = availableTiles[randomIndex];
 
             randomTile.infrastructureLevel = 25;
-            randomTile.totalPop = 10000;
+            randomTile.totalPop = 20000;
+            randomTile.SetPopulationRatios(80,20,0); //this is also important because pop will revert to the empty tile value if you don't do it like this
             randomTile.nation = nation;
             nation.ownedTiles.Add(randomTile);
 

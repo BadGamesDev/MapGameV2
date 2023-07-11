@@ -19,6 +19,7 @@ public class UpdateManager : MonoBehaviour
     public TileUI tileUI;
     public ArmyUI armyUI;
     public EconomyUI economyUI;
+    public TradeUI tradeUI;
 
     private void Start()
     {
@@ -31,10 +32,18 @@ public class UpdateManager : MonoBehaviour
         dayTickSend += OnDayTick;
         monthTickSend += OnMonthTick;
 
+        SetupResources();
         SetInitialRecruits();
     }
 
-    public void SetInitialRecruits()
+    public void SetupResources()
+    {
+        resourceManager.InitializeResourcePrices();
+        resourceManager.InitializeResources();
+        resourceManager.InitializeSupplyDemand();
+    }
+    
+    public void SetInitialRecruits() //not "bad" but there is definitely a cleaner way
     {
         foreach (TileProps province in tiles)
         {
@@ -57,9 +66,11 @@ public class UpdateManager : MonoBehaviour
         UpdateTileProps();
         UpdateNationProps();
         MoveArmies();
+        UpdateMainUI();
         UpdateTileUI();
         UpdateArmyUI();
         UpdateEconomyUI();
+        UpdateTradeUI();
     }
 
     public void OnMonthTick()
@@ -449,6 +460,11 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
+    public void UpdateMainUI()
+    {
+        mainUI.UpdateMainDisplay();
+    }
+
     public void UpdateTileUI()
     {
         if (tileUI.panelUI.activeSelf == true)
@@ -470,6 +486,11 @@ public class UpdateManager : MonoBehaviour
         economyUI.taxIncomeText.text = gameState.playerNation.incomeTax.ToString();
         economyUI.devExpenseText.text = gameState.playerNation.expenseDev.ToString();
         economyUI.milExpenseText.text = gameState.playerNation.expenseMil.ToString();
+    }
+
+    public void UpdateTradeUI()
+    {
+        tradeUI.UpdateSupplyDemandDisplay();
     }
 
     public void MoveArmies() //PLEASE FOR THE LOVE OF GOD OPTIMISE THIS
