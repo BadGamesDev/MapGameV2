@@ -26,7 +26,7 @@ public class TradeUI : MonoBehaviour
             string resourceName = supplyItem.Key;
             float supplyAmount = supplyItem.Value;
             TMP_Text supplyText = GetTextObject(supplyTexts, resourceName);
-            supplyText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(supplyAmount))}"; // might be bad for performance
+            supplyText.text = $"{resourceName}: {mainUI.FormatNumberResource(supplyAmount)}"; // might be bad for performance
         }
 
         foreach (var demandItem in gameState.playerNation.demand)
@@ -34,7 +34,7 @@ public class TradeUI : MonoBehaviour
             string resourceName = demandItem.Key;
             float demandAmount = demandItem.Value;
             TMP_Text demandText = GetTextObject(demandTexts, resourceName); // I feel like I should just do this once
-            demandText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(demandAmount))}";
+            demandText.text = $"{resourceName}: {mainUI.FormatNumberResource(demandAmount)}";
         }
 
         foreach (var supplyItem in resourceManager.globalSupply) // THERE IS A BUG HERE FOR SOME FUCKING REASON
@@ -42,7 +42,7 @@ public class TradeUI : MonoBehaviour
             string resourceName = supplyItem.Key;
             float supplyAmount = supplyItem.Value;
             TMP_Text supplyText = GetTextObject(globalSupplyTexts, resourceName);
-            supplyText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(supplyAmount))}";
+            supplyText.text = $"{resourceName}: {mainUI.FormatNumberResource(supplyAmount)}";
         }
 
         foreach (var demandItem in resourceManager.globalDemand)
@@ -50,7 +50,7 @@ public class TradeUI : MonoBehaviour
             string resourceName = demandItem.Key;
             float demandAmount = demandItem.Value;
             TMP_Text demandText = GetTextObject(globalDemandTexts, resourceName);
-            demandText.text = $"{resourceName}: {mainUI.FormatNumber(Mathf.RoundToInt(demandAmount))}";
+            demandText.text = $"{resourceName}: {mainUI.FormatNumberResource(demandAmount)}";
         }
     }
 

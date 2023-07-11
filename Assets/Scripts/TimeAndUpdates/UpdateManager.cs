@@ -374,7 +374,7 @@ public class UpdateManager : MonoBehaviour
             float nationInterest = 0;
             if (nation.debt > 0)
             {
-                nationInterest = Mathf.RoundToInt(nation.debt * 0.004f);
+                nationInterest = nation.debt * 0.004f;
             }
 
             nation.expense = nationBuy + nationMilWages + nationInterest;
@@ -405,7 +405,7 @@ public class UpdateManager : MonoBehaviour
         {
             float nationBalance = nation.income - nation.expense;
 
-            nation.money += Mathf.RoundToInt(nationBalance);
+            nation.money += nationBalance;
         }
 
         //calculate debt
@@ -418,7 +418,7 @@ public class UpdateManager : MonoBehaviour
             }
             else if (nation.money > 0 && nation.debt > 0)
             {
-                int i = Mathf.Min(nation.money, nation.debt);
+                float i = Mathf.Min(nation.money, nation.debt);
 
                 nation.debt += i * -1;
                 nation.money += i * -1;

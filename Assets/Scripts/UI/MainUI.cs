@@ -22,8 +22,8 @@ public class MainUI : MonoBehaviour
     {
         if (gameState.playerNation != null)
         {
-            populationIndicator.text ="Pop: " + FormatNumber(gameState.playerNation.population);
-            moneyIndicator.text ="Money: " + FormatNumber(gameState.playerNation.money);
+            populationIndicator.text ="Pop: " + FormatNumberPop(gameState.playerNation.population);
+            moneyIndicator.text ="Money: " + FormatNumberMoney(gameState.playerNation.money);
         }
     }
 
@@ -51,7 +51,7 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    public string FormatNumber(int number)
+    public string FormatNumberPop(int number)
     {
         const int Thousand = 1000;
         const int Million = 1000000;
@@ -71,4 +71,47 @@ public class MainUI : MonoBehaviour
             return populationInM.ToString("0.00") + "M";
         }
     }
+
+    public string FormatNumberMoney(float number)
+    {
+        const int Thousand = 1000;
+        const int Million = 1000000;
+
+        if (number < Thousand)
+        {
+            return number.ToString("0.##");
+        }
+        else if (number < Million)
+        {
+            float populationInK = number / (float)Thousand;
+            return populationInK.ToString("0.00") + "K";
+        }
+        else
+        {
+            float populationInM = number / (float)Million;
+            return populationInM.ToString("0.00") + "M";
+        }
+    }
+
+    public string FormatNumberResource(float number)
+    {
+        const int Thousand = 1000;
+        const int Million = 1000000;
+
+        if (number < Thousand)
+        {
+            return number.ToString("0.##");
+        }
+        else if (number < Million)
+        {
+            float populationInK = number / (float)Thousand;
+            return populationInK.ToString("0.00") + "K";
+        }
+        else
+        {
+            float populationInM = number / (float)Million;
+            return populationInM.ToString("0.00") + "M";
+        }
+    }
+
 }

@@ -30,8 +30,8 @@ public class NationProps : MonoBehaviour
     public float developmentBudget;
     public float militaryBudget;
 
-    public int money;
-    public int debt;
+    public float money;
+    public float debt;
 
     public List<int> populationHistory = new List<int>();
 
