@@ -9,7 +9,7 @@ public class ArmyProps : MonoBehaviour
     public List<TileProps> reinforceTiles = new List<TileProps>();
 
     public bool reinforce;
-    public bool isInCombat;
+    public bool isInBattle; // this is unused for now 
 
     public int maxSize;
     public int curSize;

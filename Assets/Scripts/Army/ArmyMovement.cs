@@ -29,7 +29,7 @@ public class ArmyMovement : MonoBehaviour
             if (delay >= 5)
             {
                 int tileLayer = LayerMask.GetMask("Tiles");
-                RaycastHit2D hit = Physics2D.Raycast(path[currNode+1], path[currNode+1], 0, tileLayer);
+                RaycastHit2D hit = Physics2D.Raycast(path[currNode+1], path[currNode+1], 0, tileLayer); //Index out of range bug, happens when on the left or right side of water and you click on water
                 if (hit)
                 {
                     MoveTo(hit.collider.gameObject);

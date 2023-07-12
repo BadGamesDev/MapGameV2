@@ -1,12 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ArmyTracker : MonoBehaviour
 {
     public static ArmyTracker instance; // Maybe I should keep doing things this way
+    public GameObject battlePrefab;
 
-    private Dictionary<ArmyProps, Vector2> armyPositions = new Dictionary<ArmyProps, Vector2>();
+    public Dictionary<ArmyProps, Vector2> armyPositions = new Dictionary<ArmyProps, Vector2>();
+    public Dictionary<BattleProps, Vector2> battlePositions = new Dictionary<BattleProps, Vector2>();
 
     private void Awake()
     {
@@ -29,33 +32,6 @@ public class ArmyTracker : MonoBehaviour
         }
     }
 
-    public void UpdateArmyPosition(ArmyProps army, Vector2 newPosition)
-    {
-        if (armyPositions.ContainsKey(army))
-        {
-            armyPositions[army] = newPosition;
-
-            if (CheckArmyCollision(army, newPosition))
-            {
-                ArmyProps enemyArmy = GetCollidingArmy(army, newPosition);
-                if (enemyArmy != null && enemyArmy.nation != army.nation)
-                {
-                    InitiateCombat(army, enemyArmy);
-                }
-            }
-        }
-    }
-
-    public Vector2 GetArmyPosition(ArmyProps army)
-    {
-        if (armyPositions.ContainsKey(army))
-        {
-            return armyPositions[army];
-        }
-
-        return Vector2.zero;
-    }
-
     public void RemoveArmy(ArmyProps army)
     {
         if (armyPositions.ContainsKey(army))
@@ -64,41 +40,64 @@ public class ArmyTracker : MonoBehaviour
         }
     }
 
-    private bool CheckArmyCollision(ArmyProps army, Vector2 position)
+    public void UpdateArmyPosition(ArmyProps army, Vector2 newPosition) //I can optimise the fuck out of this shit
     {
-        foreach (KeyValuePair<ArmyProps, Vector2> pair in armyPositions)
+        if (armyPositions.ContainsKey(army))
         {
-            if (pair.Key != army && pair.Value == position)
+            armyPositions[army] = newPosition;
+            bool battleFound = false;
+
+            foreach (KeyValuePair<BattleProps, Vector2> pair in battlePositions)
             {
-                return true;
+                if (pair.Key.attacker == army.nation || pair.Key.defender == army.nation && pair.Value == newPosition)
+                {
+                    ReinforceBattle(army, pair.Key);
+                    battleFound = true;
+                }
+            }
+
+            if (battleFound == false)
+            {
+                foreach (KeyValuePair<ArmyProps, Vector2> pair in armyPositions)
+                {
+                    if (pair.Value == newPosition && pair.Key.nation != army.nation)
+                    {
+                        InitiateBattle(army, pair.Key, newPosition);
+                    }
+                }
             }
         }
-        return false;
     }
 
-    private ArmyProps GetCollidingArmy(ArmyProps army, Vector2 position)
+    private void InitiateBattle(ArmyProps attacker, ArmyProps defender, Vector2 position)
     {
-        foreach (KeyValuePair<ArmyProps, Vector2> pair in armyPositions)
+        Debug.Log("Combat initiated between " + attacker.name + " and " + defender.name);
+        GameObject prefab = Instantiate(battlePrefab, position, Quaternion.identity);
+        BattleProps battle = battlePrefab.GetComponent<BattleProps>();
+
+        battle.attacker = attacker.nation;
+        battle.attacker = defender.nation;
+
+        battle.attackerArmies.Add(attacker);
+        battle.defenderArmies.Add(defender);
+
+        battlePositions.Add(battle ,battle.transform.position);
+    }
+
+    private void ReinforceBattle(ArmyProps army, BattleProps battle) 
+    {
+
+        Debug.Log("Combat reinforced on the side of" + army.nation);
+        army.isInBattle = true;
+        
+        if(army.nation = battle.attacker)
         {
-            if (pair.Key != army && pair.Value == position)
-            {
-                return pair.Key;
-            }
+            battle.attackerArmies.Add(army);
         }
-        return null;
-    }
-
-    private void InitiateCombat(ArmyProps army1, ArmyProps army2)
-    {
-        Debug.Log("Combat initiated between " + army1.name + " and " + army2.name);
-    }
-
-    private void OnDrawGizmos() //debug
-    {
-        Gizmos.color = Color.green;
-        foreach (KeyValuePair<ArmyProps, Vector2> entry in armyPositions)
+        
+        if (army.nation = battle.defender)
         {
-            Gizmos.DrawSphere(entry.Value, 0.5f);
+            battle.defenderArmies.Add(army);
         }
     }
 }

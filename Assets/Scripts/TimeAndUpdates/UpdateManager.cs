@@ -10,6 +10,7 @@ public class UpdateManager : MonoBehaviour
     public GameState gameState;
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
+    public ArmyTracker armyTracker;
     
     public List<ArmyProps> armies;
     public TileProps[] tiles;
@@ -197,7 +198,7 @@ public class UpdateManager : MonoBehaviour
                 int adjustedCavalryToAdd = capCavalryToAdd;
 
                 float requiredIron = capInfantryToAdd * 1 + capCavalryToAdd * 3;
-                float availableIron = resourceManager.globalSupply["Iron"] - army.nation.demand["Iron"]; //SEPARATE THE NATION AND WORLD SUPPLY IN THE FUTURE
+                float availableIron = resourceManager.globalSupply["Iron"] - army.nation.demand["Iron"]; //SEPARATE THE NATION AND WORLD SUPPLY IN THE FUTURE  //THERE IS A BUG HERE FOR SOME FUCKING REASON
 
                 if (availableIron <= requiredIron) //MIGHT CAUSE SOME ERRORS DUE TO ROUNDING !!! (adjusting reinforcements according to available resources)
                 {
@@ -426,7 +427,7 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void UpdateBattles()//THIS MIGHT BE AN ATROCIOUS WAY OF IMPLEMENTING COMBAT...
+    public void UpdateBattles()
     {
         foreach (TileProps tile in tiles)
         {
@@ -434,18 +435,18 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    //public void AutoNationExpansion() //THINKING OF REMOVING THIS SHIT
-    //{
-    //    foreach (NationProps nation in nations)
-    //    {
-    //        if (nation.GetNationEmptyNeighbors().Count > 0 && nation.isAI == true) //choose expansion target
-    //        {
-    //            TileProps randomNeighbor = nation.GetNationEmptyNeighbors()[Random.Range(0, nation.GetNationEmptyNeighbors().Count)];
-    //            randomNeighbor.nation = nation;
-    //            nation.tiles.Add(randomNeighbor);
-    //        }
-    //    }
-    //}
+    public void AutoNationExpansion() //THINKING OF REMOVING THIS SHIT
+    {
+        foreach (NationProps nation in nations)
+        {
+            if (nation.GetNationEmptyNeighbors().Count > 0 && nation.isAI == true) //choose expansion target
+            {
+                TileProps randomNeighbor = nation.GetNationEmptyNeighbors()[Random.Range(0, nation.GetNationEmptyNeighbors().Count)];
+                randomNeighbor.nation = nation;
+                nation.ownedTiles.Add(randomNeighbor);
+            }
+        }
+    }
 
     public void UpdateGraphData()
     {
