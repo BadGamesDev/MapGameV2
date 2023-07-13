@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ArmyProps : MonoBehaviour
 {
+    public Sprite[] sprites;
+
     public NationProps nation;
     public List<TileProps> reinforceTiles = new List<TileProps>();
+
+    public TMP_Text armySizeText;
 
     public bool reinforce;
     public bool isInBattle; // this is unused for now 
@@ -52,5 +57,10 @@ public class ArmyProps : MonoBehaviour
             }
         }
         return neighbors;
-    }   
+    }
+
+    public void SwitchSprite(int i)
+    {
+        GetComponent<SpriteRenderer>().sprite = sprites[i];
+    }
 }

@@ -25,7 +25,14 @@ public class ArmyInteractions : MonoBehaviour
                 {
                     if (gameState.gameMode == GameState.Mode.freeMode)
                     {
+                        if (gameState.activeArmy != null)
+                        {
+                            gameState.activeArmy.SwitchSprite(0);
+                        }
+
                         gameState.activeArmy = armyProps;
+                        armyProps.SwitchSprite(1);
+                        
                         armyUI.OpenArmyUI();
                     }
                 }

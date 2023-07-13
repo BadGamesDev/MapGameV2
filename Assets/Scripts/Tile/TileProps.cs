@@ -6,6 +6,7 @@ using static UnityEditor.PlayerSettings;
 public class TileProps : MonoBehaviour
 {
     public Sprite[] sprites;
+
     public GameObject FOW;
     public SpriteRenderer resourceSprite; //maybe make it an array?
     public NationProps nation = null;

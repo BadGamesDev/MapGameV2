@@ -11,6 +11,7 @@ public class UpdateManager : MonoBehaviour
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
     public ArmyTracker armyTracker;
+    public CamControl camControl;
     
     public List<ArmyProps> armies;
     public TileProps[] tiles;
@@ -35,6 +36,23 @@ public class UpdateManager : MonoBehaviour
 
         SetupResources();
         SetInitialRecruits();
+
+        //first tick
+        CalculateNationalDemand();
+        CalculateNationalSupply();
+        CalculateGlobalDemand();
+        CalculateGlobalSupply();
+        UpdateArmyProps();
+        UpdateTileProps();
+        UpdateNationProps();
+        MoveArmies();
+        UpdateMainUI();
+        UpdateTileUI();
+        UpdateArmyUI();
+        UpdateEconomyUI();
+        UpdateTradeUI();
+
+        camControl.CenterCamera(gameState.playerNation.capital.gameObject);
     }
 
     public void SetupResources()
@@ -234,6 +252,9 @@ public class UpdateManager : MonoBehaviour
 
                 army.curSize = army.curInfantry + army.curCavalry;
                 army.availablePop -= finalReinforcement;
+
+                //Update text finally
+                army.armySizeText.text = army.curSize.ToString();
             }
         }
     }

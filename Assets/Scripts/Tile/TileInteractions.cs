@@ -29,13 +29,14 @@ public class TileInteractions : MonoBehaviour
                 if (gameState.gameMode == GameState.Mode.freeMode && tileProps.type != 1)
                 {
                     gameState.activeTile = tileProps;
-
-                    if (tileProps.nation == gameState.playerNation)
+                   
+                    if (gameState.activeArmy != null)
                     {
-                        tileUI.OpenTileUI();
-                        tileUI.UpdateTileUI();
+                        gameState.activeArmy.SwitchSprite(0);
+                        gameState.activeArmy = null;
                     }
-                    else
+
+                    if (!tileProps.FOW.activeSelf) // ?
                     {
                         tileUI.OpenTileUI();
                         tileUI.UpdateTileUI();
@@ -94,7 +95,14 @@ public class TileInteractions : MonoBehaviour
         GameObject newArmy = Instantiate(Army, spawnPosition, Quaternion.identity);
         ArmyProps armyProps = newArmy.GetComponent<ArmyProps>();
 
+        if (gameState.activeArmy != null)
+        {
+            gameState.activeArmy.SwitchSprite(0);
+        }
+
         gameState.activeArmy = armyProps;
+        armyProps.SwitchSprite(1);
+        
         tileProps.nation.armies.Add(armyProps);
         ArmyRecruited?.Invoke(armyProps);
 

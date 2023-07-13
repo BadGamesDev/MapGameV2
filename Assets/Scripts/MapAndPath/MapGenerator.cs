@@ -139,6 +139,7 @@ public class MapGenerator : MonoBehaviour
             randomTile.SetPopulationRatios(80,20,0); //this is also important because pop will revert to the empty tile value if you don't do it like this
             randomTile.nation = nation;
             nation.ownedTiles.Add(randomTile);
+            nation.capital = randomTile;
 
             availableTiles.RemoveAt(randomIndex);
 
@@ -191,7 +192,9 @@ public class MapGenerator : MonoBehaviour
     {
         foreach (TileProps tile in landTiles)
         {
-            tile.totalPop = Mathf.RoundToInt(Random.Range(100,501));
+            //tile.totalPop = Mathf.RoundToInt(Random.Range(100,501)); I think these are some good numbers, current one is just for testing
+
+            tile.totalPop = Mathf.RoundToInt(Random.Range(10000, 15001));
             tile.SetPopulationRatios(80,20,0);
         }
     }

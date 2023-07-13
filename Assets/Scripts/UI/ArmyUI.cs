@@ -36,7 +36,7 @@ public class ArmyUI : MonoBehaviour
 
     public void UpdateArmyUI()
     {
-        armyOwner.text = gameState.activeArmy.nation.name;
+        armyOwner.text = gameState.activeArmy.nation.name; //Null reference error here!!! (Because UI is not closed when army is de-selected)
 
         recruitCount.text = gameState.activeArmy.availablePop.ToString(); //Recruit count doesn't get updated as frequently as it should for some reason
 

@@ -7,6 +7,7 @@ public class NationProps : MonoBehaviour
 
     public List<TileProps> discoveredTiles;
     public List<TileProps> ownedTiles;
+    public TileProps capital;
     
     public List<ArmyProps> armies;
     
