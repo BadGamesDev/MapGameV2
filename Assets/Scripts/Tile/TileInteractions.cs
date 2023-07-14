@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -64,10 +65,11 @@ public class TileInteractions : MonoBehaviour
                     GameObject army = gameState.activeArmy.gameObject;
                     ArmyMovement armyMovement = army.GetComponent<ArmyMovement>();
                     
-                    armyMovement.delay = 0;
-                    armyMovement.currNode = 0;
+                    armyMovement.progress = 0;
+                    armyMovement.currentNode = 0;
 
                     RaycastHit2D hit = Physics2D.Raycast(targetPos, targetPos, 0, LayerMask.GetMask("Tiles"));
+                    //Debug.DrawRay(army.transform.position, targetPos * 10, Color.red, 0.5f);
                     if (hit)
                     {
                         armyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh can probably be simplified + also move everything from camera to controler
@@ -95,13 +97,7 @@ public class TileInteractions : MonoBehaviour
         GameObject newArmy = Instantiate(Army, spawnPosition, Quaternion.identity);
         ArmyProps armyProps = newArmy.GetComponent<ArmyProps>();
 
-        if (gameState.activeArmy != null)
-        {
-            gameState.activeArmy.SwitchSprite(0);
-        }
-
         gameState.activeArmy = armyProps;
-        armyProps.SwitchSprite(1);
         
         tileProps.nation.armies.Add(armyProps);
         ArmyRecruited?.Invoke(armyProps);
@@ -112,6 +108,7 @@ public class TileInteractions : MonoBehaviour
         mainUI.armyInfantrySizeInput.gameObject.SetActive(true);
         mainUI.armyCavalrySizeInput.gameObject.SetActive(true);
         mainUI.armySizeDoneButton.gameObject.SetActive(true);
+        mainUI.recruitmentCancelButton.gameObject.SetActive(true);
 
         tileProps.isReinforceTile = true;
 

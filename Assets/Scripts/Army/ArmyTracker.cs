@@ -1,28 +1,12 @@
 using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ArmyTracker : MonoBehaviour
 {
-    public static ArmyTracker instance; // Maybe I should keep doing things this way
     public GameObject battlePrefab;
 
     public Dictionary<ArmyProps, Vector2> armyPositions = new Dictionary<ArmyProps, Vector2>();
     public Dictionary<BattleProps, Vector2> battlePositions = new Dictionary<BattleProps, Vector2>();
-
-    private void Awake()
-    {
-        // Set up the singleton instance
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public void AddArmy(ArmyProps army, Vector2 position)
     {
@@ -72,11 +56,14 @@ public class ArmyTracker : MonoBehaviour
     private void InitiateBattle(ArmyProps attacker, ArmyProps defender, Vector2 position)
     {
         Debug.Log("Combat initiated between " + attacker.name + " and " + defender.name);
+        attacker.isInBattle = true;
+        defender.isInBattle = true;
+
         GameObject prefab = Instantiate(battlePrefab, position, Quaternion.identity);
-        BattleProps battle = battlePrefab.GetComponent<BattleProps>();
+        BattleProps battle = prefab.GetComponent<BattleProps>();
 
         battle.attacker = attacker.nation;
-        battle.attacker = defender.nation;
+        battle.defender = defender.nation;
 
         battle.attackerArmies.Add(attacker);
         battle.defenderArmies.Add(defender);
@@ -86,7 +73,6 @@ public class ArmyTracker : MonoBehaviour
 
     private void ReinforceBattle(ArmyProps army, BattleProps battle) 
     {
-
         Debug.Log("Combat reinforced on the side of" + army.nation);
         army.isInBattle = true;
         

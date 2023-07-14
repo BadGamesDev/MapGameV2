@@ -45,7 +45,6 @@ public class UpdateManager : MonoBehaviour
         UpdateArmyProps();
         UpdateTileProps();
         UpdateNationProps();
-        MoveArmies();
         UpdateMainUI();
         UpdateTileUI();
         UpdateArmyUI();
@@ -85,6 +84,7 @@ public class UpdateManager : MonoBehaviour
         UpdateTileProps();
         UpdateNationProps();
         MoveArmies();
+        UpdateBattles();
         UpdateMainUI();
         UpdateTileUI();
         UpdateArmyUI();
@@ -450,9 +450,17 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateBattles()
     {
-        foreach (TileProps tile in tiles)
-        {
-            //tile.GetComponent<Collider2D>
+       foreach (BattleProps battle in armyTracker.battlePositions.Keys)
+       {
+            foreach(ArmyProps army in battle.attackerArmies)
+            {
+                army.TakeLosses(10);
+            }
+            
+            foreach (ArmyProps army in battle.defenderArmies)
+            {
+                army.TakeLosses(10);
+            }
         }
     }
 
@@ -499,7 +507,14 @@ public class UpdateManager : MonoBehaviour
     {
         if(armyUI.panelUI.activeSelf == true)
         {
-            armyUI.UpdateArmyUI();
+            if (gameState.activeArmy != null)
+            {
+                armyUI.UpdateArmyUI();
+            }
+            else
+            {
+                armyUI.panelUI.SetActive(false);
+            }
         }
     }
 

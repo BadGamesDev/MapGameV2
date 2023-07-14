@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class EconomyUI : MonoBehaviour
 {
     public GameState gameState;
-    public MainUI mainUI;
 
     public Slider sliderTaxLevel;
     public Slider sliderDevBudget;

@@ -1,35 +1,38 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ArmyMovement : MonoBehaviour
 {
-    private ArmyTracker armyTracker;
+    public ArmyTracker armyTracker;
     public ArmyProps armyProps;
     public TimeManager timeManager;
     public MapGenerator mapGenerator; //I REALLY don't like referencing this shit everywhere
 
     public List<Vector2> path = new List<Vector2>();
 
-    public int currNode = 0;
-    public float delay = 0;
+    public int currentNode = 0;
+    public float progress = 0;
+
+    public float speed;
 
     private void Start()
     {
         timeManager = FindObjectOfType<TimeManager>();
         mapGenerator = FindObjectOfType<MapGenerator>();
-        armyTracker = ArmyTracker.instance;
+        armyTracker = FindObjectOfType<ArmyTracker>();
         armyTracker.AddArmy(armyProps, transform.position);
+
+        speed = 1;
     }
 
     public void MarchArmy() //called in updateManager everyday
     {
-        if (path.Count > 0)
+        if (path.Count > 0 && armyProps.isInBattle == false)
         {
-            if (delay >= 5)
+            if (progress >= 5)
             {
                 int tileLayer = LayerMask.GetMask("Tiles");
-                RaycastHit2D hit = Physics2D.Raycast(path[currNode+1], path[currNode+1], 0, tileLayer); //Index out of range bug, happens when on the left or right side of water and you click on water
+                RaycastHit2D hit = Physics2D.Raycast(path[currentNode+1], path[currentNode+1], 0, tileLayer); //Index out of range bug, happens when on the left or right side of water and you click on water
                 if (hit)
                 {
                     MoveTo(hit.collider.gameObject);
@@ -57,13 +60,13 @@ public class ArmyMovement : MonoBehaviour
                 {
                     Debug.Log("No Tile Found");
                     path = new List<Vector2>();
-                    currNode = 0;
-                    delay = 5;
+                    currentNode = 0;
+                    progress = 5;
                 }
             }
             else
             {
-                delay += 1;
+                progress += speed;
             }
         }
     }
@@ -71,18 +74,17 @@ public class ArmyMovement : MonoBehaviour
     void MoveTo(GameObject tile)
     {
         transform.position = tile.transform.position;
-        transform.parent = tile.transform;
 
-        delay = 0;
-        currNode += 1;
+        progress = 0;
+        currentNode += 1;
 
-        armyTracker.UpdateArmyPosition(armyProps, transform.position);
-
-        if (currNode >= path.Count - 1)
+        if (currentNode >= path.Count - 1)
         {
             path = new List<Vector2>();
-            currNode = 0;
-            delay = 0.0f;
+            currentNode = 0;
+            progress = 0.0f;
         }
+
+        armyTracker.UpdateArmyPosition(armyProps, transform.position);
     }
 }

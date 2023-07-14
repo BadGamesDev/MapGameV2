@@ -13,6 +13,7 @@ public class MainUI : MonoBehaviour
     public TMP_InputField armyCavalrySizeInput;
     
     public Button armySizeDoneButton;
+    public Button recruitmentCancelButton;
 
     public GameObject economyTab;
     public GameObject tradeTab;

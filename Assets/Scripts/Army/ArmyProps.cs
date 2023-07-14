@@ -21,9 +21,9 @@ public class ArmyProps : MonoBehaviour
     public int availablePop;
 
     public int maxInfantry;
-    public int curInfantry;
-
     public int maxCavalry;
+    
+    public int curInfantry;
     public int curCavalry;
 
     private void Start()
@@ -62,5 +62,13 @@ public class ArmyProps : MonoBehaviour
     public void SwitchSprite(int i)
     {
         GetComponent<SpriteRenderer>().sprite = sprites[i];
+    }
+    
+    //I should probably write a method for reinforcements too 
+
+    public void TakeLosses(int i)
+    {
+        curCavalry -= i;
+        curInfantry -= i;
     }
 }

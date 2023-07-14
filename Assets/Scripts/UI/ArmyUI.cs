@@ -26,12 +26,18 @@ public class ArmyUI : MonoBehaviour
 
     public void OpenArmyUI()
     {
-        panelUI.SetActive(true);
+        if (!panelUI.activeSelf)
+        {
+            panelUI.SetActive(true);
+        }
     }
 
     public void CloseArmyUI()
     {
-        panelUI.SetActive(false);
+        if (panelUI.activeSelf)
+        {
+            panelUI.SetActive(false);
+        }
     }
 
     public void UpdateArmyUI()
@@ -66,17 +72,21 @@ public class ArmyUI : MonoBehaviour
         gameState.gameMode = GameState.Mode.recruitModeTiles;
     }
 
-    public void DeleteArmy() //null reference for some reason
+    public void DeleteArmy(ArmyProps army) //null reference for some reason //Update manager still has the army. Find a way of removig it
     {
         CloseArmyUI();
 
-        foreach (var tile in gameState.activeArmy.reinforceTiles)
+        foreach (var tile in army.reinforceTiles)
         {
             tile.isReinforceTile = false;
         }
+
+        army.nation.armies.Remove(army);
+        Destroy(army.gameObject);
         
-        gameState.activeArmy.nation.armies.Remove(gameState.activeArmy);
-        Destroy(gameState.activeArmy.gameObject);
-        gameState.activeArmy = null;
+        if(gameState.activeArmy == army)
+        {
+            gameState.activeArmy = null;
+        }
     }
 }
