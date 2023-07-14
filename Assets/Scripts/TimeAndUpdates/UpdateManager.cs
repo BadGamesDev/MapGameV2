@@ -189,76 +189,6 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
-    public void UpdateArmyProps()
-    {
-        foreach (ArmyProps army in armies)
-        {
-            army.availablePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));//get recruit pops
-
-            if (army.curSize < army.maxSize && army.reinforce == true)
-            {
-                int totalPop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.totalPop)); //total pop of tiles (used for reinforce speed)
-                float reinforcements = totalPop * 0.1f;
-
-                reinforcements = Mathf.Min(reinforcements, army.maxSize - army.curSize, army.availablePop);//is there a problem here?
-                int reinforcementsInt = Mathf.RoundToInt(reinforcements); //reinforcement number int
-
-                float infantryRatio = army.maxInfantry / (float)(army.maxInfantry + army.maxCavalry); //get the ratio of diffent troop types
-                float cavalryRatio = army.maxCavalry / (float)(army.maxInfantry + army.maxCavalry);
-
-                int infantryToAdd = Mathf.RoundToInt(reinforcementsInt * infantryRatio); //calculate reinforcements based on ratio
-                int cavalryToAdd = Mathf.RoundToInt(reinforcementsInt * cavalryRatio);
-
-                int capInfantryToAdd = Mathf.Min(infantryToAdd, army.maxInfantry - army.curInfantry);
-                int capCavalryToAdd = Mathf.Min(cavalryToAdd, army.maxCavalry - army.curCavalry);
-
-                int adjustedInfantryToAdd = capInfantryToAdd;
-                int adjustedCavalryToAdd = capCavalryToAdd;
-
-                float requiredIron = capInfantryToAdd * 1 + capCavalryToAdd * 3;
-                float availableIron = resourceManager.globalSupply["Iron"] - army.nation.demand["Iron"]; //SEPARATE THE NATION AND WORLD SUPPLY IN THE FUTURE  //THERE IS A BUG HERE FOR SOME FUCKING REASON
-
-                if (availableIron <= requiredIron) //MIGHT CAUSE SOME ERRORS DUE TO ROUNDING !!! (adjusting reinforcements according to available resources)
-                {
-                    float ironRatio = (float)availableIron / requiredIron;
-                    adjustedInfantryToAdd = Mathf.RoundToInt(capInfantryToAdd * ironRatio);
-                    adjustedCavalryToAdd = Mathf.RoundToInt(capCavalryToAdd * ironRatio);
-
-                    army.nation.GovBuy("Iron", availableIron);
-                    float militaryCost = resourceManager.resourcePrices["Iron"] * availableIron; //I guess it works. This is the best way I can do it for now
-                    army.nation.expenseMil += militaryCost;
-                }
-                else
-                {
-                    army.nation.GovBuy("Iron", requiredIron);
-                    float militaryCost = resourceManager.resourcePrices["Iron"] * requiredIron; //I guess it works. This is the best way I can do it for now
-                    army.nation.expenseMil += militaryCost;
-                }
-
-                army.curInfantry += adjustedInfantryToAdd;
-                army.curCavalry += adjustedCavalryToAdd;
-
-                int finalReinforcement = adjustedInfantryToAdd + adjustedCavalryToAdd;
-
-                foreach (TileProps tile in army.reinforceTiles) //get how much reinforcement each tile gives to substract them
-                {
-                    int totalReinforcePop = Mathf.RoundToInt(army.reinforceTiles.Sum(tile => tile.recruitPop));
-
-                    float tileRatio = tile.recruitPop / totalReinforcePop;
-
-                    float tileReinforcements = finalReinforcement * tileRatio;
-                    tile.recruitPop -= Mathf.RoundToInt(tileReinforcements); //There might be a difference between total population coming from tiles and the reinfrocementsInt. Maybe change some stuff?
-                } //here is an idea : add what is substracted from every tile to get a final number?
-
-                army.curSize = army.curInfantry + army.curCavalry;
-                army.availablePop -= finalReinforcement;
-
-                //Update text finally
-                army.armySizeText.text = army.curSize.ToString();
-            }
-        }
-    }
-
     public void UpdateTileProps()
     {
         foreach (TileProps tile in mapGenerator.landTiles)
@@ -448,6 +378,17 @@ public class UpdateManager : MonoBehaviour
         }
     }
 
+    public void UpdateArmyProps()
+    {
+        foreach (ArmyProps army in armies)
+        {
+            if (army.reinforce == true && army.curSize < army.maxSize && army.isInBattle == false) //Reinforce the army
+            {
+                army.GetReinforced(10);
+            }
+        }
+    }
+
     public void UpdateBattles()
     {
        foreach (BattleProps battle in armyTracker.battlePositions.Keys)
@@ -455,11 +396,26 @@ public class UpdateManager : MonoBehaviour
             foreach(ArmyProps army in battle.attackerArmies)
             {
                 army.TakeLosses(10);
+                
+                if (army.curSize <= 0) 
+                {
+                    army.DeleteArmy();
+                }
             }
             
             foreach (ArmyProps army in battle.defenderArmies)
             {
                 army.TakeLosses(10);
+
+                if (army.curSize <= 0)
+                {
+                    army.DeleteArmy();
+                }
+            }
+
+            if(battle.attackerArmies.Count == 0 || battle.defenderArmies.Count == 0)
+            {
+                battle.EndBattle();
             }
         }
     }

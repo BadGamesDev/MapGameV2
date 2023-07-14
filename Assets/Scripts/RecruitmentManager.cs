@@ -12,14 +12,12 @@ public class RecruitmentManager : MonoBehaviour
     {
         if (gameState.gameMode != GameState.Mode.recruitModeArmy)
         {
-            gameState.activeArmy = null;
-            gameState.gameMode = GameState.Mode.recruitModeArmy;
-
-            if (gameState.activeArmy != null)
+            if (gameState.activeArmy != null)// ?
             {
-                gameState.activeArmy = null;
-                gameState.activeArmy.SwitchSprite(0);
+                gameState.DeselectArmy(gameState.activeArmy);
             }
+
+            gameState.gameMode = GameState.Mode.recruitModeArmy;
         }
 
         else
@@ -41,8 +39,9 @@ public class RecruitmentManager : MonoBehaviour
         mainUI.armyInfantrySizeInput.gameObject.SetActive(false);
         mainUI.armyCavalrySizeInput.gameObject.SetActive(false);
         mainUI.armySizeDoneButton.gameObject.SetActive(false);
+        mainUI.recruitmentCancelButton.gameObject.SetActive(false);
 
-        gameState.activeArmy = null;
+        gameState.DeselectArmy(gameState.activeArmy);
 
         mapModes.mapMode = MapModes.Mode.political;
         gameState.gameMode = GameState.Mode.freeMode;
@@ -50,7 +49,7 @@ public class RecruitmentManager : MonoBehaviour
 
     public void CancelRecruitment()
     {
-        armyUI.DeleteArmy(gameState.activeArmy);
+        gameState.activeArmy.DeleteArmy();
 
         mainUI.armyInfantrySizeInput.gameObject.SetActive(false);
         mainUI.armyCavalrySizeInput.gameObject.SetActive(false);

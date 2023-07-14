@@ -13,16 +13,12 @@ public class ArmyMovement : MonoBehaviour
     public int currentNode = 0;
     public float progress = 0;
 
-    public float speed;
-
     private void Start()
     {
         timeManager = FindObjectOfType<TimeManager>();
         mapGenerator = FindObjectOfType<MapGenerator>();
         armyTracker = FindObjectOfType<ArmyTracker>();
         armyTracker.AddArmy(armyProps, transform.position);
-
-        speed = 1;
     }
 
     public void MarchArmy() //called in updateManager everyday
@@ -66,7 +62,7 @@ public class ArmyMovement : MonoBehaviour
             }
             else
             {
-                progress += speed;
+                progress += armyProps.speed;
             }
         }
     }

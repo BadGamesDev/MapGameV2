@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ArmyUI : MonoBehaviour
 {
     public GameState gameState;
+    public ArmyProps armyProps;
     
     public GameObject panelUI;
 
@@ -72,21 +73,9 @@ public class ArmyUI : MonoBehaviour
         gameState.gameMode = GameState.Mode.recruitModeTiles;
     }
 
-    public void DeleteArmy(ArmyProps army) //null reference for some reason //Update manager still has the army. Find a way of removig it
+    public void ButtonDeleteArmy()
     {
         CloseArmyUI();
-
-        foreach (var tile in army.reinforceTiles)
-        {
-            tile.isReinforceTile = false;
-        }
-
-        army.nation.armies.Remove(army);
-        Destroy(army.gameObject);
-        
-        if(gameState.activeArmy == army)
-        {
-            gameState.activeArmy = null;
-        }
+        gameState.activeArmy.DeleteArmy();
     }
 }

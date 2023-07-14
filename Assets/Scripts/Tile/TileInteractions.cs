@@ -27,21 +27,17 @@ public class TileInteractions : MonoBehaviour
         {
             if (Input.GetMouseButtonUp(0)) //Open UI
             {
-                if (gameState.gameMode == GameState.Mode.freeMode && tileProps.type != 1)
+                if (gameState.gameMode == GameState.Mode.freeMode && tileProps.type != 1 && !tileProps.FOW.activeSelf)
                 {
-                    gameState.activeTile = tileProps;
+                    gameState.SelectTile(tileProps);
                    
                     if (gameState.activeArmy != null)
                     {
-                        gameState.activeArmy.SwitchSprite(0);
-                        gameState.activeArmy = null;
+                        gameState.DeselectArmy(gameState.activeArmy);
                     }
-
-                    if (!tileProps.FOW.activeSelf) // ?
-                    {
-                        tileUI.OpenTileUI();
-                        tileUI.UpdateTileUI();
-                    }
+                    
+                    tileUI.OpenTileUI();
+                    tileUI.UpdateTileUI();
                 }
 
                 else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tileProps.nation != null && tileProps.nation == gameState.playerNation)

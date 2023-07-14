@@ -1874,7 +1874,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1630243744}
         m_TargetAssemblyTypeName: ArmyUI, Assembly-CSharp
-        m_MethodName: DeleteArmy
+        m_MethodName: ButtonDeleteArmy
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10730,6 +10730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: {fileID: 1630243737}
+  armyProps: {fileID: 0}
   panelUI: {fileID: 1630736123}
   buttonSetReinforce: {fileID: 1131967310}
   buttonEditReinforceTiles: {fileID: 22828519}

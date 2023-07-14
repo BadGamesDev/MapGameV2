@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class GameState : MonoBehaviour
@@ -21,6 +22,28 @@ public class GameState : MonoBehaviour
     private void Start()
     {
         gameMode = Mode.freeMode;
+    }
+
+    public void SelectArmy(ArmyProps army)
+    {
+        activeArmy = army;
+        army.SwitchSprite(1);
+    }
+
+    public void DeselectArmy(ArmyProps army)
+    {
+        activeArmy = null;
+        army.SwitchSprite(0);
+    }
+
+    public void SelectTile(TileProps tile)
+    {
+        activeTile = tile;
+    }
+
+    public void DeselectTile(TileProps tile)
+    {
+        activeTile = null;
     }
 
     public void ChoosePlayerNation() //Used in MapGenerator

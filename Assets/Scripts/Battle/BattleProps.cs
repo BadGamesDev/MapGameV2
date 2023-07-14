@@ -11,4 +11,9 @@ public class BattleProps : MonoBehaviour
 
     public List<ArmyProps> attackerArmies;
     public List<ArmyProps> defenderArmies;
+
+    public void EndBattle()
+    {
+
+    }
 }

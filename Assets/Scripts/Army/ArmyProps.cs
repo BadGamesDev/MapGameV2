@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,9 +27,16 @@ public class ArmyProps : MonoBehaviour
     public int curInfantry;
     public int curCavalry;
 
+    public float morale;
+    public float speed;
+
     private void Start()
     {
         reinforce = true;
+        isInBattle = false;
+
+        speed = 1;
+        morale = 10;
     }
 
     public List<TileProps> GetNeighbors() //I might just get the neighbors of the parent tile instead of doing this bullshit
@@ -66,9 +74,49 @@ public class ArmyProps : MonoBehaviour
     
     //I should probably write a method for reinforcements too 
 
-    public void TakeLosses(int i)
+    public void GetReinforced(int i) //placeholder
     {
-        curCavalry -= i;
-        curInfantry -= i;
+        int infReinforcement = Mathf.Min(i, maxInfantry - curInfantry);
+        int cavReinforcement = Mathf.Min(i, maxCavalry - curCavalry);
+
+        curInfantry += infReinforcement;
+        curCavalry += cavReinforcement;
+        
+        curSize = curInfantry + curCavalry;
+    }
+
+    public void TakeLosses(int i) //placeholder
+    {
+        int infLosses = Mathf.Min(i, curInfantry);
+        int cavLosses = Mathf.Min(i, curCavalry);
+
+        curCavalry -= infLosses;
+        curInfantry -= cavLosses;
+        
+        curSize = curInfantry + curCavalry;
+    }
+
+    public void DeleteArmy()
+    {
+        GameState gameState = FindObjectOfType<GameState>();
+        UpdateManager updateManager = FindObjectOfType<UpdateManager>();
+        ArmyTracker armyTracker = FindObjectOfType<ArmyTracker>();
+        
+        if (gameState.activeArmy == this)
+        {
+            gameState.activeArmy = null;
+        }
+
+        updateManager.armies.Remove(this); //This is a bit weird. But I don't want to reference update manager in this script directly so this works for now.
+
+        armyTracker.RemoveArmy(this);
+
+        foreach (var tile in reinforceTiles)
+        {
+            tile.isReinforceTile = false;
+        }
+
+        nation.armies.Remove(this);
+        Destroy(gameObject);
     }
 }
