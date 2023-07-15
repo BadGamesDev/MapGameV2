@@ -1,3 +1,5 @@
+using System;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class RecruitmentManager : MonoBehaviour
@@ -7,6 +9,9 @@ public class RecruitmentManager : MonoBehaviour
     public ArmyUI armyUI;
     public MapModes mapModes; //ATROCIOUS SOLUTION! FIND ANOTHER WAY!
 
+    public GameObject army;
+
+    public static event Action<ArmyProps> ArmyRecruited; //to add it to armies list in update manager
 
     public void RecruitArmyButton()
     {
@@ -59,5 +64,37 @@ public class RecruitmentManager : MonoBehaviour
 
         mapModes.mapMode = MapModes.Mode.political;
         gameState.gameMode = GameState.Mode.freeMode;
+    }
+
+    //MORNING WORK :) 
+
+    public void RecruitArmy(TileProps tile)
+    {
+        Vector3 spawnPosition = tile.transform.position;
+        GameObject newArmy = Instantiate(army, spawnPosition, Quaternion.identity);
+        ArmyProps armyProps = newArmy.GetComponent<ArmyProps>();
+
+        gameState.activeArmy = armyProps; //I don't want to highlight the army so I did it like this
+
+        tile.nation.armies.Add(armyProps);
+        ArmyRecruited.Invoke(armyProps);
+
+        armyProps.nation = tile.nation;
+        armyProps.reinforceTiles.Add(tile);
+
+        mainUI.armyInfantrySizeInput.gameObject.SetActive(true); //the whole input UI is placeholder
+        mainUI.armyCavalrySizeInput.gameObject.SetActive(true);
+        mainUI.armySizeDoneButton.gameObject.SetActive(true);
+        mainUI.recruitmentCancelButton.gameObject.SetActive(true);
+
+        tile.isReinforceTile = true;
+
+        gameState.gameMode = GameState.Mode.recruitModeTiles;
+    }
+
+    public void AssignRecruitTiles(TileProps tile)
+    {
+        gameState.activeArmy.reinforceTiles.Add(tile);
+        tile.isReinforceTile = true;
     }
 }

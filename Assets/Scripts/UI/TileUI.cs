@@ -18,6 +18,7 @@ public class TileUI : MonoBehaviour
     public TMP_Text agriPopText;
     public TMP_Text resourcePopText;
     public TMP_Text industryPopText;
+    public TMP_Text migrationText;
     public TMP_Text resourceTypeText; //Thinking of making this an image;
 
     public void OpenTileUI()
@@ -56,12 +57,21 @@ public class TileUI : MonoBehaviour
         resourcePopText.text = gameState.activeTile.resourcePop.ToString();
         industryPopText.text = gameState.activeTile.industryPop.ToString();
 
+        migrationText.text = gameState.activeTile.migration.ToString();
+
         resourceTypeText.text = gameState.activeTile.resource;
     }
 
     public void SettleTile()
     {
-        gameState.activeTile.nation = gameState.playerNation; //hard coding feels bad... again
+        TileProps settledTile = gameState.activeTile;
+        TileProps capitalTile = gameState.playerNation.capital;
+        
+        settledTile.nation = gameState.playerNation; //hard coding feels bad... again
+        settledTile.IncreasePopulationFlat(100);
+        capitalTile.DecreasePopulationFlat(100);
+
+
         gameState.playerNation.ownedTiles.Add(gameState.activeTile);
 
         List<TileProps> neighbors = gameState.playerNation.GetNationNeighbors(); //No need to get all the nation neighbors, just get tile neighbors

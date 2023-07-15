@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TimeManager;
-using static TileInteractions;
+using static RecruitmentManager;
 using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF ADDING ARMIES TO THE LIST
 
 public class UpdateManager : MonoBehaviour
@@ -45,6 +45,7 @@ public class UpdateManager : MonoBehaviour
         UpdateArmyProps();
         UpdateTileProps();
         UpdateNationProps();
+        UpdateMigrations();
         UpdateMainUI();
         UpdateTileUI();
         UpdateArmyUI();
@@ -95,6 +96,7 @@ public class UpdateManager : MonoBehaviour
     public void OnMonthTick()
     {
         UpdateGraphData();
+        UpdateMigrations();
         //AutoNationExpansion();
     }
 
@@ -193,8 +195,10 @@ public class UpdateManager : MonoBehaviour
     {
         foreach (TileProps tile in mapGenerator.landTiles)
         {
+            //Right noww the gdp calculation is completely bullshit(multiply daily production by 365) make it better in the future
+
             //POPULATION ###################################################################################
-            tile.IncreasePopulation(0.0001f);
+            tile.IncreasePopulationPercent(0.0001f);
 
             if (tile.recruitPop < tile.totalPop / 10)
             {
@@ -214,7 +218,7 @@ public class UpdateManager : MonoBehaviour
             {
                 agriDemandRatio = globalAgriDemandAmount / globalAgriSupplyAmount;
             }
-            tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio);
+            tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio) * 356;
 
             float globalResourceSupplyAmount = resourceManager.globalSupply[tile.resource];//resource
             float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
@@ -226,7 +230,7 @@ public class UpdateManager : MonoBehaviour
                 resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
             }
 
-            tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
+            tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio) * 356;
 
             tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
 
@@ -374,6 +378,62 @@ public class UpdateManager : MonoBehaviour
 
                 nation.debt += i * -1;
                 nation.money += i * -1;
+            }
+        }
+    }
+
+    public void UpdateMigrations()
+    {
+        Debug.Log("migrated");
+
+        foreach (NationProps nation in nations)
+        {
+            float totalAttraction = 0;
+            float totalTakingTileAttraction = 0; //abhorrent name, find something better
+            float avgAttraction = 0; //there will be different attraction values fro each pop type (maybe)
+
+            List<TileProps> takingTiles = new List<TileProps>();
+
+            float totalMigrantPop = 0;
+
+
+
+            foreach (TileProps tile in nation.ownedTiles)
+            {
+                tile.attraction = tile.totalPerCapGDP;
+                totalAttraction += tile.attraction;
+            }
+
+            avgAttraction = totalAttraction / nation.ownedTiles.Count;
+
+            foreach (TileProps tile in nation.ownedTiles)
+            {   
+                if (tile.attraction < avgAttraction)
+                {
+                    float tileMigrantPop = tile.totalPop * (avgAttraction / tile.attraction * 0.001f);
+                    totalMigrantPop += tileMigrantPop;
+                    tile.DecreasePopulationFlat(tileMigrantPop);
+
+                    tile.migration = tileMigrantPop * -1;
+                }
+
+                if (tile.attraction > avgAttraction)
+                {
+                    totalAttraction += tile.attraction; // Do I even need to do it like this? Am I dumb?
+                    totalTakingTileAttraction += totalTakingTileAttraction += tile.attraction;
+                    takingTiles.Add(tile);
+                }
+            }
+
+
+
+            foreach (TileProps tile in takingTiles) //Feels very scuffed indeed
+            {
+                float attractionShare = tile.attraction / totalTakingTileAttraction;
+                float attractedMigrants = totalMigrantPop * attractionShare;
+                tile.IncreasePopulationFlat(attractedMigrants);
+                
+                tile.migration = attractedMigrants;
             }
         }
     }

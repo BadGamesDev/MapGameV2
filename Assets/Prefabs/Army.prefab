@@ -14,10 +14,9 @@ GameObject:
   - component: {fileID: 2172309133561275039}
   - component: {fileID: -436085422724363299}
   - component: {fileID: -4760098470870953994}
-  - component: {fileID: -3660662086798442028}
   m_Layer: 8
   m_Name: Army
-  m_TagString: Untagged
+  m_TagString: Army
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -154,12 +153,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f560a168644964ba9490cb8ea8927a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  armyTracker: {fileID: 0}
   armyProps: {fileID: -4760098470870953994}
   timeManager: {fileID: 0}
   mapGenerator: {fileID: 0}
   path: []
-  currNode: 0
-  delay: 0
+  currentNode: 0
+  progress: 0
 --- !u!114 &-4760098470870953994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,24 +184,11 @@ MonoBehaviour:
   curSize: 0
   availablePop: 0
   maxInfantry: 0
-  curInfantry: 0
   maxCavalry: 0
+  curInfantry: 0
   curCavalry: 0
---- !u!114 &-3660662086798442028
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2172309133561275034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d26059dfa26dfa4ba50834bae292f40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  armyProps: {fileID: -4760098470870953994}
-  gameState: {fileID: 0}
-  armyUI: {fileID: 0}
+  morale: 0
+  speed: 0
 --- !u!1 &6664640353754038061
 GameObject:
   m_ObjectHideFlags: 0

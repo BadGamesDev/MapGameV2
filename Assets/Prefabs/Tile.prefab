@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 1002637299984358325}
   - component: {fileID: 1002637299984358327}
   - component: {fileID: 2727978838482467919}
-  - component: {fileID: -8174525580415072634}
   m_Layer: 7
   m_Name: Tile
-  m_TagString: Untagged
+  m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,8 +135,10 @@ MonoBehaviour:
   - {fileID: -3155371, guid: 85d248ac02ec8664db1bdc53aa04af8f, type: 3}
   - {fileID: -2120235598, guid: 85d248ac02ec8664db1bdc53aa04af8f, type: 3}
   - {fileID: -499779903, guid: 85d248ac02ec8664db1bdc53aa04af8f, type: 3}
+  FOW: {fileID: 0}
   resourceSprite: {fileID: 0}
   nation: {fileID: 0}
+  neighbors: []
   ID: 0
   type: 1
   grow: 1
@@ -157,19 +158,10 @@ MonoBehaviour:
   resourceGDP: 0
   industryGDP: 0
   totalGDP: 0
+  agriPerCapGDP: 0
+  resourcePerCapGDP: 0
+  industryPerCapGDP: 0
+  totalPerCapGDP: 0
+  infrastructureLevel: 0
+  devCost: 0
   tax: 0
---- !u!114 &-8174525580415072634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1002637299984358330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed89ca2a729867a4d99dd3fc5fcb9b20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileProps: {fileID: 2727978838482467919}
-  gameState: {fileID: 0}
-  Army: {fileID: 2172309133561275034, guid: e2c21a905868af541a327eed7239ade7, type: 3}

@@ -50,9 +50,13 @@ public class TileProps : MonoBehaviour
 
     public float tax; //might change
 
+    public float attraction;
+    public float migration; //mostly for debugging
+
     private void Awake()
     {
         infrastructureLevel = 0; //kinda bad
+        attraction = 0;
         
         isReinforceTile = false;
 
@@ -76,11 +80,46 @@ public class TileProps : MonoBehaviour
         industryPop = totalPop * (industryRatio / totalRatio);
     }
 
-    public void IncreasePopulation(float percentageIncrease) //maybe also add a method for flat increases?
+    public void IncreasePopulationPercent(float percentIncrease) //Increases or decreases don't update UI by themselves which is a bit of a problem
     {
-        agriPop += agriPop * percentageIncrease;
-        resourcePop += resourcePop * percentageIncrease;
-        industryPop += industryPop * percentageIncrease;
+        agriPop += agriPop * percentIncrease;
+        resourcePop += resourcePop * percentIncrease;
+        industryPop += industryPop * percentIncrease;
+
+        totalPop = agriPop + resourcePop + industryPop;
+    }
+
+    public void DecreasePopulationPercent(float percentDecrease)
+    {
+        agriPop -= agriPop * percentDecrease;
+        resourcePop -= resourcePop * percentDecrease;
+        industryPop -= industryPop * percentDecrease;
+
+        totalPop = agriPop + resourcePop + industryPop;
+    }
+
+    public void IncreasePopulationFlat(float flatIncrease)
+    {
+        float agriFlatIncrease = agriPop / totalPop * flatIncrease;
+        float resourceFlatIncrease = resourcePop / totalPop * flatIncrease;
+        float industryFlatIncrease = industryPop / totalPop * flatIncrease;
+
+        agriPop += agriFlatIncrease;
+        resourcePop += resourceFlatIncrease;
+        industryPop += industryFlatIncrease;
+
+        totalPop = agriPop + resourcePop + industryPop;
+    }
+
+    public void DecreasePopulationFlat(float flatDecrease)
+    {
+        float agriFlatDecrease = agriPop / totalPop * flatDecrease;
+        float resourceFlatDecrease = resourcePop / totalPop * flatDecrease;
+        float industryFlatDecrease = industryPop / totalPop * flatDecrease;
+
+        agriPop -= agriFlatDecrease;
+        resourcePop-= resourceFlatDecrease;
+        industryPop -= industryFlatDecrease;
 
         totalPop = agriPop + resourcePop + industryPop;
     }

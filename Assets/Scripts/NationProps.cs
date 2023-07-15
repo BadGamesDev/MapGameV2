@@ -188,11 +188,12 @@ public class NationProps : MonoBehaviour
         {
             foreach (Vector2 neighborPos in tile.neighbors)
             {
-                RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero);
-                if (hit.collider != null)
+                RaycastHit2D hit = Physics2D.Raycast(neighborPos, Vector2.zero, 0, LayerMask.GetMask("Tiles"));
+
+                if (hit)
                 {
                     TileProps neighborTile = hit.collider.GetComponent<TileProps>();
-                    if (neighborTile != null && neighborTile.nation == null && neighborTile.type != 1)
+                    if (neighborTile.nation == null && neighborTile.type != 1)
                     {
                         unclaimedNeighbors.Add(neighborTile);
                     }
@@ -202,11 +203,12 @@ public class NationProps : MonoBehaviour
 
         bool IsTileOwnedByNation(Vector2 position) //method used to see if a tile is border with the lambda thingy
         {
-            RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
-            if (hit.collider != null)
+            RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero, 0, LayerMask.GetMask("Tiles"));
+
+            if (hit)
             {
                 TileProps tile = hit.collider.GetComponent<TileProps>();
-                if (tile != null && tile.nation == this)
+                if (tile.nation == this)
                 {
                     return true;
                 }
