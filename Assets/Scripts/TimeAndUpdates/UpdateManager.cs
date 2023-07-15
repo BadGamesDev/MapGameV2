@@ -206,9 +206,9 @@ public class UpdateManager : MonoBehaviour
             }
 
             //ECONOMY ######################################################################################
-            tile.agriProduction = tile.GetAgriPopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f); //placeholder formula, also I feel like development could be simplified so that I don't have to divide it by 100.
-            tile.resourceProduction = tile.GetResourcePopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f);
-            tile.industryProduction = tile.GetIndustryPopulation() * 0.01f * (tile.infrastructureLevel / 100 + 0.20f);
+            tile.agriProduction = tile.GetAgriPopulation() * 0.1f * (tile.infrastructureLevel / 100 + 0.20f); //placeholder formula, also I feel like development could be simplified so that I don't have to divide it by 100.
+            tile.resourceProduction = tile.GetResourcePopulation() * 0.1f * (tile.infrastructureLevel / 100 + 0.20f);
+            tile.industryProduction = tile.GetIndustryPopulation() * 0.1f * (tile.infrastructureLevel / 100 + 0.20f);
 
             float globalAgriSupplyAmount = resourceManager.globalSupply[tile.agriResource];//agri
             float globalAgriDemandAmount = resourceManager.globalDemand[tile.agriResource];
@@ -218,7 +218,7 @@ public class UpdateManager : MonoBehaviour
             {
                 agriDemandRatio = globalAgriDemandAmount / globalAgriSupplyAmount;
             }
-            tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio) * 356;
+            tile.agriGDP = resourceManager.resourcePrices[tile.agriResource] * (tile.agriProduction * agriDemandRatio);
 
             float globalResourceSupplyAmount = resourceManager.globalSupply[tile.resource];//resource
             float globalResourceDemandAmount = resourceManager.globalDemand[tile.resource];
@@ -230,7 +230,7 @@ public class UpdateManager : MonoBehaviour
                 resourceDemandRatio = globalResourceDemandAmount / globalResourceSupplyAmount;
             }
 
-            tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio) * 356;
+            tile.resourceGDP = resourceManager.resourcePrices[tile.resource] * (tile.resourceProduction * resourceDemandRatio);
 
             tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
 

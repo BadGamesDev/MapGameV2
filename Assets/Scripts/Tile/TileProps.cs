@@ -23,9 +23,11 @@ public class TileProps : MonoBehaviour
     public bool isReinforceTile;
     public int recruitPop;
 
+    public float tribalPop;
     public float agriPop;
     public float resourcePop;
     public float industryPop;
+    public float totalPopNonTribal;
     public float totalPop;
     
     public string resource;
@@ -71,10 +73,11 @@ public class TileProps : MonoBehaviour
         };
     }
 
-    public void SetPopulationRatios(float agriRatio, float resourceRatio, float industryRatio)
+    public void SetPopulationRatios(float tribalRatio, float agriRatio, float resourceRatio, float industryRatio)
     {
-        float totalRatio = agriRatio + resourceRatio + industryRatio;
+        float totalRatio = tribalRatio + agriRatio + resourceRatio + industryRatio;
 
+        tribalPop = totalPop * (tribalRatio / totalRatio);
         agriPop = totalPop * (agriRatio / totalRatio);
         resourcePop = totalPop * (resourceRatio / totalRatio);
         industryPop = totalPop * (industryRatio / totalRatio);
@@ -86,7 +89,8 @@ public class TileProps : MonoBehaviour
         resourcePop += resourcePop * percentIncrease;
         industryPop += industryPop * percentIncrease;
 
-        totalPop = agriPop + resourcePop + industryPop;
+        totalPop = tribalPop + agriPop + resourcePop + industryPop;
+        totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
     public void DecreasePopulationPercent(float percentDecrease)
@@ -95,38 +99,46 @@ public class TileProps : MonoBehaviour
         resourcePop -= resourcePop * percentDecrease;
         industryPop -= industryPop * percentDecrease;
 
-        totalPop = agriPop + resourcePop + industryPop;
+        totalPop = tribalPop + agriPop + resourcePop + industryPop;
+        totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
     public void IncreasePopulationFlat(float flatIncrease)
     {
-        float agriFlatIncrease = agriPop / totalPop * flatIncrease;
-        float resourceFlatIncrease = resourcePop / totalPop * flatIncrease;
-        float industryFlatIncrease = industryPop / totalPop * flatIncrease;
+        float agriFlatIncrease = agriPop / totalPopNonTribal * flatIncrease;
+        float resourceFlatIncrease = resourcePop / totalPopNonTribal * flatIncrease;
+        float industryFlatIncrease = industryPop / totalPopNonTribal * flatIncrease;
 
         agriPop += agriFlatIncrease;
         resourcePop += resourceFlatIncrease;
         industryPop += industryFlatIncrease;
 
-        totalPop = agriPop + resourcePop + industryPop;
+        totalPop = tribalPop + agriPop + resourcePop + industryPop;
+        totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
     public void DecreasePopulationFlat(float flatDecrease)
     {
-        float agriFlatDecrease = agriPop / totalPop * flatDecrease;
-        float resourceFlatDecrease = resourcePop / totalPop * flatDecrease;
-        float industryFlatDecrease = industryPop / totalPop * flatDecrease;
+        float agriFlatDecrease = agriPop / totalPopNonTribal * flatDecrease;
+        float resourceFlatDecrease = resourcePop / totalPopNonTribal * flatDecrease;
+        float industryFlatDecrease = industryPop / totalPopNonTribal * flatDecrease;
 
         agriPop -= agriFlatDecrease;
         resourcePop-= resourceFlatDecrease;
         industryPop -= industryFlatDecrease;
 
-        totalPop = agriPop + resourcePop + industryPop;
+        totalPop = tribalPop + agriPop + resourcePop + industryPop;
+        totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
     public int GetTotalPopulation()
     {
-        return Mathf.RoundToInt(totalPop);
+        return Mathf.RoundToInt(GetTribalPopulation() + GetAgriPopulation() + GetResourcePopulation() + GetIndustryPopulation());
+    }
+
+    public int GetTribalPopulation()
+    {
+        return Mathf.RoundToInt(tribalPop);
     }
 
     public int GetAgriPopulation()
