@@ -18,13 +18,14 @@ public class MainUI : MonoBehaviour
     public GameObject economyTab;
     public GameObject tradeTab;
 
+    public GameObject welcomeMessage; // THIS WILL BE DELETED! THIS IS JUST TEMPORARY!
 
     public void UpdateMainDisplay() //method name sucks 
     {
         if (gameState.playerNation != null)
         {
-            populationIndicator.text ="Pop: " + FormatNumberPop(gameState.playerNation.population);
-            moneyIndicator.text ="Money: " + FormatNumberMoney(gameState.playerNation.money);
+            populationIndicator.text ="Population: " + FormatNumberPop(gameState.playerNation.population);
+            moneyIndicator.text = "Treasury: " + FormatNumberMoney(gameState.playerNation.money);
         }
     }
 
@@ -115,4 +116,8 @@ public class MainUI : MonoBehaviour
         }
     }
 
+    public void WelcomeMessageCloseButton() //make a generalised close button method.
+    {
+        welcomeMessage.SetActive(false); 
+    }
 }

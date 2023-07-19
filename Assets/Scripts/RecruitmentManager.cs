@@ -66,8 +66,6 @@ public class RecruitmentManager : MonoBehaviour
         gameState.gameMode = GameState.Mode.freeMode;
     }
 
-    //MORNING WORK :) 
-
     public void RecruitArmy(TileProps tile)
     {
         Vector3 spawnPosition = tile.transform.position;

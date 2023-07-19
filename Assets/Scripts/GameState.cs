@@ -8,7 +8,8 @@ public class GameState : MonoBehaviour
     public NationProps playerNation;
 
     public TileProps activeTile;
-    public ArmyProps activeArmy;
+    public ArmyProps activeArmy; //army and navy should probably be a list because the player needs t be able to select more than one
+    public NavyProps activeNavy; 
 
     public Mode gameMode;
 
@@ -34,6 +35,18 @@ public class GameState : MonoBehaviour
     {
         activeArmy = null;
         army.SwitchSprite(0);
+    }
+
+    public void SelectNavy(NavyProps navy)
+    {
+        activeNavy = navy;
+        navy.SwitchSprite(1);
+    }
+
+    public void DeselectNavy(NavyProps navy)
+    {
+        activeNavy = null;
+        navy.SwitchSprite(0);
     }
 
     public void SelectTile(TileProps tile)

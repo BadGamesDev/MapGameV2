@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Army
   - Tile
+  - Navy
   layers:
   - Default
   - TransparentFX

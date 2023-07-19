@@ -18,8 +18,11 @@ public class CamControl : MonoBehaviour
     {
         cameraPosition = transform.position; //temporary solution
 
-        minBounds = new Vector2(-1.5f, -2); //maybe I shouldn't hardcode this stuff?
-        maxBounds = new Vector2(81, 36);
+        minBounds = new Vector2(-999, -999); //maybe I shouldn't hardcode this stuff?
+        maxBounds = new Vector2(999, 999);
+
+        //minBounds = new Vector2(-1.5f, -2); //maybe I shouldn't hardcode this stuff?
+        //maxBounds = new Vector2(81, 36);
         minOrthographicSize = 2;
         maxOrthographicSize = 18;
     }

@@ -10,6 +10,7 @@ public class NationProps : MonoBehaviour
     public TileProps capital;
     
     public List<ArmyProps> armies;
+    public List<NavyProps> navies;
     
     public string nationName;
     public int population;
@@ -25,6 +26,7 @@ public class NationProps : MonoBehaviour
     public float expense;
     public float expenseDev;
     public float expenseMil;
+    public float expenseInt;
 
     public float taxLevel;
 

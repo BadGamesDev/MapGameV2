@@ -23,6 +23,8 @@ public class TileProps : MonoBehaviour
     public bool isReinforceTile;
     public int recruitPop;
 
+    public float popGrowthRateNonTribal;
+
     public float tribalPop;
     public float agriPop;
     public float resourcePop;
@@ -53,6 +55,7 @@ public class TileProps : MonoBehaviour
     public float tax; //might change
 
     public float attraction;
+    public float attractionModifier; //I'm sure there can be a better way
     public float migration; //mostly for debugging
 
     private void Awake()
@@ -83,7 +86,7 @@ public class TileProps : MonoBehaviour
         industryPop = totalPop * (industryRatio / totalRatio);
     }
 
-    public void IncreasePopulationPercent(float percentIncrease) //Increases or decreases don't update UI by themselves which is a bit of a problem
+    public void IncreaseAllPopsPercent(float percentIncrease) //Increases or decreases don't update UI by themselves which is a bit of a problem. These are all non tribal changes btw
     {
         agriPop += agriPop * percentIncrease;
         resourcePop += resourcePop * percentIncrease;
@@ -93,7 +96,7 @@ public class TileProps : MonoBehaviour
         totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
-    public void DecreasePopulationPercent(float percentDecrease)
+    public void DecreaseAllPopsPercent(float percentDecrease)
     {
         agriPop -= agriPop * percentDecrease;
         resourcePop -= resourcePop * percentDecrease;
@@ -103,7 +106,7 @@ public class TileProps : MonoBehaviour
         totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
-    public void IncreasePopulationFlat(float flatIncrease)
+    public void IncreaseAllPopsFlat(float flatIncrease)
     {
         float agriFlatIncrease = agriPop / totalPopNonTribal * flatIncrease;
         float resourceFlatIncrease = resourcePop / totalPopNonTribal * flatIncrease;
@@ -117,7 +120,7 @@ public class TileProps : MonoBehaviour
         totalPopNonTribal = agriPop + resourcePop + industryPop;
     }
 
-    public void DecreasePopulationFlat(float flatDecrease)
+    public void DecreaseAllPopsFlat(float flatDecrease)
     {
         float agriFlatDecrease = agriPop / totalPopNonTribal * flatDecrease;
         float resourceFlatDecrease = resourcePop / totalPopNonTribal * flatDecrease;
@@ -134,6 +137,11 @@ public class TileProps : MonoBehaviour
     public int GetTotalPopulation()
     {
         return Mathf.RoundToInt(GetTribalPopulation() + GetAgriPopulation() + GetResourcePopulation() + GetIndustryPopulation());
+    }
+
+    public int GetTotalPopulationNonTribal()
+    {
+        return Mathf.RoundToInt(GetAgriPopulation() + GetResourcePopulation() + GetIndustryPopulation());
     }
 
     public int GetTribalPopulation()

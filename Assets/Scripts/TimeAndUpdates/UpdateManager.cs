@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 using static TimeManager;
 using static RecruitmentManager;
 using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF ADDING ARMIES TO THE LIST
@@ -10,13 +11,17 @@ public class UpdateManager : MonoBehaviour
     public GameState gameState;
     public MapGenerator mapGenerator;
     public ResourceManager resourceManager;
+    public ModifierManager modifierManager; //I might turn this into an event in the future
     public ArmyTracker armyTracker;
     public CamControl camControl;
-    
+
     public List<ArmyProps> armies;
+    public List<NavyProps> navies;
     public TileProps[] tiles;
     public NationProps[] nations; //tiles can be an array but this should probably be a list
-    
+
+    public Dictionary<string, int> tilemodifiers;
+
     public MainUI mainUI; //for debugging
     public TileUI tileUI;
     public ArmyUI armyUI;
@@ -28,6 +33,8 @@ public class UpdateManager : MonoBehaviour
         armies = new List<ArmyProps>();
         tiles = FindObjectsOfType<TileProps>();
         nations = FindObjectsOfType<NationProps>();
+
+        mainUI.welcomeMessage.SetActive(true);
 
         ArmyRecruited += OnArmyRecruited;
         ArmyRecruitedAI += OnArmyRecruited;
@@ -52,7 +59,7 @@ public class UpdateManager : MonoBehaviour
         UpdateEconomyUI();
         UpdateTradeUI();
 
-        camControl.CenterCamera(gameState.playerNation.capital.gameObject);
+        camControl.CenterCamera(gameState.playerNation.navies[0].gameObject);
     }
 
     public void SetupResources()
@@ -61,7 +68,7 @@ public class UpdateManager : MonoBehaviour
         resourceManager.InitializeResources();
         resourceManager.InitializeSupplyDemand();
     }
-    
+
     public void SetInitialRecruits() //not "bad" but there is definitely a cleaner way
     {
         foreach (TileProps province in tiles)
@@ -84,8 +91,9 @@ public class UpdateManager : MonoBehaviour
         UpdateArmyProps();
         UpdateTileProps();
         UpdateNationProps();
-        MoveArmies();
+        MoveUnits();
         UpdateBattles();
+        UpdateModifiers();
         UpdateMainUI();
         UpdateTileUI();
         UpdateArmyUI();
@@ -198,7 +206,8 @@ public class UpdateManager : MonoBehaviour
             //Right noww the gdp calculation is completely bullshit(multiply daily production by 365) make it better in the future
 
             //POPULATION ###################################################################################
-            tile.IncreasePopulationPercent(0.0001f);
+            tile.IncreaseAllPopsPercent(0.0001f);
+            tile.tribalPop *= 1.0001f; //THIS IS BORING AND STUPID. FIND A GOOD FORMULA.
 
             if (tile.recruitPop < tile.totalPop / 10)
             {
@@ -234,7 +243,7 @@ public class UpdateManager : MonoBehaviour
 
             tile.totalGDP = tile.agriGDP + tile.resourceGDP + tile.industryGDP; //total
 
-            tile.totalPerCapGDP = tile.agriGDP / tile.GetTotalPopulation();
+            tile.totalPerCapGDP = tile.agriGDP / tile.GetTotalPopulationNonTribal();
             tile.agriPerCapGDP = tile.resourceGDP / tile.GetAgriPopulation();
             tile.resourcePerCapGDP = tile.industryGDP / tile.GetResourcePopulation();
             //tile.industryPerCapGDP = tile.agriGDP / tile.GetIndustryPopulation();
@@ -327,33 +336,33 @@ public class UpdateManager : MonoBehaviour
                 + army.curCavalry * 0.15f;
             }
 
-            float nationInterest = 0;
+            float expenseInterest = 0;
             if (nation.debt > 0)
             {
-                nationInterest = nation.debt * 0.004f;
+                expenseInterest = nation.debt * 0.004f;
             }
-
-            nation.expense = nationBuy + nationMilWages + nationInterest;
 
             foreach (var key in nation.govBuy.Keys.ToList()) //FEELS WRONG
             {
                 nation.govBuy[key] = 0;
             }
-            
-            float nationExpenseDev = 0;
+
+            float expenseDev = 0;
             foreach (TileProps tile in nation.ownedTiles) //Maybe move this to tile update?
             {
                 float developmentReq = (tile.totalPop / 500) * nation.developmentBudget;
-                tile.nation.GovBuy("Timber", developmentReq);
+                tile.nation.GovBuy("Timber", developmentReq); // add this to demand
                 float developmentCost = resourceManager.resourcePrices["Timber"] * developmentReq;
-                nationExpenseDev += developmentCost;
+                expenseDev += developmentCost;
             }
 
-            nation.expenseDev = nationExpenseDev;
-          
-            int nationExpenseMil = 0;//mil expense is calculated in the UpdateArmyProps. (yeah I know, couldn't do it ny other way). 
+            int expenseMil = 0;//mil expense is calculated in the UpdateArmyProps. (yeah I know, couldn't do it ny other way). 
 
-            nation.expenseMil = nationExpenseMil;
+            nation.expenseDev = expenseDev;
+            nation.expenseMil = expenseMil + nationMilWages; //might separate wages later
+            nation.expenseInt = expenseInterest;
+
+            nation.expense = nationBuy + nationMilWages + expenseInterest; //dev is part of govbuy
         }
 
         //calculate balance
@@ -390,49 +399,44 @@ public class UpdateManager : MonoBehaviour
         {
             float totalAttraction = 0;
             float totalTakingTileAttraction = 0; //abhorrent name, find something better
-            float avgAttraction = 0; //there will be different attraction values fro each pop type (maybe)
+            float avgAttraction = 0; //there will be different attraction values for each pop type (maybe)
 
             List<TileProps> takingTiles = new List<TileProps>();
 
             float totalMigrantPop = 0;
 
-
-
             foreach (TileProps tile in nation.ownedTiles)
             {
-                tile.attraction = tile.totalPerCapGDP;
+                tile.attraction = tile.totalPerCapGDP + tile.attractionModifier;
                 totalAttraction += tile.attraction;
             }
 
             avgAttraction = totalAttraction / nation.ownedTiles.Count;
 
             foreach (TileProps tile in nation.ownedTiles)
-            {   
+            {
                 if (tile.attraction < avgAttraction)
                 {
-                    float tileMigrantPop = tile.totalPop * (avgAttraction / tile.attraction * 0.001f);
+                    float tileMigrantPop = tile.totalPopNonTribal * (avgAttraction / tile.attraction * 0.001f);
                     totalMigrantPop += tileMigrantPop;
-                    tile.DecreasePopulationFlat(tileMigrantPop);
+                    tile.DecreaseAllPopsFlat(tileMigrantPop);
 
                     tile.migration = tileMigrantPop * -1;
                 }
 
                 if (tile.attraction > avgAttraction)
                 {
-                    totalAttraction += tile.attraction; // Do I even need to do it like this? Am I dumb?
-                    totalTakingTileAttraction += totalTakingTileAttraction += tile.attraction;
+                    totalTakingTileAttraction += tile.attraction;
                     takingTiles.Add(tile);
                 }
             }
-
-
 
             foreach (TileProps tile in takingTiles) //Feels very scuffed indeed
             {
                 float attractionShare = tile.attraction / totalTakingTileAttraction;
                 float attractedMigrants = totalMigrantPop * attractionShare;
-                tile.IncreasePopulationFlat(attractedMigrants);
-                
+                tile.IncreaseAllPopsFlat(attractedMigrants);
+
                 tile.migration = attractedMigrants;
             }
         }
@@ -451,18 +455,18 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateBattles()
     {
-       foreach (BattleProps battle in armyTracker.battlePositions.Keys)
-       {
-            foreach(ArmyProps army in battle.attackerArmies)
+        foreach (BattleProps battle in armyTracker.battlePositions.Keys)
+        {
+            foreach (ArmyProps army in battle.attackerArmies)
             {
                 army.TakeLosses(10);
-                
-                if (army.curSize <= 0) 
+
+                if (army.curSize <= 0)
                 {
                     army.DeleteArmy();
                 }
             }
-            
+
             foreach (ArmyProps army in battle.defenderArmies)
             {
                 army.TakeLosses(10);
@@ -473,10 +477,31 @@ public class UpdateManager : MonoBehaviour
                 }
             }
 
-            if(battle.attackerArmies.Count == 0 || battle.defenderArmies.Count == 0)
+            if (battle.attackerArmies.Count == 0 || battle.defenderArmies.Count == 0)
             {
                 battle.EndBattle();
             }
+        }
+    }
+
+    public void UpdateModifiers()
+    {
+        Dictionary<TileProps, Modifier> modifiersToRemove = new Dictionary<TileProps, Modifier>();
+
+        foreach (KeyValuePair<TileProps, Modifier> modifier in modifierManager.tileModifiers)
+        {
+            Modifier currentModifier = modifier.Value;
+            currentModifier.duration -= 1;
+
+            if (currentModifier.duration <= 0)
+            {
+                modifiersToRemove.Add(modifier.Key, modifier.Value);
+            }
+        }
+
+        foreach (KeyValuePair<TileProps, Modifier> modifier in modifiersToRemove)
+        {
+            modifierManager.RemoveModifier(modifier.Key, modifier.Value);
         }
     }
 
@@ -514,14 +539,14 @@ public class UpdateManager : MonoBehaviour
     public void UpdateTileUI()
     {
         if (tileUI.panelUI.activeSelf == true)
-        { 
+        {
             tileUI.UpdateTileUI();
         }
     }
-    
+
     public void UpdateArmyUI()
     {
-        if(armyUI.panelUI.activeSelf == true)
+        if (armyUI.panelUI.activeSelf == true)
         {
             if (gameState.activeArmy != null)
             {
@@ -536,9 +561,7 @@ public class UpdateManager : MonoBehaviour
 
     public void UpdateEconomyUI()
     {
-        economyUI.taxIncomeText.text = gameState.playerNation.incomeTax.ToString();
-        economyUI.devExpenseText.text = gameState.playerNation.expenseDev.ToString();
-        economyUI.milExpenseText.text = gameState.playerNation.expenseMil.ToString();
+        economyUI.UpdateEconomyUI();
     }
 
     public void UpdateTradeUI()
@@ -546,11 +569,16 @@ public class UpdateManager : MonoBehaviour
         tradeUI.UpdateSupplyDemandDisplay();
     }
 
-    public void MoveArmies() //PLEASE FOR THE LOVE OF GOD OPTIMISE THIS
+    public void MoveUnits() //PLEASE FOR THE LOVE OF GOD OPTIMISE THIS
     {
         foreach (ArmyProps army in armies)
         {
             army.gameObject.GetComponent<ArmyMovement>().MarchArmy();
+        }
+
+        foreach (NavyProps navy in navies)
+        {
+            navy.gameObject.GetComponent<NavyMovement>().MarchNavy();
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -11,17 +12,20 @@ public class MapGenerator : MonoBehaviour
     public GameObject tilePrefab;
     public GameObject nationPrefab;
     public GameObject tilesParent;
+    public GameObject shipPrefab; //Doesn't feel right here
 
-    public int masses = 30;
+    public int masses;
 
-    public Vector2 mapSize = new Vector2(80, 40);
+    public Vector2 mapSize;
 
-    public Vector2 grow = new Vector2(4, 7);
+    public Vector2 grow;
     public int freq = 3;
 
     public int landTileCount = 0;
+    public int seaTileCount = 0;
 
     public List<TileProps> landTiles;
+    public List<TileProps> seaTiles;
 
     private void Awake()
     {
@@ -59,7 +63,7 @@ public class MapGenerator : MonoBehaviour
         {
             attempt++;
 
-            Vector2 pos = new Vector2(Mathf.Round(Random.value * mapSize.x - 1), Mathf.Round(Random.value * mapSize.y - 1));
+            Vector2 pos = new Vector2(Random.Range(14, mapSize.x - 15), Random.Range(14, mapSize.y - 15));
 
             if (pos.y % 2 == 0)
             {
@@ -102,6 +106,8 @@ public class MapGenerator : MonoBehaviour
 
         GenerateNations();
 
+        PlaceStartingBoat();
+
         ClearFOW();
 
         Invoke(nameof(DrawGrid), Time.deltaTime);
@@ -120,7 +126,7 @@ public class MapGenerator : MonoBehaviour
 
     void GenerateNations()
     {
-        List<TileProps> availableTiles = FindObjectsOfType<TileProps>().Where(tile => tile.type != 1).ToList();
+        List<TileProps> availableTiles = FindObjectsOfType<TileProps>().Where(tile => tile.type != 1).ToList(); //just use landtiles instead
 
         for (int i = 0; i < 2; i++)
         {
@@ -131,23 +137,49 @@ public class MapGenerator : MonoBehaviour
             nation.nationName = i.ToString();
             nation.isAI = true;
 
-            int randomIndex = Random.Range(0, availableTiles.Count);
-            TileProps randomTile = availableTiles[randomIndex];
+            //int randomIndex = Random.Range(0, availableTiles.Count);
+            //TileProps randomTile = availableTiles[randomIndex];
 
-            randomTile.infrastructureLevel = 25;
-            randomTile.totalPop = 20000;
-            randomTile.SetPopulationRatios(0,80,20,0); //this is also important because pop will revert to the empty tile value if you don't do it like this
-            randomTile.nation = nation;
-            nation.ownedTiles.Add(randomTile);
-            nation.capital = randomTile;
+            //randomTile.infrastructureLevel = 25;
+            //randomTile.totalPop = 20000;
+            //randomTile.SetPopulationRatios(0,80,20,0); //this is also important because pop will revert to the empty tile value if you don't do it like this
+            //randomTile.nation = nation;
+            //nation.ownedTiles.Add(randomTile);
+            //nation.capital = randomTile;
 
-            availableTiles.RemoveAt(randomIndex);
+            //availableTiles.RemoveAt(randomIndex);
 
-            nation.discoveredTiles.Add(randomTile);
-            nation.discoveredTiles.AddRange(nation.GetNationNeighbors());
+            //nation.discoveredTiles.Add(randomTile);
+            //nation.discoveredTiles.AddRange(nation.GetNationNeighbors());
         }
 
         gameState.ChoosePlayerNation();
+    }
+
+    void PlaceStartingBoat()
+    {
+        TileProps startTile = seaTiles[Random.Range(0, seaTiles.Count +1)];
+        GameObject starterNavyObject = Instantiate(shipPrefab, new Vector2(startTile.transform.position.x, startTile.transform.position.y), Quaternion.identity);
+        NavyProps starterNavy = starterNavyObject.GetComponent<NavyProps>();
+        NationProps playerNation = gameState.playerNation;
+        UpdateManager updateManager = FindObjectOfType<UpdateManager>(); // very scuffed reference. Do not reference updatemanager from here
+        
+        updateManager.navies.Add(starterNavy);
+
+        starterNavy.nation = playerNation;
+        playerNation.navies.Add(starterNavy);
+
+        playerNation.discoveredTiles.Add(startTile);
+
+        List<TileProps> neighbors = starterNavy.GetNeighbors();
+        foreach (TileProps neighbor in neighbors)
+        {
+            if (!starterNavy.nation.discoveredTiles.Contains(neighbor))
+            {
+                starterNavy.nation.discoveredTiles.Add(neighbor);
+            }
+        }
+        ClearFOW();
     }
 
     void CalcLandTiles()
@@ -170,6 +202,11 @@ public class MapGenerator : MonoBehaviour
                     {
                         landTileCount += 1;
                         landTiles.Add(hit.collider.gameObject.GetComponent<TileProps>());
+                    }
+                    else
+                    {
+                        seaTileCount += 1;
+                        seaTiles.Add(hit.collider.gameObject.GetComponent<TileProps>());
                     }
                 }
             }

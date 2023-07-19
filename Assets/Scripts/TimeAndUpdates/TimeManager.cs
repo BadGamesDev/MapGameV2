@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -27,7 +24,7 @@ public class TimeManager : MonoBehaviour
     {
         day = 1;
         month = 1;
-        year = 1780;
+        year = 1530;
     }
 
     void Update()
