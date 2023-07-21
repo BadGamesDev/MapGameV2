@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,7 +28,7 @@ public class TileUI : MonoBehaviour
     {
         panelUI.SetActive(true);
 
-        if (gameState.playerNation.GetNationEmptyNeighbors().Contains(gameState.activeTile))
+        if (gameState.playerNation.GetNationEmptyNeighbors().Contains(gameState.activeTile) || gameState.playerNation.capital == null && gameState.playerNation.navies[0].GetNeighbors().Contains(gameState.activeTile))
         {
             buttonSettleTile.interactable = true;
         }
@@ -63,6 +64,18 @@ public class TileUI : MonoBehaviour
         migrationText.text = Mathf.RoundToInt(gameState.activeTile.migration).ToString();
 
         resourceTypeText.text = gameState.activeTile.resource;
+
+        //THE PART AFTER THIS NEEDS TO BE FIXED, REALLY UGLY CODE
+
+        if (gameState.playerNation.GetNationEmptyNeighbors().Contains(gameState.activeTile) || gameState.playerNation.capital == null && gameState.playerNation.navies[0].GetNeighbors().Contains(gameState.activeTile))
+        {
+            buttonSettleTile.interactable = true;
+        }
+
+        else
+        {
+            buttonSettleTile.interactable = false;
+        }
     }
 
     public void SettleTile() //I think this should take in a nation and tile to make it useful for AI etc.
@@ -70,17 +83,28 @@ public class TileUI : MonoBehaviour
         TileProps settledTile = gameState.activeTile;
         NationProps playerNation = gameState.playerNation;
 
-        if (gameState.playerNation.capital = null)
+        if (gameState.playerNation.capital == null)
         {
+            playerNation.navies[0].DeleteNavy();
+            float tribes = settledTile.tribalPop;
             settledTile.infrastructureLevel = 25;
-            settledTile.totalPop = 20000;
+            settledTile.totalPop = 10000;
             settledTile.SetPopulationRatios(0, 80, 20, 0); //this is also important because pop will revert to the empty tile value if you don't do it like this
+            settledTile.tribalPop += tribes;
             settledTile.nation = playerNation;
             playerNation.ownedTiles.Add(settledTile);
             playerNation.capital = settledTile;
 
             playerNation.discoveredTiles.Add(settledTile);
             playerNation.discoveredTiles.AddRange(playerNation.GetNationNeighbors());
+
+            mapGenerator.ClearFOW();
+            UpdateTileUI();
+
+            MainUI mainUI = FindObjectOfType<MainUI>();
+            mainUI.settlementMessage.SetActive(true);
+            Calendar calendar = FindObjectOfType<Calendar>();
+            calendar.chooseSpeed0();
         }
 
         else if (playerNation.capital.agriPop >= 80 && playerNation.capital.resourcePop >= 20)

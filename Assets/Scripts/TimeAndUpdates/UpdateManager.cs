@@ -5,6 +5,7 @@ using UnityEngine;
 using static TimeManager;
 using static RecruitmentManager;
 using static NationAI; //THIS MIGHT BE REAAAAALY BAD!!!!!! FIND ANOTHER WAY OF ADDING ARMIES TO THE LIST
+using Unity.Burst.Intrinsics;
 
 public class UpdateManager : MonoBehaviour
 {
@@ -450,37 +451,54 @@ public class UpdateManager : MonoBehaviour
             {
                 army.GetReinforced(10);
             }
+            army.armySizeText.text = army.curSize.ToString();
         }
     }
 
     public void UpdateBattles()
     {
+        List<BattleProps> battlesToEnd = new List<BattleProps>();
+
         foreach (BattleProps battle in armyTracker.battlePositions.Keys)
         {
+            List<ArmyProps> armiesToRemove = new List<ArmyProps>();
+                
             foreach (ArmyProps army in battle.attackerArmies)
             {
-                army.TakeLosses(10);
+                army.TakeLosses(4);
 
                 if (army.curSize <= 0)
                 {
-                    army.DeleteArmy();
+                    armiesToRemove.Add(army);
                 }
             }
 
             foreach (ArmyProps army in battle.defenderArmies)
             {
-                army.TakeLosses(10);
+                army.TakeLosses(4);
 
                 if (army.curSize <= 0)
                 {
-                    army.DeleteArmy();
+                    armiesToRemove.Add(army);
                 }
+            }
+
+            foreach (ArmyProps army in armiesToRemove)
+            {
+                army.DeleteArmy();
             }
 
             if (battle.attackerArmies.Count == 0 || battle.defenderArmies.Count == 0)
             {
-                battle.EndBattle();
+                battlesToEnd.Add(battle);
             }
+
+            battle.UpdateText();
+        }
+
+        foreach (BattleProps battle in battlesToEnd)
+        {
+            battle.EndBattle();
         }
     }
 

@@ -1,4 +1,3 @@
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -35,10 +34,12 @@ public class Controls : MonoBehaviour
                     {
                         if (gameState.activeTile != null)
                         {
+                            tileUI.CloseTileUI();
                             gameState.DeselectTile(gameState.activeTile);
                         }
                         if (gameState.activeArmy != null)
                         {
+                            armyUI.CloseArmyUI();
                             gameState.DeselectArmy(gameState.activeArmy);
                         }
                         if (gameState.activeNavy != null)
@@ -63,10 +64,12 @@ public class Controls : MonoBehaviour
                     {
                         if (gameState.activeTile != null)
                         {
+                            tileUI.CloseTileUI();
                             gameState.DeselectTile(gameState.activeTile);
                         }
                         if (gameState.activeArmy != null)
                         {
+                            armyUI.CloseArmyUI();
                             gameState.DeselectArmy(gameState.activeArmy);
                         }
                         if (gameState.activeNavy != null)
@@ -89,27 +92,28 @@ public class Controls : MonoBehaviour
 
                     if (gameState.gameMode == GameState.Mode.freeMode && !tile.FOW.activeSelf) //normal click, just open the UI
                     {
-                        gameState.SelectTile(tile);
-                        
-                        if(tile.type != 1)
-                        {
-                            tileUI.OpenTileUI();
-                            tileUI.UpdateTileUI();
-                        }
-
                         if (gameState.activeTile != null)
                         {
+                            tileUI.CloseTileUI();
                             gameState.DeselectTile(gameState.activeTile);
                         }
                         if (gameState.activeArmy != null)
                         {
+                            armyUI.CloseArmyUI();
                             gameState.DeselectArmy(gameState.activeArmy);
                         }
                         if (gameState.activeNavy != null)
                         {
                             gameState.DeselectNavy(gameState.activeNavy);
                         }
-                        
+
+                        gameState.SelectTile(tile);
+
+                        if (tile.type != 1)
+                        {
+                            tileUI.OpenTileUI();
+                            tileUI.UpdateTileUI();
+                        }
                     }
 
                     else if (gameState.gameMode == GameState.Mode.recruitModeArmy && tile.nation != null && tile.nation == gameState.playerNation && tile.isReinforceTile == false) //recruit army
@@ -147,7 +151,7 @@ public class Controls : MonoBehaviour
                 
                 if (hit)
                 {
-                    armyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9); //not a very good line tbh can probably be simplified + also move everything from camera to controler
+                    armyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(army.transform.position, hit.collider.gameObject.transform.position, 9, "army"); //not a very good line tbh can probably be simplified + also move everything from camera to controler
                 }
             }
             
@@ -166,7 +170,7 @@ public class Controls : MonoBehaviour
 
                 if (hit)
                 {
-                    navyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(navy.transform.position, hit.collider.gameObject.transform.position, 9999999); //not a very good line tbh can probably be simplified + also move everything from camera to controler
+                    navyMovement.path = GameObject.Find("Main Camera").GetComponent<PathFinding>().GetPath(navy.transform.position, hit.collider.gameObject.transform.position, 9, "navy"); //not a very good line tbh can probably be simplified + also move everything from camera to controler
                 }
             }
         }

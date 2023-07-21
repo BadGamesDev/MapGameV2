@@ -7,14 +7,28 @@ public class RecruitmentManager : MonoBehaviour
     public GameState gameState;
     public MainUI mainUI;
     public ArmyUI armyUI;
+    public TileUI tileUI; //fuck it we ball
     public MapModes mapModes; //ATROCIOUS SOLUTION! FIND ANOTHER WAY!
 
-    public GameObject army;
+    public GameObject armyPrefab;
 
     public static event Action<ArmyProps> ArmyRecruited; //to add it to armies list in update manager
 
     public void RecruitArmyButton()
     {
+        armyUI.CloseArmyUI(); //I should probably have a method to turn off all UI
+        tileUI.CloseTileUI();
+
+        if (mainUI.economyTab.activeSelf)
+        {
+            mainUI.economyTab.SetActive(false);
+        }
+
+        if (mainUI.tradeTab.activeSelf)
+        {
+            mainUI.tradeTab.SetActive(false);
+        }
+
         if (gameState.gameMode != GameState.Mode.recruitModeArmy)
         {
             if (gameState.activeArmy != null)// ?
@@ -27,7 +41,7 @@ public class RecruitmentManager : MonoBehaviour
 
         else
         {
-            mapModes.mapMode = MapModes.Mode.political; //It should probably be back to the map mode you have choosen but come on dude... we can do that later
+            mapModes.mapMode = MapModes.Mode.terrain; //It should probably be back to the map mode you have choosen but come on dude... we can do that later
             gameState.gameMode = GameState.Mode.freeMode;
         }
     }
@@ -48,7 +62,7 @@ public class RecruitmentManager : MonoBehaviour
 
         gameState.DeselectArmy(gameState.activeArmy);
 
-        mapModes.mapMode = MapModes.Mode.political;
+        mapModes.mapMode = MapModes.Mode.terrain;
         gameState.gameMode = GameState.Mode.freeMode;
     }
 
@@ -69,7 +83,7 @@ public class RecruitmentManager : MonoBehaviour
     public void RecruitArmy(TileProps tile)
     {
         Vector3 spawnPosition = tile.transform.position;
-        GameObject newArmy = Instantiate(army, spawnPosition, Quaternion.identity);
+        GameObject newArmy = Instantiate(armyPrefab, spawnPosition, Quaternion.identity);
         ArmyProps armyProps = newArmy.GetComponent<ArmyProps>();
 
         gameState.activeArmy = armyProps; //I don't want to highlight the army so I did it like this

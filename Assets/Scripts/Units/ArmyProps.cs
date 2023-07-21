@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class ArmyProps : MonoBehaviour
     private void Start()
     {
         reinforce = true;
-        isInBattle = false;
+        //isInBattle = false; // FOR SOME FUCKING REASON THIS SHIT WILL FUCK UP NATIVE AMBUSHERS
 
         speed = 1;
         morale = 10;
@@ -105,6 +106,21 @@ public class ArmyProps : MonoBehaviour
         }
 
         updateManager.armies.Remove(this); //This is a bit weird. But I don't want to reference update manager in this script directly so this works for now.
+
+        if(isInBattle)
+        {
+            foreach (KeyValuePair<BattleProps, Vector2> battle in armyTracker.battlePositions) //Checking every battle like this is bad. Find a way of directly referencing the battle this army is in.
+            {
+                if(battle.Key.attackerArmies.Contains(this))
+                {
+                    battle.Key.attackerArmies.Remove(this);
+                }
+                if (battle.Key.defenderArmies.Contains(this))
+                {
+                    battle.Key.defenderArmies.Remove(this);
+                }
+            }
+        }
 
         armyTracker.RemoveArmy(this);
 

@@ -79,6 +79,20 @@ public class MapModes : MonoBehaviour
         {
             tile.SwitchSprite(tile.type);
             tile.GetComponent<Renderer>().material.color = Color.white;
+
+            if (tile.nation != null)
+            {
+                if (tile.nation.GetComponent<NationProps>().nationName == "0")
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.red;
+                }
+                else if (tile.nation.GetComponent<NationProps>().nationName == "1")
+                {
+                    tile.SwitchSprite(0);
+                    tile.GetComponent<Renderer>().material.color = Color.yellow;
+                }
+            }
         }
     }
 
@@ -180,15 +194,10 @@ public class MapModes : MonoBehaviour
 
     private void ApplyPopulationMapMode()
     {
-        float minPopulation = Mathf.Infinity;
         float maxPopulation = 0f;
         foreach (TileProps tile in mapGenerator.landTiles)
         {
             float population = tile.GetTotalPopulation();
-            if (population < minPopulation)
-            {
-                minPopulation = population;
-            }
             if (population > maxPopulation)
             {
                 maxPopulation = population;
@@ -200,9 +209,9 @@ public class MapModes : MonoBehaviour
             tile.SwitchSprite(0);
             float population = tile.GetTotalPopulation();
 
-            float populationRatio = (population - minPopulation) / (maxPopulation - minPopulation);
+            float populationRatio = population / maxPopulation;
 
-            Color color = Color.Lerp(Color.green, Color.white, populationRatio);
+            Color color = Color.Lerp(Color.white, Color.green, populationRatio);
 
             // Set the sprite color of the tile
             tile.GetComponent<Renderer>().material.color = color;

@@ -15,7 +15,7 @@ public class ArmyUI : MonoBehaviour
 
     public TMP_Text armyOwner;
 
-    public TMP_Text recruitCount;
+    //public TMP_Text recruitCount;
 
     public TMP_Text maxTroopCount;
     public TMP_Text maxInfantryCount;
@@ -45,7 +45,7 @@ public class ArmyUI : MonoBehaviour
     {
         armyOwner.text = gameState.activeArmy.nation.name; //Null reference error here!!! (Because UI is not closed when army is de-selected)
 
-        recruitCount.text = gameState.activeArmy.availablePop.ToString(); //Recruit count doesn't get updated as frequently as it should for some reason
+        //recruitCount.text = gameState.activeArmy.availablePop.ToString(); //Recruit count doesn't get updated as frequently as it should for some reason
 
         curTroopCount.text = gameState.activeArmy.curSize.ToString();
         infantryCount.text = gameState.activeArmy.curInfantry.ToString();
@@ -70,7 +70,16 @@ public class ArmyUI : MonoBehaviour
 
     public void EditReinforceTiles()
     {
-        gameState.gameMode = GameState.Mode.recruitModeTiles;
+        if (gameState.gameMode != GameState.Mode.recruitModeTiles)
+        {
+            gameState.gameMode = GameState.Mode.recruitModeTiles;
+        }
+        else
+        {
+            gameState.gameMode = GameState.Mode.freeMode;
+            MapModes mapModes = FindObjectOfType<MapModes>();
+            mapModes.mapMode = MapModes.Mode.terrain;
+        }
     }
 
     public void ButtonDeleteArmy()

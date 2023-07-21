@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class TileProps : MonoBehaviour
 {
@@ -57,6 +55,8 @@ public class TileProps : MonoBehaviour
     public float attraction;
     public float attractionModifier; //I'm sure there can be a better way
     public float migration; //mostly for debugging
+
+    public int nativeAgressiveness;
 
     private void Awake()
     {

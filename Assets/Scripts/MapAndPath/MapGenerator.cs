@@ -27,6 +27,8 @@ public class MapGenerator : MonoBehaviour
     public List<TileProps> landTiles;
     public List<TileProps> seaTiles;
 
+    public List<TileProps> starterTiles; //will be removed, just for the ship
+
     private void Awake()
     {
         GenerateMap();
@@ -92,7 +94,9 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        CalcLandTiles();
+        CalcLandTypes();
+
+        GetOuterTiles(); //will be removed
 
         AssignID();
 
@@ -103,6 +107,8 @@ public class MapGenerator : MonoBehaviour
         SetPopulation();
 
         SetDevelopment();
+
+        SetAgressiveness();
 
         GenerateNations();
 
@@ -132,7 +138,7 @@ public class MapGenerator : MonoBehaviour
         {
             GameObject newNation = Instantiate(nationPrefab);
             NationProps nation = newNation.GetComponent<NationProps>();
-            
+
             newNation.name = "Nation" + i.ToString();
             nation.nationName = i.ToString();
             nation.isAI = true;
@@ -158,12 +164,12 @@ public class MapGenerator : MonoBehaviour
 
     void PlaceStartingBoat()
     {
-        TileProps startTile = seaTiles[Random.Range(0, seaTiles.Count +1)];
+        TileProps startTile = starterTiles[Random.Range(0, starterTiles.Count + 1)];
         GameObject starterNavyObject = Instantiate(shipPrefab, new Vector2(startTile.transform.position.x, startTile.transform.position.y), Quaternion.identity);
         NavyProps starterNavy = starterNavyObject.GetComponent<NavyProps>();
         NationProps playerNation = gameState.playerNation;
         UpdateManager updateManager = FindObjectOfType<UpdateManager>(); // very scuffed reference. Do not reference updatemanager from here
-        
+
         updateManager.navies.Add(starterNavy);
 
         starterNavy.nation = playerNation;
@@ -182,7 +188,7 @@ public class MapGenerator : MonoBehaviour
         ClearFOW();
     }
 
-    void CalcLandTiles()
+    void CalcLandTypes()
     {
         for (int x = 0; x < mapSize.x; x++)
         {
@@ -211,6 +217,17 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+    void GetOuterTiles() //this is a very scuffed temporary method used to make sure the starting ship is far away from the center of the map
+    {
+        foreach(TileProps tile in seaTiles)
+        {
+            if(1.5f < tile.transform.position.x && tile.transform.position.x < 78f && 2f < tile.transform.position.y && tile.transform.position.y < 5f)
+            {
+                starterTiles.Add(tile);
+            }
         }
     }
 
@@ -252,8 +269,8 @@ public class MapGenerator : MonoBehaviour
 
     void SetLaborResources()
     {
-        foreach(TileProps tile in landTiles) 
-        { 
+        foreach (TileProps tile in landTiles)
+        {
             int randomNumber = Random.Range(1, 101);
             if (randomNumber > 95)
             {
@@ -274,6 +291,15 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    void SetAgressiveness()
+    {
+        foreach (TileProps tile in landTiles)
+        {
+            int randomNumber = Random.Range(1, 21);
+            tile.nativeAgressiveness = randomNumber;
+        }
+    }
+    
     void DrawGrid()
     {
         GetComponent<PathGrid>().width = (int)mapSize.x;

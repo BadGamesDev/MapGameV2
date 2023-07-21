@@ -14,7 +14,7 @@ public class PathFinding : MonoBehaviour
         grid = GetComponent<PathGrid>();
     }
     
-    public List<Vector2> GetPath(Vector2 startPos, Vector2 endPos, int unitType)
+    public List<Vector2> GetPath(Vector2 startPos, Vector2 endPos, int unitType, string tag)
     {
         List<Vector2> pathVect = new List<Vector2>();
 
@@ -63,11 +63,19 @@ public class PathFinding : MonoBehaviour
                 {
                     continue;
                 }
-                if (neighbor.open > unitType)
+                
+                if (neighbor.open > unitType && tag == "army")
                 {
                     closedNodes.Add(neighbor);
                     continue;
                 }
+
+                if (neighbor.open < unitType && tag == "navy")
+                {
+                    closedNodes.Add(neighbor);
+                    continue;
+                }
+
                 else
                 {
                     float newGcost = currNode.gCost + 1;
@@ -88,7 +96,7 @@ public class PathFinding : MonoBehaviour
             }
         }
 
-        PathNode closestNode = GetClosestNode(endNode);
+        PathNode closestNode = GetClosestNode(endNode, tag);
         if (closestNode != null)
         {
             return CalcPath(closestNode);
@@ -184,21 +192,36 @@ public class PathFinding : MonoBehaviour
         return pathVector;
     }
 
-    private PathNode GetClosestNode(PathNode targetNode)
+    private PathNode GetClosestNode(PathNode targetNode, string tag)
     {
         PathNode closestNode = null;
         float closestDistance = float.MaxValue;
-
-        foreach (PathNode node in closedNodes)
+        
+        if (tag == "army")
         {
-            float distance = CalcDistance(node.pos, targetNode.pos);
-            if (distance < closestDistance && node.open <= 9)
+            foreach (PathNode node in closedNodes)
             {
-                closestNode = node;
-                closestDistance = distance;
-            }
+                float distance = CalcDistance(node.pos, targetNode.pos);
+                if (distance < closestDistance && node.open <= 9)
+                {
+                    closestNode = node;
+                    closestDistance = distance;
+                }
+            } 
         }
 
+        if (tag == "navy")
+        {
+            foreach (PathNode node in closedNodes)
+            {
+                float distance = CalcDistance(node.pos, targetNode.pos);
+                if (distance < closestDistance && node.open >= 9)
+                {
+                    closestNode = node;
+                    closestDistance = distance;
+                }
+            }
+        }
         return closestNode;
     }
 }

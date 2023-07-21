@@ -19,6 +19,7 @@ public class MainUI : MonoBehaviour
     public GameObject tradeTab;
 
     public GameObject welcomeMessage; // THIS WILL BE DELETED! THIS IS JUST TEMPORARY!
+    public GameObject settlementMessage; //Also there should only be one message window to display all messages(probably)
 
     public void UpdateMainDisplay() //method name sucks 
     {
@@ -39,6 +40,10 @@ public class MainUI : MonoBehaviour
         {
             economyTab.SetActive(true);
         }
+        if (tradeTab.activeSelf)
+        {
+            tradeTab.SetActive(false);
+        }
     }
 
     public void OpenTradeTab() // this is horrible UI, will fix it in the future
@@ -50,6 +55,10 @@ public class MainUI : MonoBehaviour
         else
         {
             tradeTab.SetActive(true);
+        }
+        if (economyTab.activeSelf)
+        {
+            economyTab.SetActive(false);
         }
     }
 
@@ -119,5 +128,10 @@ public class MainUI : MonoBehaviour
     public void WelcomeMessageCloseButton() //make a generalised close button method.
     {
         welcomeMessage.SetActive(false); 
+    }
+
+    public void SettlementMessageCloseButton() //make a generalised close button method.
+    {
+        settlementMessage.SetActive(false);
     }
 }

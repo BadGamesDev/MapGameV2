@@ -79,6 +79,27 @@ public class ArmyMovement : MonoBehaviour
             path = new List<Vector2>();
             currentNode = 0;
             progress = 0.0f;
+        }    
+
+        if(tile.GetComponent<TileProps>().nation == null)
+        { 
+            int ambushRoll = tile.GetComponent<TileProps>().nativeAgressiveness + Random.Range(0, 100);
+            if (ambushRoll >= 100)
+            {
+                RecruitmentManager recruitmentManager = FindObjectOfType<RecruitmentManager>();
+                GameObject nativeArmyPrefab = Instantiate(recruitmentManager.armyPrefab, tile.transform.position, Quaternion.identity);
+                ArmyProps nativeArmy = nativeArmyPrefab.GetComponent<ArmyProps>();
+
+                armyTracker.AddArmy(nativeArmy, nativeArmy.transform.position);
+
+                nativeArmy.SwitchSprite(2);
+                nativeArmy.curInfantry = 50;
+                nativeArmy.curCavalry = 50;
+                nativeArmy.nation = GameObject.Find("Nation1").GetComponent<NationProps>();
+                //nativeArmy.isInBattle = true; //armytracker is not working so I have to do this shit manually
+
+                Debug.Log("AMBUSH!");
+            }
         }
 
         armyTracker.UpdateArmyPosition(armyProps, transform.position);

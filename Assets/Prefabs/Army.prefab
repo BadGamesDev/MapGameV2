@@ -175,6 +175,7 @@ MonoBehaviour:
   sprites:
   - {fileID: -1941866384, guid: 9ae9725430169cf4db022801cf5baad5, type: 3}
   - {fileID: 436785932, guid: 9ae9725430169cf4db022801cf5baad5, type: 3}
+  - {fileID: 21300000, guid: dfcd2b381df618d4eac061a9a775d7b9, type: 3}
   nation: {fileID: 0}
   reinforceTiles: []
   armySizeText: {fileID: 3245982636806771391}
@@ -316,8 +317,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 3
-  m_fontSizeBase: 3
+  m_fontSize: 2
+  m_fontSizeBase: 2
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

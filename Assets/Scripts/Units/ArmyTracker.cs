@@ -4,6 +4,7 @@ using UnityEngine;
 public class ArmyTracker : MonoBehaviour
 {
     public GameObject battlePrefab;
+    public GameObject armyPrefab;
 
     public Dictionary<ArmyProps, Vector2> armyPositions = new Dictionary<ArmyProps, Vector2>();
     public Dictionary<BattleProps, Vector2> battlePositions = new Dictionary<BattleProps, Vector2>();
@@ -26,7 +27,7 @@ public class ArmyTracker : MonoBehaviour
 
     public void UpdateArmyPosition(ArmyProps army, Vector2 newPosition) //I can optimise the fuck out of this shit
     {
-        if (armyPositions.ContainsKey(army))
+        if (armyPositions.ContainsKey(army)) // Do I need this if check?
         {
             armyPositions[army] = newPosition;
             bool battleFound = false;
@@ -53,14 +54,21 @@ public class ArmyTracker : MonoBehaviour
         }
     }
 
-    private void InitiateBattle(ArmyProps attacker, ArmyProps defender, Vector2 position)
+    public void InitiateBattle(ArmyProps attacker, ArmyProps defender, Vector2 position)
     {
         Debug.Log("Combat initiated between " + attacker.name + " and " + defender.name);
-        attacker.isInBattle = true;
-        defender.isInBattle = true;
 
         GameObject prefab = Instantiate(battlePrefab, position, Quaternion.identity);
         BattleProps battle = prefab.GetComponent<BattleProps>();
+
+        attacker.gameObject.transform.position = new Vector2(position.x - 0.25f, position.y);
+        defender.gameObject.transform.position = new Vector2(position.x + 0.25f, position.y);
+
+        attacker.isInBattle = true;
+        defender.isInBattle = true;
+
+        attacker.armySizeText.gameObject.SetActive(false);
+        defender.armySizeText.gameObject.SetActive(false);
 
         battle.attacker = attacker.nation;
         battle.defender = defender.nation;
